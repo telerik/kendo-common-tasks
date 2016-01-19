@@ -1,0 +1,39 @@
+{
+  "name": "kendo-common-tasks",
+  "version": "0.1.0",
+  "description": "Build infrastructure helpers and gulp tasks for Kendo UI Angular 2 / React components",
+  "main": "index.js",
+  "keywords": [
+    "Kendo UI"
+  ],
+  "dependencies": {
+    "babel-eslint": "^4.1.6",
+    "browser-sync": "2.10.0",
+    "browser-sync-webpack-plugin": "^1.0.1",
+    "css-loader": "^0.23.1",
+    "eslint": "^1.10.1",
+    "eslint-plugin-react": "^3.10.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "glob": "^6.0.4",
+    "gulp": "^3.9.0",
+    "gulp-eslint": "^1.1.0",
+    "gulp-if": "^2.0.0",
+    "gulp-load-plugins": "1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.1.0",
+    "gulp-sourcemaps": "1.6.0",
+    "gulp-util": "^3.0.7",
+    "lazypipe": "^1.0.1",
+    "lodash": "^3.10.1",
+    "sass-loader": "^3.1.2",
+    "style-loader": "^0.13.0",
+    "vinyl-named": "^1.1.0",
+    "webpack": "^1.12.10",
+    "webpack-dev-server": "^1.14.0",
+    "webpack-sources": "^0.1.0",
+    "webpack-stream": "^3.1.0",
+    "yargs": "^3.30.0"
+  },
+  "author": "Telerik",
+  "license": "Apache-2.0"
+}
