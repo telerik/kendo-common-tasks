@@ -104,10 +104,7 @@ exports.webpackDevConfig = (config) => ({
   ],
 
   module: {
-    loaders: [
-      ...config.loaders,
-      devSassLoader
-    ]
+    loaders: config.loaders.concat([ devSassLoader ])
   }
 })
 
