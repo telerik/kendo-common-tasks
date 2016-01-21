@@ -68,7 +68,7 @@ const addHMR = (path) =>
   glob.sync(path).reduce(addHMRCallback, {})
 
 exports.resolveConfig = ( extensions, nodeModulesPath ) => ({
-  extensions: ['', '.js', ...extensions, '.scss'],
+  extensions: ['', '.js'].concat(extensions, [ '.scss' ]),
   fallback: [nodeModulesPath, path.join(__dirname, 'node_modules')]
 })
 
