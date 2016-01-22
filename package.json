@@ -5,7 +5,7 @@
   "repository": "telerik/kendo-common-tasks",
   "main": "index.js",
   "scripts": {
-    "lint": "echo lint stub"
+    "lint": "./node_modules/.bin/eslint ."
   },
   "keywords": [
     "Kendo UI"
