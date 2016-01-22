@@ -1,6 +1,7 @@
 const path = require('path')
 const _ = require('lodash')
 const named = require('vinyl-named')
+const argv = require('yargs').argv;
 
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
@@ -68,8 +69,8 @@ const addHMR = (path) =>
   glob.sync(path).reduce(addHMRCallback, {})
 
 exports.resolveConfig = ( extensions, nodeModulesPath ) => ({
-  extensions: ['', '.js'].concat(extensions, [ '.scss' ]),
-  fallback: [nodeModulesPath, path.join(__dirname, 'node_modules')]
+  extensions: [ '', '.js' ].concat(extensions, [ '.scss' ]),
+  fallback: [ nodeModulesPath, path.join(__dirname, 'node_modules') ]
 })
 
 exports.webpackDevConfig = (config) => ({
@@ -161,5 +162,15 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
         throw new $.util.PluginError('webpack-dev-server', err)
       }
     })
+  })
+
+  gulp.task('lint', () => {
+    const isFixed = (file) => file.eslint != null && file.eslint.fixed;
+
+    return gulp.src([ srcGlob, 'test' ])
+      .pipe($.eslint({fix: argv.fix}))
+      .pipe($.eslint.format())
+      .pipe($.if(isFixed, gulp.dest(".")))
+      .pipe($.eslint.failAfterError());
   })
 }
