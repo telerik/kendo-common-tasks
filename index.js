@@ -1,12 +1,12 @@
 const path = require('path')
 const _ = require('lodash')
 const named = require('vinyl-named')
-const argv = require('yargs').argv;
+const argv = require('yargs').argv
 
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 const webpackStream = require('webpack-stream')
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
 
 const glob = require('glob')
@@ -165,12 +165,12 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
   })
 
   gulp.task('lint', () => {
-    const isFixed = (file) => file.eslint != null && file.eslint.fixed;
+    const isFixed = (file) => file.eslint != null && file.eslint.fixed
 
     return gulp.src([ srcGlob, 'test' ])
       .pipe($.eslint({fix: argv.fix}))
       .pipe($.eslint.format())
       .pipe($.if(isFixed, gulp.dest(".")))
-      .pipe($.eslint.failAfterError());
+      .pipe($.eslint.failAfterError())
   })
 }
