@@ -1,5 +1,5 @@
 {
-  "name": "kendo-common-tasks",
+  "name": "@telerik/kendo-common-tasks",
   "version": "0.1.0",
   "description": "Build infrastructure helpers and gulp tasks for Kendo UI Angular 2 / React components",
   "repository": "telerik/kendo-common-tasks",
