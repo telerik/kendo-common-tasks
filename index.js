@@ -153,7 +153,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
       contentBase: './',
       hot: true,
       noInfo: true,
-      stats: {colors: true}
+      stats: { colors: true }
     });
 
     server.listen(webpackPort, host, err => {
@@ -168,7 +168,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
     const isFixed = (file) => file.eslint != null && file.eslint.fixed;
 
     return gulp.src([ srcGlob, 'test' ])
-      .pipe($.eslint({fix: argv.fix}))
+      .pipe($.eslint({ fix: argv.fix }))
       .pipe($.eslint.format())
       .pipe($.if(isFixed, gulp.dest(".")))
       .pipe($.eslint.failAfterError());
