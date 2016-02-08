@@ -115,8 +115,6 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
     gulp.task('build-npm-package', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
 
-        config.output.library = libraryClassName;
-
         return gulp.src(srcGlob)
                    .pipe(named())
                    .pipe(webpackStream(config))
