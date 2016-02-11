@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <! -- code mirror -->
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.6.0/codemirror.min.css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.6.0/codemirror.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.6.0/mode/javascript/javascript.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.6.0/mode/css/css.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.6.0/mode/xml/xml.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/5.6.0/mode/htmlmixed/htmlmixed.min.js"></script>
+    <link rel="stylesheet" href="/internals/tomorrow-night.css">
+    <script src="/internals/jsx.js"></script> <!-- code mirror mode -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+
+    <script src="http://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script src="http://docs.telerik.com/kendo-ui/assets/prettify.js?cb=7160d45af34e15b185fc57760755c88f"></script>
+
+    <script>
+      var scriptSrc = '/cdn/{{scriptSrc}}'
+      var styleSrc = '/cdn/{{styleSrc}}'
+    </script>
+
+    <script src="/internals/snippet.js"></script>
+    <style>
+      body {
+        width: 80%;
+        margin: 0 auto;
+      }
+      .editor .pane {
+        display: inline-block;
+        width: 30%;
+      }
+
+      .editor .preview-pane {
+        display: block;
+        width: 100%;
+      }
+
+      pre {
+        background: #e9e9e9;
+        padding: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{title}}</h1>
+
+      {{{ content }}}
+    </div>
+  </body>
+</html>

@@ -8,6 +8,11 @@ const WebpackDevServer = require('webpack-dev-server');
 const webpackStream = require('webpack-stream');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
+const express = require('express');
+const mds = require('markdown-serve');
+const BrowserSync = require('browser-sync');
+const serveIndex = require('serve-index');
+const rewrite = require('express-urlrewrite');
 
 const glob = require('glob');
 const $ = require('gulp-load-plugins')();
@@ -170,5 +175,44 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
                    .pipe($.eslint.format())
                    .pipe($.if(isFixed, gulp.dest(".")))
                    .pipe($.eslint.failAfterError());
+    });
+
+    gulp.task('docs', (done) => {
+        const browserSync = BrowserSync.create();
+        const app = express();
+
+        app.use(rewrite(/(.+)\.md$/, '/$1'));
+
+        app.set('views', __dirname);
+        app.set('view engine', 'hbs');
+
+        app.use('/internals', express.static(path.join(__dirname, 'docs-public')));
+        app.use('/cdn', express.static('dist/cdn/'));
+
+        app.use('/', serveIndex('docs', { 'icons': true }));
+
+        app.use(mds.middleware({
+            rootDirectory: 'docs',
+            view: 'docs-layout',
+            preParse: function(markdownFile) {
+                return {
+                    scriptSrc: `js/${libraryName}.js`,
+                    styleSrc: `css/${libraryName}.css`,
+                    content: markdownFile.parseContent()
+                };
+            }
+        }));
+
+        app.listen(3000, function() {
+            browserSync.init({
+                port: 8080,
+                proxy: "localhost:3000"
+            });
+
+            gulp.watch("docs/**/*{.md,.hbs}").on('change', browserSync.reload);
+            gulp.watch("public/**/*{.css,.js}").on('change', browserSync.reload);
+        });
+
+        process.on('exit', done);
     });
 };
