@@ -31,7 +31,7 @@ exports.webpackStream = webpackStream;
 exports.CDNSassLoader = {
     test: /\.scss$/,
     loader: ExtractTextPlugin.extract(styleLoaderPath, [
-        `${cssLoaderPath}?modules&sourceMaplocalIdentName=${cssModuleIdentName}`,
+        `${cssLoaderPath}?modules&sourceMap&localIdentName=${cssModuleIdentName}`,
         sassLoaderPath
     ])
 };
