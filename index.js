@@ -177,7 +177,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
                    .pipe($.eslint.failAfterError());
     });
 
-    gulp.task('docs', (done) => {
+    gulp.task('docs', [ 'build-cdn' ], (done) => {
         const browserSync = BrowserSync.create();
         const app = express();
 
@@ -209,8 +209,10 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
                 proxy: "localhost:3000"
             });
 
-            gulp.watch("docs/**/*{.md,.hbs}").on('change', browserSync.reload);
-            gulp.watch("public/**/*{.css,.js}").on('change', browserSync.reload);
+            gulp.watch("docs/**/*.{md,hbs}").on('change', browserSync.reload);
+            gulp.watch("public/**/*.{css,js}").on('change', browserSync.reload);
+            gulp.watch("dist/cdn/**/*.{css,js}").on('change', browserSync.reload);
+            gulp.watch("src/**/*.{jsx,ts}", [ "build-cdn" ]);
         });
 
         process.on('exit', done);
