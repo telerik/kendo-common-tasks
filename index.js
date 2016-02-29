@@ -24,6 +24,8 @@ const sassLoaderPath = require.resolve('sass-loader');
 
 const cssModuleIdentName = 'k-[local]';
 
+const SRC_EXT_GLOB = ".{jsx,ts}";
+
 exports.webpack = webpack;
 
 exports.webpackStream = webpackStream;
@@ -139,7 +141,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
 
         config.output.library = libraryClassName;
 
-        return gulp.src('src/bundle.*')
+        return gulp.src('src/main' + SRC_EXT_GLOB)
                    .pipe(webpackStream(config))
                    .pipe($.rename((path) => {
                        path.basename = libraryName;
@@ -152,7 +154,13 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
         const webpackPort = 8888;
         const host = '0.0.0.0';
 
-        const server = new WebpackDevServer(webpack(webpackConfig.dev), {
+        const packageInfo = require(path.join(process.cwd(), 'package.json'));
+
+        const config = _.assign({}, webpackConfig.dev);
+
+        config.resolve = Object.assign({}, config.resolve, { alias: { [packageInfo.name]: '../src/main' } });
+
+        const server = new WebpackDevServer(webpack(config), {
             contentBase: './',
             hot: true,
             noInfo: true,
@@ -212,7 +220,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
             gulp.watch("docs/**/*.{md,hbs}").on('change', browserSync.reload);
             gulp.watch("public/**/*.{css,js}").on('change', browserSync.reload);
             gulp.watch("dist/cdn/**/*.{css,js}").on('change', browserSync.reload);
-            gulp.watch("src/**/*.{jsx,ts}", [ "build-cdn" ]);
+            gulp.watch("src/**/*" + SRC_EXT_GLOB, [ "build-cdn" ]);
         });
 
         process.on('exit', done);
