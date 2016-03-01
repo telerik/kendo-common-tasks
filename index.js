@@ -47,7 +47,7 @@ exports.extractCssPlugin = () =>
 exports.uglifyJsPlugin = () =>
   new webpack.optimize.UglifyJsPlugin();
 
-const devSassLoader = {
+const inlineSassLoader = {
     test: /\.scss$/,
     loaders: [
         styleLoaderPath,
@@ -79,6 +79,8 @@ exports.resolveConfig = ( extensions, nodeModulesPath ) => ({
     extensions: [ '', '.js' ].concat(extensions, [ '.scss' ]),
     fallback: [ nodeModulesPath, path.join(__dirname, 'node_modules') ]
 });
+
+exports.inlineSassLoader = inlineSassLoader;
 
 exports.webpackDevConfig = (config) => ({
     resolve: config.resolve,
@@ -112,7 +114,7 @@ exports.webpackDevConfig = (config) => ({
     ],
 
     module: {
-        loaders: config.loaders.concat([ devSassLoader ])
+        loaders: config.loaders.concat([ inlineSassLoader ])
     }
 });
 
