@@ -4,3 +4,5 @@ the package contains build and packaging utilities, webpack objects, and gulp ta
 It also re-exports common packages, like webpack.
 
 Working examples of its usage are the `kendo-react-tasks` and `kendo-angular-tasks` packages.
+
+TODO: link the tasks
