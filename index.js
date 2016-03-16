@@ -118,13 +118,13 @@ exports.webpackDevConfig = (config) => ({
     }
 });
 
-exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig) => {
+exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlop) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, _.capitalize)(libraryName);
 
     gulp.task('build-npm-package', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
 
-        return gulp.src(srcGlob)
+        return gulp.src(_.compact(_.concat([], srcGlob, dtsGlop)))
                    .pipe(named())
                    .pipe(webpackStream(config))
                    .pipe($.rename((path) => {
