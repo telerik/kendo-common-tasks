@@ -28,7 +28,6 @@
     "glob": "^6.0.4",
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.1.0",
-    "gulp-if": "^2.0.0",
     "gulp-load-plugins": "1.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.0",
@@ -59,8 +58,9 @@
   "devDependencies": {
     "cz-conventional-changelog": "^1.1.5",
     "ghooks": "^1.0.3",
-    "validate-commit-msg": "^1.1.1",
-    "semantic-release": "^4.3.5"
+    "gulp-add-src": "^0.2.0",
+    "semantic-release": "^4.3.5",
+    "validate-commit-msg": "^1.1.1"
   },
   "config": {
     "commitizen": {

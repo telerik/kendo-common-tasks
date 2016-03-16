@@ -2,6 +2,7 @@ const path = require('path');
 const _ = require('lodash');
 const named = require('vinyl-named');
 const argv = require('yargs').argv;
+const addsrc = require('gulp-add-src');
 
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
@@ -118,15 +119,16 @@ exports.webpackDevConfig = (config) => ({
     }
 });
 
-exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlop) => { //eslint-disable-line max-params
+exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, _.capitalize)(libraryName);
 
     gulp.task('build-npm-package', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
 
-        return gulp.src(_.compact(_.concat([], srcGlob, dtsGlop)))
+        return gulp.src(srcGlob)
                    .pipe(named())
                    .pipe(webpackStream(config))
+                   .pipe(addsrc.append(_.compact(_.concat([], dtsGlob))))
                    .pipe($.rename((path) => {
                        if (path.extname === '.css') {
                            path.dirname = 'css';
