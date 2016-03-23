@@ -20,6 +20,8 @@ const $ = require('gulp-load-plugins')();
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const cssLoaderPath = require.resolve('css-loader');
+const urlLoaderPath = require.resolve('url-loader');
+const fileLoaderPath = require.resolve('file-loader');
 const styleLoaderPath = require.resolve('style-loader');
 const sassLoaderPath = require.resolve('sass-loader');
 
@@ -38,6 +40,16 @@ exports.CDNSassLoader = {
         sassLoaderPath
     ])
 };
+
+const resourceLoaders = [
+    { test: /\.(jpe?g|png|gif|svg)$/i, loader: `${urlLoaderPath}?limit=10000` },
+    { test: /\.(woff|woff2)$/, loader: `${urlLoaderPath}?limit=10000&mimetype=application/font-woff` },
+    { test: /\.ttf$/, loader: `${urlLoaderPath}?limit=10000&mimetype=application/octet-stream` },
+    { test: /\.eot$/, loader: `${fileLoaderPath}` },
+    { test: /\.svg$/, loader: `${urlLoaderPath}?limit=10000&mimetype=image/svg+xml` }
+];
+
+exports.resourceLoaders = resourceLoaders;
 
 // alias, for now
 exports.npmPackageSassLoader = exports.CDNSassLoader;
@@ -115,7 +127,7 @@ exports.webpackDevConfig = (config) => ({
     ],
 
     module: {
-        loaders: config.loaders.concat([ inlineSassLoader ])
+        loaders: config.loaders.concat([ inlineSassLoader ]).concat(resourceLoaders)
     }
 });
 
