@@ -28,7 +28,7 @@ function ReactPreview(container) {
 ReactPreview.prototype.update = function(jsx, html) {
     var content = reactTemplate
       .replace('{{content}}', html)
-      .replace('{{script}}', babel.transform(jsx).code);
+      .replace('{{script}}', Babel.transform(jsx, { presets: [ 'react', 'es2015', 'stage-1' ] }).code);
 
     var contents = this.iframe.contents();
     contents[0].open();
