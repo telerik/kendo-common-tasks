@@ -43,10 +43,10 @@ exports.CDNSassLoader = {
 
 const resourceLoaders = [
     { test: /\.(jpe?g|png|gif|svg)$/i, loader: `${urlLoaderPath}?limit=10000` },
-    { test: /\.(woff|woff2)$/, loader: `${urlLoaderPath}?limit=10000&mimetype=application/font-woff` },
-    { test: /\.ttf$/, loader: `${urlLoaderPath}?limit=10000&mimetype=application/octet-stream` },
+    { test: /\.(woff|woff2)$/, loader: `${fileLoaderPath}?mimetype=application/font-woff` },
+    { test: /\.ttf$/, loader: `${fileLoaderPath}?mimetype=application/octet-stream` },
     { test: /\.eot$/, loader: `${fileLoaderPath}` },
-    { test: /\.svg$/, loader: `${urlLoaderPath}?limit=10000&mimetype=image/svg+xml` }
+    { test: /\.svg$/, loader: `${fileLoaderPath}?mimetype=image/svg+xml` }
 ];
 
 exports.resourceLoaders = resourceLoaders;
@@ -64,7 +64,7 @@ const inlineSassLoader = {
     test: /\.scss$/,
     loaders: [
         styleLoaderPath,
-        `${cssLoaderPath}?modules&sourceMap&localIdentName=${cssModuleIdentName}`,
+        `${cssLoaderPath}?modules&localIdentName=${cssModuleIdentName}`,
         `${sassLoaderPath}?sourceMap`
     ]
 };
