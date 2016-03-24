@@ -101,6 +101,7 @@ exports.webpackDevConfig = (config) => ({
     entry: addHMR(config.entries),
 
     output: {
+        publicPath: '/',
         path: '/',
         filename: 'examples/[name].js'
     },
