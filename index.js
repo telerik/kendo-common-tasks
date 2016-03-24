@@ -29,6 +29,8 @@ const cssModuleIdentName = 'k-[local]';
 
 const SRC_EXT_GLOB = ".{jsx,ts}";
 
+const FONT_EXTENSIONS = [ 'eot', 'svg', 'ttf', 'woff' ];
+
 exports.webpack = webpack;
 
 exports.webpackStream = webpackStream;
@@ -42,11 +44,11 @@ exports.CDNSassLoader = {
 };
 
 const resourceLoaders = [
-    { test: /\.(jpe?g|png|gif|svg)$/i, loader: `${urlLoaderPath}?limit=10000` },
-    { test: /\.(woff|woff2)$/, loader: `${fileLoaderPath}?mimetype=application/font-woff` },
-    { test: /\.ttf$/, loader: `${fileLoaderPath}?mimetype=application/octet-stream` },
-    { test: /\.eot$/, loader: `${fileLoaderPath}` },
-    { test: /\.svg$/, loader: `${fileLoaderPath}?mimetype=image/svg+xml` }
+    { test: /\.(jpe?g|png|gif|svg)$/i, loader: `${urlLoaderPath}?name=[name].[ext]?[hash]&limit=10000` },
+    { test: /\.(woff|woff2)$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]&mimetype=application/font-woff` },
+    { test: /\.ttf$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]&mimetype=application/octet-stream` },
+    { test: /\.eot$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]` },
+    { test: /\.svg$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]&mimetype=image/svg+xml` }
 ];
 
 exports.resourceLoaders = resourceLoaders;
@@ -161,8 +163,15 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         return gulp.src('src/main' + SRC_EXT_GLOB)
                    .pipe(webpackStream(config))
                    .pipe($.rename((path) => {
-                       path.basename = libraryName;
-                       path.dirname = path.extname.replace('.', '');
+                       var dirname = path.extname.replace('.', '');
+
+                       if (FONT_EXTENSIONS.indexOf(dirname) >= 0) {
+                           dirname = 'css';
+                       } else {
+                           path.basename = libraryName;
+                       }
+
+                       path.dirname = dirname;
                    }))
                    .pipe(gulp.dest('dist/cdn'));
     });
