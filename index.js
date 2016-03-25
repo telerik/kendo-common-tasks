@@ -1,7 +1,6 @@
 /* eslint no-var: 0 */
 const path = require('path');
 const _ = require('lodash');
-const named = require('vinyl-named');
 const argv = require('yargs').argv;
 const addsrc = require('gulp-add-src');
 
@@ -22,15 +21,12 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const cssLoaderPath = require.resolve('css-loader');
 const urlLoaderPath = require.resolve('url-loader');
-const fileLoaderPath = require.resolve('file-loader');
 const styleLoaderPath = require.resolve('style-loader');
 const sassLoaderPath = require.resolve('sass-loader');
 
 const cssModuleIdentName = 'k-[local]';
 
 const SRC_EXT_GLOB = ".{jsx,ts}";
-
-const FONT_EXTENSIONS = [ 'eot', 'svg', 'ttf', 'woff' ];
 
 exports.webpack = webpack;
 
@@ -46,10 +42,7 @@ exports.CDNSassLoader = {
 
 const resourceLoaders = [
     { test: /\.(jpe?g|png|gif|svg)$/i, loader: `${urlLoaderPath}?name=[name].[ext]?[hash]&limit=10000` },
-    { test: /\.(woff|woff2)$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]&mimetype=application/font-woff` },
-    { test: /\.ttf$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]&mimetype=application/octet-stream` },
-    { test: /\.eot$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]` },
-    { test: /\.svg$/, loader: `${fileLoaderPath}?name=[name].[ext]?[hash]&mimetype=image/svg+xml` }
+    { test: /\.(woff|woff2)$/, loader: `${urlLoaderPath}?name=[name].[ext]?[hash]&mimetype=application/font-woff` }
 ];
 
 exports.resourceLoaders = resourceLoaders;
@@ -141,17 +134,14 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
     gulp.task('build-npm-package', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
 
-        return gulp.src(srcGlob)
-                   .pipe(named())
+        return gulp.src('src/main' + SRC_EXT_GLOB)
+                   // .pipe(named())
                    .pipe(webpackStream(config))
                    .pipe(addsrc.append(_.compact(_.concat([], dtsGlob))))
                    .pipe($.rename((path) => {
-                       if (path.extname === '.css') {
-                           path.dirname = 'css';
-                           path.basename = 'main';
-                       } else {
-                           path.dirname = 'js';
-                       }
+                       var dirname = path.extname.replace('.', '');
+                       path.basename = 'main';
+                       path.dirname = dirname;
                    }))
                    .pipe(gulp.dest('dist/npm'));
     });
@@ -165,13 +155,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
                    .pipe(webpackStream(config))
                    .pipe($.rename((path) => {
                        var dirname = path.extname.replace('.', '');
-
-                       if (FONT_EXTENSIONS.indexOf(dirname) >= 0) {
-                           dirname = 'css';
-                       } else {
-                           path.basename = libraryName;
-                       }
-
+                       path.basename = libraryName;
                        path.dirname = dirname;
                    }))
                    .pipe(gulp.dest('dist/cdn'));
