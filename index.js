@@ -1,3 +1,4 @@
+/* eslint no-var: 0 */
 const path = require('path');
 const _ = require('lodash');
 const named = require('vinyl-named');
