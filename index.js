@@ -3,6 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 const argv = require('yargs').argv;
 const addsrc = require('gulp-add-src');
+const named = require('vinyl-named');
 
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
@@ -26,6 +27,7 @@ const sassLoaderPath = require.resolve('sass-loader');
 
 const cssModuleIdentName = 'k-[local]';
 
+const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts}";
 
 exports.webpack = webpack;
@@ -134,14 +136,23 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
     gulp.task('build-npm-package', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
 
-        return gulp.src('src/main' + SRC_EXT_GLOB)
-                   // .pipe(named())
+        return gulp.src(srcGlob)
+                    .pipe(named(function(file) {
+                        const thePath = file.path;
+                        const relativeDir = path.relative(file.base, path.dirname(thePath));
+                        const fileName = path.basename(thePath, path.extname(thePath));
+                        return path.join(SRC, relativeDir, fileName);
+                    }))
                    .pipe(webpackStream(config))
+                   // .pipe($.debug())
                    .pipe(addsrc.append(_.compact(_.concat([], dtsGlob))))
-                   .pipe($.rename((path) => {
-                       var dirname = path.extname.replace('.', '');
-                       path.basename = 'main';
-                       path.dirname = dirname;
+                   .pipe($.rename((thePath) => {
+                       if (thePath.extname === '.css') {
+                           thePath.dirname = 'css';
+                           thePath.basename = 'main';
+                       } else {
+                           thePath.dirname = path.join('js', path.relative(SRC, thePath.dirname));
+                       }
                    }))
                    .pipe(gulp.dest('dist/npm'));
     });
