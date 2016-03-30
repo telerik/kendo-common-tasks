@@ -130,8 +130,13 @@ exports.webpackDevConfig = (config) => ({
     }
 });
 
+
+function ucfirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //eslint-disable-line max-params
-    const libraryClassName = _.flow(_.camelCase, _.capitalize)(libraryName);
+    const libraryClassName = _.flow(_.camelCase, ucfirst)(libraryName);
 
     gulp.task('build-npm-package', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
