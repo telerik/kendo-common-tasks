@@ -20,6 +20,8 @@ const glob = require('glob');
 const $ = require('gulp-load-plugins')();
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+const KarmaServer = require('karma').Server;
+
 const cssLoaderPath = require.resolve('css-loader');
 const urlLoaderPath = require.resolve('url-loader');
 const styleLoaderPath = require.resolve('style-loader');
@@ -129,6 +131,19 @@ exports.webpackDevConfig = (config) => ({
         loaders: config.loaders.concat([ inlineSassLoader ]).concat(resourceLoaders)
     }
 });
+
+exports.startKarma = (done, confPath, singleRun) => (
+    new KarmaServer({
+        singleRun: singleRun,
+        configFile: confPath
+    }, function(exitStatus) {
+        if (exitStatus !== 0) {
+            done("specs failed");
+        } else {
+            done();
+        }
+    }).start()
+);
 
 
 function ucfirst(str) {
