@@ -26,11 +26,15 @@ const cssLoaderPath = require.resolve('css-loader');
 const urlLoaderPath = require.resolve('url-loader');
 const styleLoaderPath = require.resolve('style-loader');
 const sassLoaderPath = require.resolve('sass-loader');
+const postCssLoaderPath = require.resolve('postcss-loader');
+const autoprefixer = require('autoprefixer');
 
 const cssModuleIdentName = 'k-[local]';
 
 const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts}";
+
+const cssLoaderQuery = `modules&localIdentName=${cssModuleIdentName}&importLoaders=1`;
 
 exports.webpack = webpack;
 
@@ -39,7 +43,8 @@ exports.webpackStream = webpackStream;
 exports.CDNSassLoader = {
     test: /\.scss$/,
     loader: ExtractTextPlugin.extract(styleLoaderPath, [
-        `${cssLoaderPath}?modules&sourceMap&localIdentName=${cssModuleIdentName}`,
+        `${cssLoaderPath}?sourceMap&${cssLoaderQuery}`,
+        postCssLoaderPath,
         sassLoaderPath
     ])
 };
@@ -79,7 +84,8 @@ const inlineSassLoader = {
     test: /\.scss$/,
     loaders: [
         styleLoaderPath,
-        `${cssLoaderPath}?modules&localIdentName=${cssModuleIdentName}`,
+        `${cssLoaderPath}?${cssLoaderQuery}`,
+        postCssLoaderPath,
         `${sassLoaderPath}?sourceMap`
     ]
 };
@@ -143,8 +149,15 @@ exports.webpackDevConfig = (config) => ({
     ],
 
     module: {
-        loaders: config.loaders.concat([ inlineSassLoader ]).concat(resourceLoaders)
-    }
+        loaders: _.flatten([
+            config.loaders,
+            inlineSassLoader,
+            resourceLoaders
+        ])
+    },
+    postcss: () => ([
+        autoprefixer
+    ])
 });
 
 exports.startKarma = (done, confPath, singleRun) => (
