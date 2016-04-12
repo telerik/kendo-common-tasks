@@ -80,16 +80,6 @@ exports.extractCssPlugin = () =>
 exports.uglifyJsPlugin = () =>
   new webpack.optimize.UglifyJsPlugin();
 
-const inlineSassLoader = {
-    test: /\.scss$/,
-    loaders: [
-        styleLoaderPath,
-        `${cssLoaderPath}?${cssLoaderQuery}`,
-        postCssLoaderPath,
-        `${sassLoaderPath}?sourceMap`
-    ]
-};
-
 // Used in [].reduce below, to convert each script entry in
 // the examples directory to webpack entry object with HMR scripts injected
 // {
@@ -114,9 +104,41 @@ exports.resolveConfig = ( extensions, nodeModulesPath ) => ({
     fallback: [ nodeModulesPath, path.join(__dirname, 'node_modules') ]
 });
 
-exports.inlineSassLoader = inlineSassLoader;
+exports.inlineSassLoader = {
+    test: /\.scss$/,
+    loaders: [
+        styleLoaderPath,
+        `${cssLoaderPath}?${cssLoaderQuery}`,
+        postCssLoaderPath,
+        `${sassLoaderPath}?sourceMap`
+    ]
+};
 
-exports.webpackDevConfig = (config) => ({
+// adds theme configuration to webpack config
+const webpackThemeConfig = (webpackConfig, settings) => {
+    const extract = settings && settings.extract;
+    const sassLoader = extract ? exports.CDNSassLoader : exports.inlineSassLoader;
+    const plugins = extract ? [ exports.extractCssPlugin() ] : [];
+
+    return Object.assign({}, webpackConfig, {
+        plugins: plugins.concat(webpackConfig.plugins || []),
+
+        module: {
+            loaders: _.flatten([
+                webpackConfig.module && webpackConfig.module.loaders,
+                sassLoader,
+                resourceLoaders
+            ])
+        },
+        postcss: () => ([
+            autoprefixer
+        ])
+    });
+};
+
+exports.webpackThemeConfig = webpackThemeConfig;
+
+exports.webpackDevConfig = (config) => webpackThemeConfig({
     resolve: config.resolve,
 
     entry: addHMR(config.entries),
@@ -149,15 +171,8 @@ exports.webpackDevConfig = (config) => ({
     ],
 
     module: {
-        loaders: _.flatten([
-            config.loaders,
-            inlineSassLoader,
-            resourceLoaders
-        ])
-    },
-    postcss: () => ([
-        autoprefixer
-    ])
+        loaders: config.loaders
+    }
 });
 
 exports.startKarma = (done, confPath, singleRun) => (
