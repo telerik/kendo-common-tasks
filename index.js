@@ -44,9 +44,24 @@ exports.CDNSassLoader = {
     ])
 };
 
+const hashedName = "[name].[ext]?[hash]";
 const resourceLoaders = [
-    { test: /\.(jpe?g|png|gif|svg)$/i, loader: `${urlLoaderPath}?name=[name].[ext]?[hash]&limit=10000` },
-    { test: /\.(woff|woff2)$/, loader: `${urlLoaderPath}?name=[name].[ext]?[hash]&mimetype=application/font-woff` }
+    {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loader: urlLoaderPath,
+        query: {
+            name: hashedName,
+            limit: 10000
+        }
+    },
+    {
+        test: /\.(woff|woff2)$/,
+        loader: urlLoaderPath,
+        query: {
+            name: hashedName,
+            mimetype: "application/font-woff"
+        }
+    }
 ];
 
 exports.resourceLoaders = resourceLoaders;
