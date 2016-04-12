@@ -1,10 +1,9 @@
 /* eslint-env es6 */
-
 var reactTemplate = `
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://fb.me/react-0.14.7.min.js"></script>
+    <script src="https://fb.me/react-with-addons-0.14.7.min.js"></script>
     <script src="https://fb.me/react-dom-0.14.7.min.js"></script>
     <script src="${scriptSrc}"></script>
     <link rel="stylesheet" href="${styleSrc}">
