@@ -114,9 +114,17 @@ exports.inlineSassLoader = {
     ]
 };
 
+const stubLoader = {
+    test: /\.(ttf|eot|svg|woff|woff2|jpe?g|png|gif|svg)$/i,
+    loader: require.resolve('./stub-loader.js')
+};
+
 // adds theme configuration to webpack config
-const webpackThemeConfig = (webpackConfig, settings) => {
-    const extract = settings && settings.extract;
+const webpackThemeConfig = (_settings, _webpackConfig) => {
+    const options = _webpackConfig ? _settings : {};
+    const webpackConfig = _webpackConfig ? _webpackConfig : _settings;
+
+    const extract = options && options.extract;
     const sassLoader = extract ? exports.CDNSassLoader : exports.inlineSassLoader;
     const plugins = extract ? [ exports.extractCssPlugin() ] : [];
 
@@ -127,7 +135,7 @@ const webpackThemeConfig = (webpackConfig, settings) => {
             loaders: _.flatten([
                 webpackConfig.module && webpackConfig.module.loaders,
                 sassLoader,
-                resourceLoaders
+                options.stubResources ? stubLoader : resourceLoaders
             ])
         },
         postcss: () => ([
