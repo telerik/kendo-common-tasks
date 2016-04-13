@@ -28,11 +28,15 @@ const cssLoaderPath = require.resolve('css-loader');
 const urlLoaderPath = require.resolve('url-loader');
 const styleLoaderPath = require.resolve('style-loader');
 const sassLoaderPath = require.resolve('sass-loader');
+const postCssLoaderPath = require.resolve('postcss-loader');
+const autoprefixer = require('autoprefixer');
 
 const cssModuleIdentName = 'k-[local]';
 
 const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts}";
+
+const cssLoaderQuery = `modules&localIdentName=${cssModuleIdentName}&importLoaders=1`;
 
 exports.webpack = webpack;
 
@@ -41,14 +45,30 @@ exports.webpackStream = webpackStream;
 exports.CDNSassLoader = {
     test: /\.scss$/,
     loader: ExtractTextPlugin.extract(styleLoaderPath, [
-        `${cssLoaderPath}?modules&sourceMap&localIdentName=${cssModuleIdentName}`,
+        `${cssLoaderPath}?sourceMap&${cssLoaderQuery}`,
+        postCssLoaderPath,
         sassLoaderPath
     ])
 };
 
+const hashedName = "[name].[ext]?[hash]";
 const resourceLoaders = [
-    { test: /\.(jpe?g|png|gif|svg)$/i, loader: `${urlLoaderPath}?name=[name].[ext]?[hash]&limit=10000` },
-    { test: /\.(woff|woff2)$/, loader: `${urlLoaderPath}?name=[name].[ext]?[hash]&mimetype=application/font-woff` }
+    {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loader: urlLoaderPath,
+        query: {
+            name: hashedName,
+            limit: 10000
+        }
+    },
+    {
+        test: /\.(woff|woff2)$/,
+        loader: urlLoaderPath,
+        query: {
+            name: hashedName,
+            mimetype: "application/font-woff"
+        }
+    }
 ];
 
 exports.resourceLoaders = resourceLoaders;
@@ -61,15 +81,6 @@ exports.extractCssPlugin = () =>
 
 exports.uglifyJsPlugin = () =>
   new webpack.optimize.UglifyJsPlugin();
-
-const inlineSassLoader = {
-    test: /\.scss$/,
-    loaders: [
-        styleLoaderPath,
-        `${cssLoaderPath}?modules&localIdentName=${cssModuleIdentName}`,
-        `${sassLoaderPath}?sourceMap`
-    ]
-};
 
 // Used in [].reduce below, to convert each script entry in
 // the examples directory to webpack entry object with HMR scripts injected
@@ -95,9 +106,49 @@ exports.resolveConfig = ( extensions, nodeModulesPath ) => ({
     fallback: [ nodeModulesPath, path.join(__dirname, 'node_modules') ]
 });
 
-exports.inlineSassLoader = inlineSassLoader;
+exports.inlineSassLoader = {
+    test: /\.scss$/,
+    loaders: [
+        styleLoaderPath,
+        `${cssLoaderPath}?${cssLoaderQuery}`,
+        postCssLoaderPath,
+        `${sassLoaderPath}?sourceMap`
+    ]
+};
 
-exports.webpackDevConfig = (config) => ({
+const stubLoader = {
+    test: /\.(ttf|eot|svg|woff|woff2|jpe?g|png|gif|svg)$/i,
+    loader: require.resolve('./stub-loader.js')
+};
+
+// adds theme configuration to webpack config
+const webpackThemeConfig = (_settings, _webpackConfig) => {
+    const options = _webpackConfig ? _settings : {};
+    const webpackConfig = _webpackConfig ? _webpackConfig : _settings;
+
+    const extract = options && options.extract;
+    const sassLoader = extract ? exports.CDNSassLoader : exports.inlineSassLoader;
+    const plugins = extract ? [ exports.extractCssPlugin() ] : [];
+
+    return Object.assign({}, webpackConfig, {
+        plugins: plugins.concat(webpackConfig.plugins || []),
+
+        module: {
+            loaders: _.flatten([
+                webpackConfig.module && webpackConfig.module.loaders,
+                sassLoader,
+                options.stubResources ? stubLoader : resourceLoaders
+            ])
+        },
+        postcss: () => ([
+            autoprefixer
+        ])
+    });
+};
+
+exports.webpackThemeConfig = webpackThemeConfig;
+
+exports.webpackDevConfig = (config) => webpackThemeConfig({
     resolve: config.resolve,
 
     entry: addHMR(config.entries),
@@ -130,7 +181,7 @@ exports.webpackDevConfig = (config) => ({
     ],
 
     module: {
-        loaders: config.loaders.concat([ inlineSassLoader ]).concat(resourceLoaders)
+        loaders: config.loaders
     }
 });
 

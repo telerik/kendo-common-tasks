@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "@telerik/eslint-config": "1.1.0",
+    "autoprefixer": "^6.3.6",
     "babel-eslint": "^4.1.6",
     "browser-sync": "2.10.0",
     "browser-sync-webpack-plugin": "^1.0.1",
@@ -51,6 +52,7 @@
     "markdown-serve": "underlog/markdown-serve#master",
     "node-sass": "^3.4.2",
     "phantomjs-prebuilt": ">=1.9",
+    "postcss-loader": "^0.8.2",
     "sass-loader": "^3.1.2",
     "serve-index": "^1.7.3",
     "socket.io": "=1.4.5",
