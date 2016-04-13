@@ -1,4 +1,6 @@
 /* eslint no-var: 0 */
+'use strict';
+
 const path = require('path');
 const _ = require('lodash');
 const argv = require('yargs').argv;
@@ -266,5 +268,53 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         });
 
         process.on('exit', done);
+    });
+};
+
+exports.karmaConfig = function(config, webpackConfig, bundleFile) {
+    const USE_SANDBOXED_CHROME = process.env['TRAVIS'];
+
+    const ENV_BROWSER = process.env['ENV_BROWSER'];
+
+    let browsers;
+
+    if (ENV_BROWSER) {
+        browsers = [ ENV_BROWSER ];
+    } else {
+        browsers = USE_SANDBOXED_CHROME ? [ 'TravisCI' ] : [ 'Chrome' ];
+    }
+
+    config.set({
+        basePath: '',
+        frameworks: [ 'jasmine' ],
+
+        exclude: [ ],
+
+        files: [ { pattern: bundleFile, watched: false } ],
+
+        preprocessors: { [bundleFile]: [ 'webpack', 'sourcemap' ] },
+
+        webpack: webpackConfig,
+
+        webpackServer: { noInfo: true },
+
+        reporters: [ 'story' ],
+
+        port: 9876,
+
+        colors: true,
+
+        logLevel: config.LOG_INFO,
+
+        autoWatch: true,
+
+        browsers: browsers,
+
+        customLaunchers: {
+            TravisCI: {
+                base: "Chrome",
+                flags: [ '--no-sandbox' ]
+            }
+        }
     });
 };
