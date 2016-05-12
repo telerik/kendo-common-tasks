@@ -41,6 +41,7 @@
     "lazypipe": "^1.0.1",
     "lodash": "^4.6.0",
     "markdown-serve": "underlog/markdown-serve#master",
+    "merge2": "^1.0.2",
     "node-sass": "^3.4.2",
     "sass-loader": "^3.1.2",
     "serve-index": "^1.7.3",
