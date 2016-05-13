@@ -4,7 +4,7 @@
 const path = require('path');
 const _ = require('lodash');
 const argv = require('yargs').argv;
-const addsrc = require('gulp-add-src');
+const merge = require('merge2');
 const named = require('vinyl-named');
 
 const webpack = require('webpack');
@@ -209,25 +209,29 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
     gulp.task('build-npm-package', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
 
-        return gulp.src(srcGlob)
-                    .pipe(named(function(file) {
-                        const thePath = file.path;
-                        const relativeDir = path.relative(file.base, path.dirname(thePath));
-                        const fileName = path.basename(thePath, path.extname(thePath));
-                        return path.join(SRC, relativeDir, fileName);
-                    }))
-                   .pipe(webpackStream(config))
-                   // .pipe($.debug())
-                   .pipe(addsrc.append(_.compact(_.concat([], dtsGlob))))
-                   .pipe($.rename((thePath) => {
-                       if (thePath.extname === '.css') {
-                           thePath.dirname = 'css';
-                           thePath.basename = 'main';
-                       } else {
-                           thePath.dirname = path.join('js', path.relative(SRC, thePath.dirname));
-                       }
-                   }))
-                   .pipe(gulp.dest('dist/npm'));
+        const srcStream = gulp.src(srcGlob)
+                .pipe(named(function(file) {
+                    const thePath = file.path;
+                    const relativeDir = path.relative(file.base, path.dirname(thePath));
+                    const fileName = path.basename(thePath, path.extname(thePath));
+                    return path.join(SRC, relativeDir, fileName);
+                }))
+                .pipe(webpackStream(config))
+                .pipe($.rename((thePath) => {
+                    if (thePath.extname === '.css') {
+                        thePath.dirname = 'css';
+                        thePath.basename = 'main';
+                    } else {
+                        thePath.dirname = path.join('js', path.relative(SRC, thePath.dirname));
+                    }
+                }));
+
+        const dtsStream = gulp.src(_.compact(_.concat([], dtsGlob)))
+                .pipe($.rename((thePath) =>
+                    thePath.dirname = path.join('js', thePath.dirname)
+                ));
+
+        return merge(srcStream, dtsStream).pipe(gulp.dest('dist/npm'));
     });
 
     gulp.task('build-cdn', () => {
