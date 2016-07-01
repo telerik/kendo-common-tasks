@@ -34,7 +34,7 @@ const autoprefixer = require('autoprefixer');
 const cssModuleIdentName = 'k-[local]';
 
 const SRC = "src";
-const SRC_EXT_GLOB = ".{jsx,ts}";
+const SRC_EXT_GLOB = ".{jsx,ts,js}";
 
 const cssLoaderQuery = `modules&localIdentName=${cssModuleIdentName}&importLoaders=1`;
 
