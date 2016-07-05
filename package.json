@@ -54,6 +54,7 @@
     "node-sass": "^3.4.2",
     "phantomjs-prebuilt": ">=1.9",
     "postcss-loader": "^0.8.2",
+    "resolve-url-loader": "^1.5.0",
     "sass-loader": "^3.1.2",
     "serve-index": "^1.7.3",
     "socket.io": "=1.4.5",

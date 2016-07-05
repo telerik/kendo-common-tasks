@@ -30,6 +30,7 @@ const styleLoaderPath = require.resolve('style-loader');
 const sassLoaderPath = require.resolve('sass-loader');
 const postCssLoaderPath = require.resolve('postcss-loader');
 const autoprefixer = require('autoprefixer');
+const urlResolverPath = require.resolve('resolve-url-loader');
 
 const cssModuleIdentName = 'k-[local]';
 
@@ -112,6 +113,7 @@ exports.inlineSassLoader = {
         styleLoaderPath,
         `${cssLoaderPath}?${cssLoaderQuery}`,
         postCssLoaderPath,
+        urlResolverPath,
         `${sassLoaderPath}?sourceMap`
     ]
 };
