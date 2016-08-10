@@ -312,6 +312,8 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
             }
         }));
 
+        app.use('/images', express.static('docs/images'));
+
         app.listen(3000, function() {
             browserSync.init({
                 port: 8080,
