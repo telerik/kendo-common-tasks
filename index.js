@@ -297,6 +297,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
 
         app.use('/internals', express.static(path.join(__dirname, 'docs-public')));
         app.use('/cdn', express.static('dist/cdn/'));
+        app.use('/images', express.static('docs/images'));
 
         app.use('/', serveIndex('docs', { 'icons': true }));
 
@@ -311,8 +312,6 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
                 };
             }
         }));
-
-        app.use('/images', express.static('docs/images'));
 
         app.listen(3000, function() {
             browserSync.init({
