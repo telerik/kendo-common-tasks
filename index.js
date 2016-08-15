@@ -286,7 +286,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
                    .pipe($.eslint.failAfterError());
     });
 
-    gulp.task('docs', [ 'build-cdn' ], (done) => {
+    gulp.task('docs', [ 'build-cdn', 'build-npm-package' ], (done) => {
         const browserSync = BrowserSync.create();
         const app = express();
 
@@ -298,6 +298,8 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         app.use('/internals', express.static(path.join(__dirname, 'docs-public')));
         app.use('/cdn', express.static('dist/cdn/'));
         app.use('/images', express.static('docs/images'));
+        app.use('/npm', express.static('node_modules'));
+        app.use('/dist', express.static('dist/'));
 
         app.use('/', serveIndex('docs', { 'icons': true }));
 
