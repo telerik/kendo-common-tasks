@@ -237,6 +237,10 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
     });
 
     gulp.task('build-cdn', () => {
+        if (!webpackConfig.CDN) {
+            return gulp.src([]);
+        }
+
         const config = _.assign({}, webpackConfig.CDN);
 
         config.output.library = libraryClassName;
@@ -297,11 +301,10 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
 
         app.use('/internals', express.static(path.join(__dirname, 'docs-public')));
         app.use('/cdn', express.static('dist/cdn/'));
-        app.use('/images', express.static('docs/images'));
         app.use('/npm', express.static('node_modules'));
-        app.use('/dist', express.static('dist/'));
-
+        app.use(`/npm/@progress/${libraryName}/dist`, express.static('dist/'));
         app.use('/', serveIndex('docs', { 'icons': true }));
+        app.use('/', express.static('docs/'));
 
         app.use(mds.middleware({
             rootDirectory: 'docs',
@@ -324,7 +327,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
             gulp.watch("docs/**/*.{md,hbs}").on('change', browserSync.reload);
             gulp.watch("public/**/*.{css,js}").on('change', browserSync.reload);
             gulp.watch("dist/cdn/**/*.{css,js}").on('change', browserSync.reload);
-            gulp.watch("src/**/*" + SRC_EXT_GLOB, [ "build-cdn" ]);
+            gulp.watch("src/**/*" + SRC_EXT_GLOB, [ "build-cdn", "build-npm-package" ]);
         });
 
         process.on('exit', done);

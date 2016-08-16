@@ -136,6 +136,8 @@ function reactPage(html, jsx) {
     });
 }
 
+var moduleDirectives = window.moduleDirectives || [];
+
 var angularTemplate = kendo.template(
 '<!doctype html>\
 <html>\
@@ -187,31 +189,22 @@ function wrapAngularTemplate(template, directiveList) {
     ].join("\n");
 }
 
-var directivesByModule = $.extend({
-    '@angular/core': [
-        { match: '@(Component)', import: "Component" }
-    ]
-}, window.moduleDirectives);
+var directivesByModule = [
+    { module: '@angular/core', match: '@(Component)', import: "Component" }
+].concat(moduleDirectives);
 
 // tested in test.html
 function analyzeDirectives(code) {
-    var directives = [];
+    var directives = directivesByModule.map(function(directive) {
+        var match = (new RegExp(directive.match)).exec(code);
 
-    for (var module in directivesByModule) {
-        if (!directivesByModule.hasOwnProperty(module)) continue;
-
-        directivesByModule[module].forEach(function(directive) {
-            var match = (new RegExp(directive.match)).exec(code);
-
-            if (match) {
-                directives.push({
-                    directive: directive.import,
-                    module: module
-                });
-            }
-        });
-
-    }
+        if (match) {
+            return {
+                directive: directive.import,
+                module: directive.module
+            };
+        }
+    }).filter(Boolean);
 
     return directives;
 }
