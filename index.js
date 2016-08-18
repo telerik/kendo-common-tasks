@@ -32,12 +32,8 @@ const postCssLoaderPath = require.resolve('postcss-loader');
 const autoprefixer = require('autoprefixer');
 const urlResolverPath = require.resolve('resolve-url-loader');
 
-const cssModuleIdentName = 'k-[local]';
-
 const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts,js}";
-
-const cssLoaderQuery = `modules&localIdentName=${cssModuleIdentName}&importLoaders=1`;
 
 exports.webpack = webpack;
 
@@ -46,7 +42,7 @@ exports.webpackStream = webpackStream;
 exports.CDNSassLoader = {
     test: /\.scss$/,
     loader: ExtractTextPlugin.extract(styleLoaderPath, [
-        `${cssLoaderPath}?sourceMap&${cssLoaderQuery}`,
+        `${cssLoaderPath}?sourceMap`,
         postCssLoaderPath,
         sassLoaderPath
     ])
@@ -111,7 +107,7 @@ exports.inlineSassLoader = {
     test: /\.scss$/,
     loaders: [
         styleLoaderPath,
-        `${cssLoaderPath}?${cssLoaderQuery}`,
+        cssLoaderPath,
         postCssLoaderPath,
         urlResolverPath,
         `${sassLoaderPath}?sourceMap`
