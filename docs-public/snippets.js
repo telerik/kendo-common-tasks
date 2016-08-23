@@ -147,7 +147,7 @@ var angularTemplate = kendo.template(
         body { margin: 0; font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; }\
         my-app { display: block; width: 100%; height: 100%; min-height: 260px; }\
     </style>\
-    <script src="https://npmcdn.com/zone.js@0.6.12/dist/zone.js"></script>\
+    <script src="https://npmcdn.com/zone.js@0.6.13/dist/zone.js"></script>\
     <script src="https://npmcdn.com/reflect-metadata@0.1.3/Reflect.js"></script>\
     <script src="https://npmcdn.com/systemjs@0.19.31/dist/system.js"></script>\
     <script src="https://npmcdn.com/typescript@1.8.10/lib/typescript.js"></script>\
@@ -168,29 +168,25 @@ var angularTemplate = kendo.template(
 </html>\
 ');
 
-function wrapAngularTemplate(template, directiveList) {
+function wrapAngularTemplate(template) {
     if (!/^\s*</.test(template)) {
         // not a template
         return template;
     }
-
-    var directives = directiveList.map(function(directive) {
-        return directive.directive;
-    });
-
     // template-only code, wrap in component
     return [
         "@Component({",
         "    selector: 'my-app',",
-        "    template: `" + template + "`,",
-        "    directives: [ " + directives.join(", ") + " ]",
+        "    template: `" + template + "`",
         "})",
         "class AppComponent {}"
     ].join("\n");
 }
 
 var directivesByModule = [
-    { module: '@angular/core', match: '@(Component)', import: "Component" }
+    { module: '@angular/core', match: '@(Component)', import: "Component" },
+    { module: '@angular/forms', match: 'ngModel', import: "FormsModule" },
+    { module: '@angular/platform-browser', match: '.', import: "BrowserModule" }
 ].concat(moduleDirectives);
 
 // tested in test.html
@@ -227,17 +223,24 @@ function missingImports(code, directives) {
 }
 
 function bootstrapAngular(code, resize) {
+    code = wrapAngularTemplate(code);
     var directives = analyzeDirectives(code);
-    code = wrapAngularTemplate(code, directives);
-
-    // analyze directives again to add missing ones after template wrapping
-    directives = analyzeDirectives(code);
     var imports = missingImports(code, directives);
-
+    var moduleImports = directives.map(function(item) {
+        if (/Module$/.test(item.directive))
+            return item.directive;
+    }).filter(Boolean).join(',');
     return (imports.concat([
         code,
-        "import { bootstrap } from '@angular/platform-browser-dynamic';",
-        "bootstrap(AppComponent, [])",
+        "import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';",
+        "import { NgModule } from '@angular/core';",
+        "@NgModule({",
+            "declarations: [AppComponent],",
+            "imports: [ " + moduleImports + " ],",
+            "bootstrap: [AppComponent]",
+        "})",
+        "class AppModule {}",
+        "platformBrowserDynamic().bootstrapModule(AppModule)",
         (resize ? "\t.then(_runnerInit)" : ""),
         "\t.catch(err => console.error(err));"
     ]).filter(Boolean).join("\n"));

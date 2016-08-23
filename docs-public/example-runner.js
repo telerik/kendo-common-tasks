@@ -35,6 +35,10 @@ var ExampleRunner = (function() {
                     main: 'bundles/platform-browser.umd.js',
                     defaultExtension: 'js'
                 },
+                '@angular/forms': {
+                    main: 'bundles/forms.umd.js',
+                    defaultExtension: 'js'
+                },
                 rxjs: {
                     defaultExtension: 'js'
                 },
@@ -44,6 +48,14 @@ var ExampleRunner = (function() {
                 },
                 jQuery: {
                     defaultExtension: 'js'
+                },
+                //TODO Temporary solution for common modules
+                '@telerik/kendo-inputs-common': {
+                    defaultExtension: 'js'
+                },
+                '@telerik/kendo-draggable': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/Draggable.js"
                 }
             };
 
