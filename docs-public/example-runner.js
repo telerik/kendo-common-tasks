@@ -60,6 +60,10 @@ var ExampleRunner = (function() {
                 '@progress/kendo-drawing': {
                     defaultExtension: 'js',
                     main: "dist/npm/js/main.js"
+                },
+                '@progress/kendo-popup-common': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/bundle.js"
                 }
             };
 
