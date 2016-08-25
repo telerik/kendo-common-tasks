@@ -42,11 +42,7 @@ var ExampleRunner = (function() {
                 rxjs: {
                     defaultExtension: 'js'
                 },
-                //TODO Temporary dependancy for the Charts
-                kendo: {
-                    defaultExtension: 'js'
-                },
-                jQuery: {
+                'chroma-js': {
                     defaultExtension: 'js'
                 },
                 //TODO Temporary solution for common modules
@@ -56,6 +52,14 @@ var ExampleRunner = (function() {
                 '@telerik/kendo-draggable': {
                     defaultExtension: 'js',
                     main: "dist/npm/js/Draggable.js"
+                },
+                '@progress/kendo-charts': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/main.js"
+                },
+                '@progress/kendo-drawing': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/main.js"
                 }
             };
 
