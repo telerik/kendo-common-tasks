@@ -35,10 +35,6 @@ var ExampleRunner = (function() {
                     main: 'bundles/platform-browser.umd.js',
                     defaultExtension: 'js'
                 },
-                '@angular/forms': {
-                    main: 'bundles/forms.umd.js',
-                    defaultExtension: 'js'
-                },
                 rxjs: {
                     defaultExtension: 'js'
                 },
@@ -69,8 +65,8 @@ var ExampleRunner = (function() {
 
             modules.forEach(function(directive) {
                 packages[directive.module] = {
-                  main: 'dist/npm/js/main.js',
-                  defaultExtension: 'js'
+                  main: directive.main || 'dist/npm/js/main.js',
+                  defaultExtension: directive.defaultExtension || 'js'
                 };
             });
 
