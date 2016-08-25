@@ -87,9 +87,7 @@ var ExampleRunner = (function() {
                 '@progress': npmUrl + '/@progress',
                 '@angular': 'https://npmcdn.com/@angular',
                 'rxjs': 'https://npmcdn.com/rxjs@5.0.0-beta.6',
-                //TODO Temporary dependancy for the Charts
-                'kendo': npmUrl + '/kendo',
-                'jquery': 'https://code.jquery.com/jquery-2.1.4.min.js'
+                'chroma-js': 'https://npmcdn.com/chroma-js@1.2.1'
               },
               packages: packages
             });
