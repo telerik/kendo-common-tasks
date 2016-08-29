@@ -49,6 +49,10 @@ var ExampleRunner = (function() {
                     defaultExtension: 'js',
                     main: "dist/npm/js/Draggable.js"
                 },
+                '@telerik/kendo-dropdowns-common': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/bundle.js"
+                },
                 '@progress/kendo-charts': {
                     defaultExtension: 'js',
                     main: "dist/npm/js/main.js"
@@ -58,10 +62,6 @@ var ExampleRunner = (function() {
                     main: "dist/npm/js/main.js"
                 },
                 '@progress/kendo-popup-common': {
-                    defaultExtension: 'js',
-                    main: "dist/npm/js/bundle.js"
-                },
-                '@progress/kendo-dropdowns-common': {
                     defaultExtension: 'js',
                     main: "dist/npm/js/bundle.js"
                 }
