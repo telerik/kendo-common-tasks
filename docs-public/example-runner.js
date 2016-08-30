@@ -27,10 +27,6 @@ var ExampleRunner = (function() {
                     main: 'bundles/common.umd.js',
                     defaultExtension: 'js'
                 },
-                '@angular/forms': {
-                    main: 'bundles/forms.umd.js',
-                    defaultExtension: 'js'
-                },
                 '@angular/platform-browser-dynamic': {
                     main: 'bundles/platform-browser-dynamic.umd.js',
                     defaultExtension: 'js'
