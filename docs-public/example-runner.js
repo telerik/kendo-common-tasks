@@ -85,9 +85,9 @@ var ExampleRunner = (function() {
 
                 '@telerik': npmUrl + '/@telerik',
                 '@progress': npmUrl + '/@progress',
-                '@angular': 'https://npmcdn.com/@angular',
-                'rxjs': 'https://npmcdn.com/rxjs@5.0.0-beta.6',
-                'chroma-js': 'https://npmcdn.com/chroma-js@1.2.1'
+                '@angular': 'https://unpkg.com/@angular',
+                'rxjs': 'https://unpkg.com/rxjs@5.0.0-beta.6',
+                'chroma-js': 'https://unpkg.com/chroma-js@1.2.1'
               },
               packages: packages
             });
