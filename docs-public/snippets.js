@@ -299,6 +299,7 @@ function CodeListing(elements) {
       var preview = false;
       var noRun = false;
       var language = /lang(uage)?-([^\s]+)/.exec(element.className);
+      var hideTabs = element.className.match(/hide-tabs/);
       language = language ? language[2] : "generic";
 
       if (/-preview/.test(language)) {
@@ -314,6 +315,7 @@ function CodeListing(elements) {
       return $.extend({
           language: language,
           noRun: noRun,
+          hideTabs: hideTabs,
           preview: preview
       }, blockTypes[language]);
   });
@@ -429,6 +431,10 @@ $(function() {
               })).insertBefore(block.elements[0]);
 
           previewElement.find('.tab-code').append(block.elements);
+
+          if (block.types[0].hideTabs) {
+              $(previewElement[0]).hide(); // hide the tabstrip
+          }
 
           previewElement.find('.edit-online').click(
               framework.editOnline.bind(null, block)
