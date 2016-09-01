@@ -31,6 +31,7 @@ const sassLoaderPath = require.resolve('sass-loader');
 const postCssLoaderPath = require.resolve('postcss-loader');
 const autoprefixer = require('autoprefixer');
 const urlResolverPath = require.resolve('resolve-url-loader');
+const verifyModules = require('./verify-modules');
 
 const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts,js}";
@@ -204,7 +205,7 @@ function ucfirst(str) {
 exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, ucfirst)(libraryName);
 
-    gulp.task('build-npm-package', () => {
+    gulp.task('build-npm', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
 
         const srcStream = gulp.src(srcGlob)
@@ -231,6 +232,12 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
 
         return merge(srcStream, dtsStream).pipe(gulp.dest('dist/npm'));
     });
+
+    gulp.task('verify-npm', [ 'build-npm' ], (done) => {
+        verifyModules('./dist/npm/js/main.js', done);
+    });
+
+    gulp.task('build-npm-package', [ 'verify-npm' ]);
 
     gulp.task('build-cdn', () => {
         if (!webpackConfig.CDN) {
