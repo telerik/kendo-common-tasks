@@ -92,7 +92,6 @@ var ExampleRunner = (function() {
                 };
             });
 
-            console.log(map, packages)
             system.config({
                 transpiler: 'typescript',
                 typescriptOptions: {
