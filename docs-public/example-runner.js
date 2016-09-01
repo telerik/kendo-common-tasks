@@ -10,30 +10,26 @@ var ExampleRunner = (function() {
         // configures SystemJS to run with modules cloned to /npm
         // and cdn versions of angular / rxjs
         configure: function(system, npmUrl, modules) {
+
+            var ngVer = '@2.0.0-rc.6'; // lock in the angular package version; do not let it float to current!
+
+            //map tells the System loader where to look for things
+            var map = {
+                'app':                        '/demos-src',
+                '@telerik':                   npmUrl + '/@telerik',
+                '@progress':                  npmUrl + '/@progress',
+                '@angular':                   'https://unpkg.com/@angular', // sufficient if we didn't pin the version
+                'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
+                'rxjs':                       'https://unpkg.com/rxjs@5.0.0-beta.11',
+                'chroma-js':                  'https://unpkg.com/chroma-js@1.2.1',
+                'ts':                         'https://unpkg.com/plugin-typescript@5.0.19/lib/plugin.js',
+                'typescript':                 'https://unpkg.com/typescript@2.0.2/lib/typescript.js',
+            };
+
             var packages = {
                 app: {
                     main: './main.ts',
                     defaultExtension: 'ts'
-                },
-                '@angular/core': {
-                    main: 'bundles/core.umd.js',
-                    defaultExtension: 'js'
-                },
-                '@angular/compiler': {
-                    main: 'bundles/compiler.umd.js',
-                    defaultExtension: 'js'
-                },
-                '@angular/common': {
-                    main: 'bundles/common.umd.js',
-                    defaultExtension: 'js'
-                },
-                '@angular/platform-browser-dynamic': {
-                    main: 'bundles/platform-browser-dynamic.umd.js',
-                    defaultExtension: 'js'
-                },
-                '@angular/platform-browser': {
-                    main: 'bundles/platform-browser.umd.js',
-                    defaultExtension: 'js'
                 },
                 rxjs: {
                     defaultExtension: 'js'
@@ -67,29 +63,44 @@ var ExampleRunner = (function() {
                 }
             };
 
+            var ngPackageNames = [
+                'common',
+                'compiler',
+                'forms',
+                'core',
+                'http',
+                'platform-browser',
+                'platform-browser-dynamic',
+                'upgrade',
+            ];
+
+            // Add map entries for each angular package
+            // only because we're pinning the version with `ngVer`.
+            ngPackageNames.forEach(function(pkgName) {
+                map['@angular/'+pkgName] = 'https://unpkg.com/@angular/' + pkgName + ngVer;
+            });
+
+            // Add package entries for angular packages
+            ngPackageNames.concat(['forms']).forEach(function(pkgName) {
+                packages['@angular/'+pkgName] = { main: '/bundles/' + pkgName + '.umd.js' };
+            });
+
             modules.forEach(function(directive) {
                 packages[directive.module] = {
-                  main: directive.main || 'dist/npm/js/main.js',
-                  defaultExtension: directive.defaultExtension || 'js'
+                    main: directive.main || 'dist/npm/js/main.js',
+                    defaultExtension: directive.defaultExtension || 'js'
                 };
             });
 
+            console.log(map, packages)
             system.config({
-              transpiler: 'typescript',
-              typescriptOptions: {
-                diagnostics: true,
-                emitDecoratorMetadata: true
-              },
-              map: {
-                app: "/demos-src",
-
-                '@telerik': npmUrl + '/@telerik',
-                '@progress': npmUrl + '/@progress',
-                '@angular': 'https://unpkg.com/@angular',
-                'rxjs': 'https://unpkg.com/rxjs@5.0.0-beta.6',
-                'chroma-js': 'https://unpkg.com/chroma-js@1.2.1'
-              },
-              packages: packages
+                transpiler: 'typescript',
+                typescriptOptions: {
+                    diagnostics: true,
+                    emitDecoratorMetadata: true
+                },
+                map: map,
+                packages: packages
             });
 
             // allow mocking of files via custom fetch function
