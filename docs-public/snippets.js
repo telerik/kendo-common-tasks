@@ -421,7 +421,6 @@ $(function() {
       block.updateHtml();
 
       if (block.noRun) {
-          // don't run snippet
       } else if (block.preview) {
           // preview snippets - start with example, allow view source
           var previewElement =
@@ -524,5 +523,40 @@ $(function() {
             onChange();
           });
       }
+
+      if (Clipboard) {
+          $(block.elements).before('<button class="btn copy-btn">Copy</button>');
+      }
   });
+
+
+  if (Clipboard) {
+      var clipboard = new Clipboard('.copy-btn', {
+        text: function(trigger) {
+            return $(trigger).next('pre').text();
+        }
+      })
+
+      clipboard.on('success', function(e) {
+        setTooltip(e.trigger, 'Copied!');
+        hideTooltip(e.trigger);
+      });
+
+      $('.copy-btn').tooltip({
+        trigger: 'click',
+        placement: 'bottom'
+      });
+
+      function setTooltip(btn, message) {
+        $(btn).tooltip('hide')
+          .attr('data-original-title', message)
+          .tooltip('show');
+      }
+
+      function hideTooltip(btn) {
+        setTimeout(function() {
+          $(btn).tooltip('hide');
+        }, 1000);
+      }
+  }
 });
