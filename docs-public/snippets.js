@@ -524,13 +524,12 @@ $(function() {
           });
       }
 
-      if (Clipboard) {
+      if (window.Clipboard) {
           $(block.elements).before('<button class="btn copy-btn">Copy</button>');
       }
   });
 
-
-  if (Clipboard) {
+  if (window.Clipboard) {
       var clipboard = new Clipboard('.copy-btn', {
         text: function(trigger) {
             return $(trigger).next('pre').text();
