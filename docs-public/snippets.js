@@ -406,12 +406,8 @@ function toModuleImport(dir) {
     return "import { " + dir.import + " } from '" + dir.module + "';";
 }
 
-function toSystemJsMap(dir) {
-     return "'" + dir.module + "': 'kendo:" + dir.module + "',";
-}
-
 function toSystemJsPackage(dir) {
-    var key = '"kendo:' + dir.module + '"';
+    var key = '"' + dir.module + '"';
     var contents = JSON.stringify({ main: './dist/npm/js/main.js', defaultExtension: 'js' });
 
     return key + ": " + contents + ",";
@@ -424,7 +420,6 @@ function openInPlunkr(ts) {
 
         appModuleImports:   $.map(moduleDirectives, toModuleImport).join("\n"),
         appModules:         $.map(moduleDirectives, function(dir) { return dir.import }).join(", "),
-        systemjsMaps:       $.map(moduleDirectives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsMap).join("\n"),
         systemjsPackages:   $.map(moduleDirectives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsPackage).join("\n")
     };
 

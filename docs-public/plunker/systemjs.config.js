@@ -12,18 +12,14 @@
     },
     paths: {
       // paths serve as alias
-      'npm:': 'https://unpkg.com/',
-      'kendo:': '#= npmUrl #'
+      'npm:': 'https://unpkg.com/'
     },
     // map tells the System loader where to look for things
     map: {
       // our app is within the app folder
       app: 'app',
-
-      #= systemjsMaps #
-      '@telerik/kendo-inputs-common': 'kendo:@telerik/kendo-inputs-common',
-      '@telerik/kendo-dropdowns-common': 'kendo:@telerik/kendo-dropdowns-common',
-      '@telerik/kendo-draggable': 'kendo:@telerik/kendo-draggable',
+      '@progress': '#= npmUrl #@progress',
+      '@telerik': '#= npmUrl #@telerik',
 
       // angular bundles
       '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -47,37 +43,37 @@
 
       // other libraries
       'rxjs':                       'npm:rxjs',
+      'chroma-js':                  'npm:chroma-js@1.2.1',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
       'ts':                         'npm:plugin-typescript@4.0.10/lib/plugin.js',
-      'typescript':                 'npm:typescript@1.9.0-dev.20160409/lib/typescript.js',
-
+      'typescript':                 'npm:typescript@1.9.0-dev.20160409/lib/typescript.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
       #= systemjsPackages #
 
-      'kendo:@telerik/kendo-inputs-common': {
+      '@telerik/kendo-inputs-common': {
           defaultExtension: 'js'
       },
-      'kendo:@telerik/kendo-draggable': {
+      '@telerik/kendo-draggable': {
           defaultExtension: 'js',
-          main: "dist/npm/js/Draggable.js"
+          main: "./dist/npm/js/Draggable.js"
       },
-      'kendo:@telerik/kendo-dropdowns-common': {
+      '@telerik/kendo-dropdowns-common': {
           defaultExtension: 'js',
-          main: "dist/npm/js/bundle.js"
+          main: "./dist/npm/js/bundle.js"
       },
-      'kendo:@progress/kendo-charts': {
+      '@progress/kendo-charts': {
           defaultExtension: 'js',
-          main: "dist/npm/js/main.js"
+          main: "./dist/npm/js/main.js"
       },
-      'kendo:@progress/kendo-drawing': {
+      '@progress/kendo-drawing': {
           defaultExtension: 'js',
-          main: "dist/npm/js/main.js"
+          main: "./dist/npm/js/main.js"
       },
-      'kendo:@progress/kendo-popup-common': {
+      '@progress/kendo-popup-common': {
           defaultExtension: 'js',
-          main: "dist/npm/js/bundle.js"
+          main: "./dist/npm/js/bundle.js"
       },
 
       app: {
