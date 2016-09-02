@@ -424,8 +424,8 @@ function openInPlunkr(ts) {
 
         appModuleImports:   $.map(moduleDirectives, toModuleImport).join("\n"),
         appModules:         $.map(moduleDirectives, function(dir) { return dir.import }).join(", "),
-        systemjsMaps:       $.map(moduleDirectives, toSystemJsMap).join("\n"),
-        systemjsPackages:   $.map(moduleDirectives, toSystemJsPackage).join("\n")
+        systemjsMaps:       $.map(moduleDirectives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsMap).join("\n"),
+        systemjsPackages:   $.map(moduleDirectives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsPackage).join("\n")
     };
 
     var form = new EditorForm('http://plnkr.co/edit/?p=preview');

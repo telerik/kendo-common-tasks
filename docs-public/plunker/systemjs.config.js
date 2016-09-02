@@ -21,6 +21,9 @@
       app: 'app',
 
       #= systemjsMaps #
+      '@telerik/kendo-inputs-common': 'kendo:@telerik/kendo-inputs-common',
+      '@telerik/kendo-dropdowns-common': 'kendo:@telerik/kendo-dropdowns-common',
+      '@telerik/kendo-draggable': 'kendo:@telerik/kendo-draggable',
 
       // angular bundles
       '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
@@ -52,6 +55,30 @@
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
       #= systemjsPackages #
+
+      'kendo:@telerik/kendo-inputs-common': {
+          defaultExtension: 'js'
+      },
+      'kendo:@telerik/kendo-draggable': {
+          defaultExtension: 'js',
+          main: "dist/npm/js/Draggable.js"
+      },
+      'kendo:@telerik/kendo-dropdowns-common': {
+          defaultExtension: 'js',
+          main: "dist/npm/js/bundle.js"
+      },
+      'kendo:@progress/kendo-charts': {
+          defaultExtension: 'js',
+          main: "dist/npm/js/main.js"
+      },
+      'kendo:@progress/kendo-drawing': {
+          defaultExtension: 'js',
+          main: "dist/npm/js/main.js"
+      },
+      'kendo:@progress/kendo-popup-common': {
+          defaultExtension: 'js',
+          main: "dist/npm/js/bundle.js"
+      },
 
       app: {
         main: './main.ts',
