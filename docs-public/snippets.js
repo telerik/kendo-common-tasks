@@ -375,14 +375,81 @@ function openInFiddle(jsx, html) {
     form.remove();
 }
 
+var plunkerFiles = [
+    'index.html',
+    'systemjs.config.js',
+    'app/main.ts',
+    'app/app.component.ts',
+    'app/app.module.ts',
+    'tsconfig.json'
+];
+
+function EditorForm(action) {
+    this.form = $('<form style="display: none;" action="' + action + '" method="post" target="_blank" />').appendTo(document.body);
+}
+
+EditorForm.prototype.addField = function(name, value) {
+    $('<input type=hidden />').val(value).attr("name", name).appendTo(this.form);
+}
+
+EditorForm.prototype.submit = function() {
+    this.form[0].submit();
+    this.form.remove();
+    this.form = null;
+}
+
+function getPlunkerFile(file) {
+    return $.ajax(plunkerBluePrintPath + file, { dataType: 'text' });
+}
+
+function toModuleImport(dir) {
+    return "import { " + dir.import + " } from '" + dir.module + "';";
+}
+
+function toSystemJsMap(dir) {
+     return "'" + dir.module + "': 'kendo:" + dir.module + "',";
+}
+
+function toSystemJsPackage(dir) {
+    var key = '"kendo:' + dir.module + '"';
+    var contents = JSON.stringify({ main: './dist/npm/js/main.js', defaultExtension: 'js' });
+
+    return key + ": " + contents + ",";
+}
+
+function openInPlunkr(ts) {
+    plunkrContext = {
+        appComponentContent: ts,
+        npmUrl: $("<a />").attr("href", npmUrl)[0].href + "/",
+
+        appModuleImports:   $.map(moduleDirectives, toModuleImport).join("\n"),
+        appModules:         $.map(moduleDirectives, function(dir) { return dir.import }).join(", "),
+        systemjsMaps:       $.map(moduleDirectives, toSystemJsMap).join("\n"),
+        systemjsPackages:   $.map(moduleDirectives, toSystemJsPackage).join("\n")
+    };
+
+    var form = new EditorForm('http://plnkr.co/edit/?p=preview');
+    form.addField('tags[0]', 'angular2')
+    form.addField('tags[1]', 'kendo')
+
+    $.when.apply($, $.map(plunkerFiles, getPlunkerFile)).then(function() {
+        $.each(arguments, function(index, arr) {
+            form.addField('files[' + plunkerFiles[index] + ']', kendo.template(arr[0])(plunkrContext));
+        })
+
+        form.submit();
+    })
+}
+
 $(function() {
 
   var framework = {
       angular: {
           editor: 'plunkr',
-          editButtonTemplate: '',
+          editButtonTemplate: '<a href="#" class="edit-online plunkr">Open as Plunker</a>',
           editOnline: function(listing) {
-              // editing online not available for Angular
+              openInPlunkr(listing['ts']);
+              return false;
           },
           runnerContent: function(listing) {
               return angularPage(
