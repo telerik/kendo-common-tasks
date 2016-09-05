@@ -32,6 +32,7 @@ const postCssLoaderPath = require.resolve('postcss-loader');
 const autoprefixer = require('autoprefixer');
 const urlResolverPath = require.resolve('resolve-url-loader');
 const verifyModules = require('./verify-modules');
+const jsonLoaderPath = require.resolve('json-loader');
 
 const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts,js}";
@@ -66,6 +67,10 @@ const resourceLoaders = [
             name: hashedName,
             mimetype: "application/font-woff"
         }
+    },
+    {
+        test: /\.json$/i,
+        loader: jsonLoaderPath
     }
 ];
 
