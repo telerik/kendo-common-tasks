@@ -384,6 +384,12 @@ var plunkerFiles = [
     'tsconfig.json'
 ];
 
+function getPlunkerFile(file) {
+    return $.ajax(plunkerBluePrintPath + file, { dataType: 'text' });
+}
+
+var plunkerRequests; // global
+
 function EditorForm(action) {
     this.form = $('<form style="display: none;" action="' + action + '" method="post" target="_blank" />').appendTo(document.body);
 }
@@ -396,10 +402,6 @@ EditorForm.prototype.submit = function() {
     this.form[0].submit();
     this.form.remove();
     this.form = null;
-}
-
-function getPlunkerFile(file) {
-    return $.ajax(plunkerBluePrintPath + file, { dataType: 'text' });
 }
 
 function toModuleImport(dir) {
@@ -442,7 +444,7 @@ function openInPlunkr(ts, template) {
     form.addField('tags[0]', 'angular2')
     form.addField('tags[1]', 'kendo')
 
-    $.when.apply($, $.map(plunkerFiles, getPlunkerFile)).then(function() {
+    $.when.apply($, plunkerRequests).then(function() {
         $.each(arguments, function(index, arr) {
             form.addField('files[' + plunkerFiles[index] + ']', kendo.template(arr[0])(plunkrContext));
         })
@@ -452,6 +454,7 @@ function openInPlunkr(ts, template) {
 }
 
 $(function() {
+  plunkerRequests = $.map(plunkerFiles, getPlunkerFile); // fetch the plunker templates
 
   var framework = {
       angular: {
