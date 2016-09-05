@@ -304,7 +304,11 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
 
         app.use('/internals', express.static(path.join(__dirname, 'docs-public')));
         app.use('/cdn', express.static('dist/cdn/'));
-        app.use('/npm', express.static('node_modules'));
+        app.use('/npm', express.static('node_modules', {
+            setHeaders: (response) => {
+                response.set('Access-Control-Allow-Origin', 'http://run.plnkr.co');
+            }
+        }));
         app.use(`/npm/@progress/${libraryName}/dist`, express.static('dist/', {
             setHeaders: (response) => {
                 response.set('Access-Control-Allow-Origin', 'http://run.plnkr.co');

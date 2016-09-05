@@ -413,7 +413,22 @@ function toSystemJsPackage(dir) {
     return key + ": " + contents + ",";
 }
 
-function openInPlunkr(ts) {
+var tsFromTemplate = kendo.template(
+'@Component({ \n\
+    selector: "my-app", \n\
+    template: `\n\
+#= template #\n\
+    `\n\
+}) \n\
+\n\
+class AppComponent { \n\
+}');
+
+function openInPlunkr(ts, template) {
+    if (!ts) {
+        ts = tsFromTemplate({ template: template });
+    }
+
     plunkrContext = {
         appComponentContent: ts,
         npmUrl: $("<a />").attr("href", npmUrl)[0].href + "/",
@@ -443,7 +458,7 @@ $(function() {
           editor: 'plunkr',
           editButtonTemplate: '<a href="#" class="edit-online plunkr">Open as Plunker</a>',
           editOnline: function(listing) {
-              openInPlunkr(listing['ts']);
+              openInPlunkr(listing['ts'], listing['ng-template']);
               return false;
           },
           runnerContent: function(listing) {
