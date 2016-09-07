@@ -488,9 +488,14 @@ $(function() {
       var blocks = [];
 
       for (var i = 0; i < tags.length;) {
-          var siblingTags = tags.eq(i).nextUntil(":not(pre)").addBack();
-          blocks.push(new CodeListing(siblingTags));
-
+          var tag = tags.eq(i);
+          var siblingTags = tag.nextUntil(":not(pre)").addBack();
+          if (tag.data("codeListing")) {
+              // console.log('skip processing');
+          } else {
+              tag.data("codeListing", true);
+              blocks.push(new CodeListing(siblingTags));
+          }
           i += siblingTags.length;
       }
 
