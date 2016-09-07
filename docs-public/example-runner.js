@@ -49,6 +49,14 @@ var ExampleRunner = (function() {
                     defaultExtension: 'js',
                     main: "dist/npm/js/bundle.js"
                 },
+                '@telerik/kendo-intl': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/main.js"
+                },
+                '@progress/kendo-angular-intl': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/main.js"
+                },
                 '@progress/kendo-charts': {
                     defaultExtension: 'js',
                     main: "dist/npm/js/main.js"
