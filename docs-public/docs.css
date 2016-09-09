@@ -72,18 +72,23 @@ a code {
 }
 
 .docs-tabstrip li.active {
-  border-bottom: 2px solid #ec407a;
+  border-bottom: 2px solid #ff6358;
+}
+
+.docs-tabstrip li.active a {
+  color: #ff6358;
 }
 
 .docs-tabstrip a {
   display: block;
-  padding: 6px 0;
+  padding: 4px 0;
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: "Metric", "Roboto", Helvetica, Arial, sans-serif;
   line-height: 1em;
   letter-spacing: 0.02em;
-  color: #36393f;
 }
 
 /* Dialog styles */
