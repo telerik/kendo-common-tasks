@@ -1,5 +1,5 @@
 (function (global) {
-  var angularVersion = '2.0.0-rc.6';
+  var angularVersion = '2.0.0';
 
   System.config({
     // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER

@@ -11,7 +11,7 @@ var ExampleRunner = (function() {
         // and cdn versions of angular / rxjs
         configure: function(system, npmUrl, modules) {
 
-            var ngVer = '@2.0.0-rc.6'; // lock in the angular package version; do not let it float to current!
+            var ngVer = '@2.0.0'; // lock in the angular package version; do not let it float to current!
 
             //map tells the System loader where to look for things
             var map = {
@@ -20,10 +20,10 @@ var ExampleRunner = (function() {
                 '@progress':                  npmUrl + '/@progress',
                 '@angular':                   'https://unpkg.com/@angular', // sufficient if we didn't pin the version
                 'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
-                'rxjs':                       'https://unpkg.com/rxjs@5.0.0-beta.11',
+                'rxjs':                       'https://unpkg.com/rxjs@5.0.0-beta.12',
                 'chroma-js':                  'https://unpkg.com/chroma-js@1.2.1',
                 'ts':                         'https://unpkg.com/plugin-typescript@5.0.19/lib/plugin.js',
-                'typescript':                 'https://unpkg.com/typescript@2.0.2/lib/typescript.js',
+                'typescript':                 'https://unpkg.com/typescript@1.8.10/lib/typescript.js',
             };
 
             var packages = {
