@@ -147,7 +147,7 @@ var angularTemplate = kendo.template(
         body { margin: 0; font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; }\
         my-app { display: block; width: 100%; height: 100%; min-height: 260px; }\
     </style>\
-    <script src="https://unpkg.com/zone.js@0.6.13/dist/zone.js"></script>\
+    <script src="https://unpkg.com/zone.js@0.6.23/dist/zone.js"></script>\
     <script src="https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"></script>\
     <script src="https://unpkg.com/systemjs@0.19.31/dist/system.js"></script>\
     <script src="https://unpkg.com/typescript@1.8.10/lib/typescript.js"></script>\
