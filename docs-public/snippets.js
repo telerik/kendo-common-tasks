@@ -525,6 +525,10 @@ $(function() {
   }
 
   toCodeListings($("pre")).forEach(function(block, idx) {
+      if (!block.types.length) {
+        return;
+      }
+
       block.updateHtml();
 
       if (block.noRun) {
