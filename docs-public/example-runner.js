@@ -47,7 +47,7 @@ var ExampleRunner = (function() {
                 },
                 '@telerik/kendo-dropdowns-common': {
                     defaultExtension: 'js',
-                    main: "dist/npm/js/bundle.js"
+                    main: "dist/npm/js/main.js"
                 },
                 '@telerik/kendo-intl': {
                     defaultExtension: 'js',
@@ -67,7 +67,7 @@ var ExampleRunner = (function() {
                 },
                 '@progress/kendo-popup-common': {
                     defaultExtension: 'js',
-                    main: "dist/npm/js/bundle.js"
+                    main: "dist/npm/js/main.js"
                 }
             };
 
