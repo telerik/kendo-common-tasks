@@ -146,6 +146,7 @@ var angularTemplate = kendo.template(
     <style>\
         body { margin: 0; font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; }\
         my-app { display: block; width: 100%; height: 100%; min-height: 260px; }\
+        my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
     </style>\
     <script src="https://unpkg.com/zone.js@0.6.23/dist/zone.js"></script>\
     <script src="https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"></script>\
@@ -162,7 +163,13 @@ var angularTemplate = kendo.template(
 <body>\
     #= html #\
     <my-app>\
-        loading…\
+        <span class="k-loading">\
+            <svg width="64px" height="64px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">\
+                 <rect x="0" y="0" width="100" height="100" fill="none"></rect>\
+                 <circle cx="50" cy="50" r="40" stroke="none" fill="none" stroke-width="10" stroke-linecap="round"></circle>\
+                 <circle class="animate" cx="50" cy="50" r="40" stroke="\\#ff6358" fill="none" stroke-width="6" stroke-linecap="round"></circle>\
+            </svg>\
+        </span>\
     </my-app>\
 </body>\
 </html>\
