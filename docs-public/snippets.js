@@ -81,8 +81,16 @@ SnippetRunner.prototype = {
       this.iframe.height(this.iframe.contents().outerHeight());
     },
 
+    call: function(name) {
+      var iframe = this.iframe[0];
+      var iframeWnd = iframe.contentWindow || iframe;
+      var method = iframeWnd[name] || $.noop;
+
+      method.apply(iframeWnd, Array.prototype.slice.call(arguments, 1));
+    },
+
     update: function(content) {
-      this.iframe.remove();
+      this.container.empty();
 
       this.iframe =
           $('<iframe class="snippet-runner">')
@@ -156,7 +164,9 @@ var angularTemplate = kendo.template(
     <script>\
         var runner = new ExampleRunner();\
         runner.configure(System, "' + npmUrl + '", ' + JSON.stringify(moduleDirectives) + ');\
-        runner.register("main.ts", "#= typescript #");\
+        # for (var i = 0; i < files.length; i++) { #\
+        runner.register("#= files[i].name #", "#= files[i].content #");\
+        # } #\
         runner.start(System);\
     </script>\
 </head>\
@@ -254,9 +264,14 @@ function bootstrapAngular(code, resize) {
 }
 
 function angularPage(ts, html) {
+    var ts = bootstrapAngular(ts, true).replace(/"/g, '\\"').replace(/\n/g, '\\\n');
+    var files = [
+        { name: "main.ts", content: ts }
+    ];
+
     return angularTemplate({
         html: html || "",
-        typescript: bootstrapAngular(ts, true).replace(/"/g, '\\"').replace(/\n/g, '\\\n')
+        files: files
     });
 }
 
