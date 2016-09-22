@@ -156,6 +156,7 @@ var angularTemplate = kendo.template(
         my-app { display: block; width: 100%; height: 100%; min-height: 260px; }\
         my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
     </style>\
+    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
     <script src="https://unpkg.com/zone.js@0.6.23/dist/zone.js"></script>\
     <script src="https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"></script>\
     <script src="https://unpkg.com/systemjs@0.19.31/dist/system.js"></script>\
