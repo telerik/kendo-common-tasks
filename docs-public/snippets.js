@@ -153,7 +153,7 @@ var angularTemplate = kendo.template(
     <link rel="stylesheet" href="' + npmUrl + '/@telerik/kendo-theme-default/dist/all.css" />\
     <style>\
         body { margin: 0; font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; }\
-        my-app { display: block; width: 100%; height: 100%; min-height: 260px; }\
+        my-app { display: block; width: 100%; overflow: hidden; min-height: 260px; }\
         my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
     </style>\
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
