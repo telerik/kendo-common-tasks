@@ -53,7 +53,7 @@
       },
       '@telerik/kendo-dropdowns-common': {
           defaultExtension: 'js',
-          main: "./dist/npm/js/bundle.js"
+          main: "./dist/npm/js/main.js"
       },
       '@telerik/kendo-intl': {
           defaultExtension: 'js',
@@ -73,7 +73,7 @@
       },
       '@progress/kendo-popup-common': {
           defaultExtension: 'js',
-          main: "./dist/npm/js/bundle.js"
+          main: "./dist/npm/js/main.js"
       },
 
       app: {
