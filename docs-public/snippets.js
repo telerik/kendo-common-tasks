@@ -448,7 +448,7 @@ var tsFromTemplate = kendo.template(
 class AppComponent { \n\
 }');
 
-function openInPlunkr(ts, template) {
+function openInPlunkr(ts, template, html) {
     if (!ts) {
         ts = tsFromTemplate({ template: template });
     }
@@ -456,6 +456,7 @@ function openInPlunkr(ts, template) {
     plunkrContext = {
         appComponentContent: ts,
         npmUrl: $("<a />").attr("href", npmUrl)[0].href + "/",
+        htmlContent: html,
 
         appModuleImports:   $.map(moduleDirectives, toModuleImport).join("\n"),
         appModules:         $.map(moduleDirectives, function(dir) { return dir.import }).join(", "),
@@ -483,7 +484,7 @@ $(function() {
           editor: 'plunkr',
           editButtonTemplate: '<a href="#" class="edit-online plunkr">Open as Plunker</a>',
           editOnline: function(listing) {
-              openInPlunkr(listing['ts'], listing['ng-template']);
+              openInPlunkr(listing['ts'], listing['ng-template'], listing['html']);
               return false;
           },
           runnerContent: function(listing) {
