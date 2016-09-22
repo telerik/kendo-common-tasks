@@ -345,6 +345,12 @@ function CodeListing(elements) {
 }
 
 CodeListing.prototype = {
+    needsUpdate: function() {
+        var hasTypedListings = this.types.length > 0;
+        var hasColorizedListings = this.elements.find(".cm-s-default").length > 0;
+
+        return hasTypedListings && !hasColorizedListings;
+    },
     updateHtml: function() {
       var block = this;
 
@@ -527,7 +533,16 @@ $(function() {
   }
 
   toCodeListings($("pre")).forEach(function(block, idx) {
-      if (!block.types.length) {
+      if (!block.needsUpdate()) {
+          // turbolinks back/forward -- no need to update html, but
+          // existing snippet runners needs to refresh
+          var content = framework.runnerContent(block);
+          var previewElement = block.elements.closest(".tab-content").find('.tab-preview');
+
+          if (previewElement.length) {
+              var preview = new SnippetRunner(previewElement)
+              preview.update(content);
+          }
         return;
       }
 
