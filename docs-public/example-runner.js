@@ -39,7 +39,8 @@ var ExampleRunner = (function() {
                 },
                 //TODO Temporary solution for common modules
                 '@telerik/kendo-inputs-common': {
-                    defaultExtension: 'js'
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/main.js"
                 },
                 '@telerik/kendo-draggable': {
                     defaultExtension: 'js',

@@ -45,7 +45,8 @@
       #= systemjsPackages #
 
       '@telerik/kendo-inputs-common': {
-          defaultExtension: 'js'
+          defaultExtension: 'js',
+          main: "./dist/npm/js/main.js"
       },
       '@telerik/kendo-draggable': {
           defaultExtension: 'js',
@@ -57,11 +58,11 @@
       },
       '@telerik/kendo-intl': {
           defaultExtension: 'js',
-          main: "dist/npm/js/main.js"
+          main: "./dist/npm/js/main.js"
       },
       '@progress/kendo-angular-intl': {
           defaultExtension: 'js',
-          main: "dist/npm/js/main.js"
+          main: "./dist/npm/js/main.js"
       },
       '@progress/kendo-charts': {
           defaultExtension: 'js',
