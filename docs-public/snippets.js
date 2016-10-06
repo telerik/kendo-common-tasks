@@ -265,7 +265,7 @@ function bootstrapAngular(code, resize) {
 }
 
 function angularPage(ts, html) {
-    var ts = bootstrapAngular(ts, true).replace(/"/g, '\\"').replace(/\n/g, '\\\n');
+    var ts = bootstrapAngular(ts, true).replace(/"/g, '\\"').replace(/\n/g, '\\n');
     var files = [
         { name: "main.ts", content: ts }
     ];
