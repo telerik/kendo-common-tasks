@@ -144,7 +144,28 @@ function reactPage(html, jsx) {
     });
 }
 
-var moduleDirectives = window.moduleDirectives || [];
+function registerDirectives(moduleDirectives) {
+    var directives = [];
+
+    moduleDirectives.forEach(function(current) {
+        var filtered = false;
+
+        directives.forEach(function(uniqueDirective) {
+            if(current.module === uniqueDirective.module) {
+                filtered = true;
+            }
+        });
+
+        if (!filtered) {
+            directives.push(current);
+        }
+    });
+
+    return directives;
+}
+
+var moduleDirectives = registerDirectives(window.moduleDirectives || []);
+var plunkrDirectives = [];
 
 var angularTemplate = kendo.template(
 '<!doctype html>\
@@ -209,18 +230,26 @@ var directivesByModule = [
 
 // tested in test.html
 function analyzeDirectives(code) {
-    var directives = directivesByModule.map(function(directive) {
+    var directives = directivesByModule.filter(function(directive) {
         var match = (new RegExp(directive.match)).exec(code);
 
         if (match) {
-            return {
-                directive: directive.import,
-                module: directive.module
-            };
+            return true;
         }
     }).filter(Boolean);
 
-    return directives;
+    window.plunkrDirectives = directives.filter(function(item) {
+        if (/Module$/.test(item.import)) {
+            return true;
+        }
+    });
+
+    return directives.map(function(directive) {
+        return {
+            directive: directive.import,
+            module: directive.module
+        };
+    });
 }
 
 function missingImports(code, directives) {
@@ -245,8 +274,9 @@ function bootstrapAngular(code, resize) {
     var directives = analyzeDirectives(code);
     var imports = missingImports(code, directives);
     var moduleImports = directives.map(function(item) {
-        if (/Module$/.test(item.directive))
+        if (/Module$/.test(item.directive)) {
             return item.directive;
+        }
     }).filter(Boolean).join(',');
     return (imports.concat([
         code,
@@ -470,9 +500,9 @@ function openInPlunkr(ts, template, html) {
         npmUrl: $("<a />").attr("href", npmUrl)[0].href + "/",
         htmlContent: html,
 
-        appModuleImports:   $.map(moduleDirectives, toModuleImport).join("\n"),
-        appModules:         $.map(moduleDirectives, function(dir) { return dir.import }).join(", "),
-        systemjsPackages:   $.map(moduleDirectives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsPackage).join("\n")
+        appModuleImports:   $.map(plunkrDirectives, toModuleImport).join("\n"),
+        appModules:         $.map(plunkrDirectives, function(dir) { return dir.import }).join(", "),
+        systemjsPackages:   $.map(plunkrDirectives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsPackage).join("\n")
     };
 
     var form = new EditorForm('http://plnkr.co/edit/?p=preview');
