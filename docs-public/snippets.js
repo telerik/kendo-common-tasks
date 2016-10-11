@@ -302,6 +302,11 @@ var blockTypes = {
         highlight: 'javascript',
         noRun: true
     },
+    'scss': {
+        label: 'SCSS',
+        highlight: 'css',
+        noRun: true
+    },
     'ng-template': {
         label: 'Angular template',
         highlight: 'htmlmixed'
