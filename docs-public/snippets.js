@@ -721,4 +721,38 @@ $(function() {
         }, 1000);
       }
   }
+
+  document.addEventListener("turbolinks:load", function() {
+      $(".demo-embed").each(function() {
+          var embeddedDemo = $(this);
+
+          var files = $.map(embeddedDemo.find("pre"), function(item) {
+              var pre = $(item);
+              return {
+                  name: pre.attr("data-file"),
+                  content: pre.text().replace(/"/g, '\\"').replace(/\n/g, '\\\n')
+              };
+          })
+          var content = angularTemplate({
+              html: "",
+              files: files
+          })
+          var runnerElement = embeddedDemo.find('.runner');
+          var runner = new SnippetRunner(runnerElement);
+          runner.update(content);
+          runnerElement.data("runner", runner);
+      });
+
+      $(".callout-tabs").off("click").on("click", "li:not(.active)", function() {
+          var item = $(this)
+          item.siblings().removeClass("active").end()
+              .addClass("active")
+          var snippetRunner = $(".demo-embed .runner").data("runner");
+          snippetRunner.call("changeSection", item.data("section"))
+          var packageName = item.find("h4").text()
+          $("#demo-info-link")
+              .attr("href", item.data("href"))
+              .find("span").text(packageName);
+      });
+  });
 });
