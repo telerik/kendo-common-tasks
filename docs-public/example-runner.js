@@ -58,6 +58,10 @@ var ExampleRunner = (function() {
                     defaultExtension: 'js',
                     main: "dist/npm/js/main.js"
                 },
+                '@progress/kendo-angular-popup': {
+                    defaultExtension: 'js',
+                    main: "dist/npm/js/main.js"
+                },
                 '@progress/kendo-charts': {
                     defaultExtension: 'js',
                     main: "dist/npm/js/main.js"
