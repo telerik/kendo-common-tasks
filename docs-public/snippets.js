@@ -273,7 +273,7 @@ function jsTrackingCode() {
     return [
         "import Raven = require('raven-js');",
         "import { ErrorHandler } from '@angular/core';",
-        "Raven.default.config('https://1e8dd1f92f8842e381fe743684f3da9e@sentry.io/108229').install();",
+        "Raven.default.config('https://e7cc5054385e4b4cb97bd7ea376c6174@sentry.io/112659').install();",
         "class RavenErrorHandler implements ErrorHandler {",
             "handleError(err:any) : void {",
                 "Raven.default.captureException(err.originalError || err);",
