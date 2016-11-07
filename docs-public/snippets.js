@@ -185,7 +185,7 @@ var angularTemplate = kendo.template(
     <script src="' + runnerScript + '"></script>\
     <script>\
         var runner = new ExampleRunner();\
-        runner.configure(System, "' + npmUrl + '", ' + JSON.stringify(moduleDirectives) + ');\
+        runner.configure(System, "' + npmUrl + '", ' + JSON.stringify(moduleDirectives) + ', #= trackjs #);\
         # for (var i = 0; i < files.length; i++) { #\
         runner.register("#= files[i].name #", "#= files[i].content #");\
         # } #\
@@ -269,8 +269,22 @@ function missingImports(code, directives) {
     return imports;
 }
 
-function bootstrapAngular(code, resize) {
+function jsTrackingCode() {
+    return [
+        "import Raven = require('raven-js');",
+        "import { ErrorHandler } from '@angular/core';",
+        "Raven.default.config('https://1e8dd1f92f8842e381fe743684f3da9e@sentry.io/108229').install();",
+        "class RavenErrorHandler implements ErrorHandler {",
+            "handleError(err:any) : void {",
+                "Raven.default.captureException(err.originalError || err);",
+            "}",
+        "}"
+    ].join("\n");
+}
+
+function bootstrapAngular(code, resize, trackjs) {
     code = wrapAngularTemplate(code);
+    var jsTracking = jsTrackingCode();
     var directives = analyzeDirectives(code);
     var imports = missingImports(code, directives);
     var moduleImports = directives.map(function(item) {
@@ -278,14 +292,17 @@ function bootstrapAngular(code, resize) {
             return item.directive;
         }
     }).filter(Boolean).join(',');
+
     return (imports.concat([
         code,
         "import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';",
         "import { NgModule } from '@angular/core';",
+        trackjs ? jsTracking : "",
         "@NgModule({",
             "declarations: [AppComponent],",
             "imports: [ " + moduleImports + " ],",
             "bootstrap: [AppComponent]",
+            trackjs ? "providers: [ { provide: ErrorHandler, useClass: RavenErrorHandler } ]" : "",
         "})",
         "class AppModule {}",
         "platformBrowserDynamic().bootstrapModule(AppModule)",
@@ -294,15 +311,16 @@ function bootstrapAngular(code, resize) {
     ]).filter(Boolean).join("\n"));
 }
 
-function angularPage(ts, html) {
-    var ts = bootstrapAngular(ts, true).replace(/"/g, '\\"').replace(/\n/g, '\\n');
+function angularPage(ts, html, trackjs) {
+    var ts = bootstrapAngular(ts, true, trackjs).replace(/"/g, '\\"').replace(/\n/g, '\\n');
     var files = [
         { name: "main.ts", content: ts }
     ];
 
     return angularTemplate({
         html: html || "",
-        files: files
+        files: files,
+        trackjs: trackjs
     });
 }
 
@@ -529,10 +547,10 @@ $(function() {
               openInPlunkr(listing['ts'], listing['ng-template'], listing['html']);
               return false;
           },
-          runnerContent: function(listing) {
+          runnerContent: function(listing, trackjs) {
               return angularPage(
                   listing['ts'] || listing['ng-template'],
-                  listing['html']
+                  listing['html'], trackjs
               );
           }
       },
@@ -571,7 +589,7 @@ $(function() {
       if (!block.needsUpdate()) {
           // turbolinks back/forward -- no need to update html, but
           // existing snippet runners needs to refresh
-          var content = framework.runnerContent(block);
+          var content = framework.runnerContent(block, window.trackjs);
           var previewElement = block.elements.closest(".tab-content").find('.tab-preview');
 
           if (previewElement.length) {
@@ -602,7 +620,7 @@ $(function() {
               framework.editOnline.bind(null, block)
           );
 
-          var content = framework.runnerContent(block);
+          var content = framework.runnerContent(block, window.trackjs);
 
           var preview = new SnippetRunner(previewElement.find('.tab-preview'))
           preview.update(content);
@@ -671,7 +689,7 @@ $(function() {
             var preview = new SnippetRunner(editor.find('.pane-preview'));
 
             var onChange = debounce(function() {
-                var content = framework.runnerContent(listing());
+                var content = framework.runnerContent(listing(), false);
 
                 preview.update(content);
             }, 500);
@@ -722,6 +740,18 @@ $(function() {
       }
   }
 
+  function removeJsTrackingMarks(text) {
+      if(window.trackjs) {
+          text = text.replace(/\/\/trackjs.*/, "").replace(/\/\/sjkcart.*/, "");
+          text = text.replace(/\/\*trackjs\*\//, "");
+      } else {
+          text = text.replace(/\/\*trackjs\*\/.*/g, "");
+          text = text.replace(/\/\/trackjs[\s\S]*\/\/sjkcart/gm, "");
+      }
+
+      return text;
+  }
+
   document.addEventListener("turbolinks:load", function() {
       $(".demo-embed").each(function() {
           var embeddedDemo = $(this);
@@ -730,12 +760,14 @@ $(function() {
               var pre = $(item);
               return {
                   name: pre.attr("data-file"),
-                  content: pre.text().replace(/"/g, '\\"').replace(/\n/g, '\\\n')
+                  content: removeJsTrackingMarks(pre.text()).replace(/"/g, '\\"').replace(/\n/g, '\\\n')
               };
-          })
+          });
+
           var content = angularTemplate({
               html: "",
-              files: files
+              files: files,
+              trackjs: window.trackjs
           })
           var runnerElement = embeddedDemo.find('.runner');
           var runner = new SnippetRunner(runnerElement);

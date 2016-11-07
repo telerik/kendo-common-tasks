@@ -9,7 +9,7 @@ var ExampleRunner = (function() {
     ExampleRunner.prototype = {
         // configures SystemJS to run with modules cloned to /npm
         // and cdn versions of angular / rxjs
-        configure: function(system, npmUrl, modules) {
+        configure: function(system, npmUrl, modules, trackjs) {
 
             var ngVer = '@2.0.0'; // lock in the angular package version; do not let it float to current!
 
@@ -77,8 +77,18 @@ var ExampleRunner = (function() {
                 '@progress/kendo-popup-common': {
                     defaultExtension: 'js',
                     main: "dist/npm/js/main.js"
-                }
+                },
             };
+
+            var paths = {};
+
+            if(trackjs) {
+                packages['raven-js'] = {
+                    main: 'dist/raven.js'
+                };
+
+                paths['raven-js'] = npmUrl + "/raven-js";
+            }
 
             var ngPackageNames = [
                 'common',
@@ -110,6 +120,7 @@ var ExampleRunner = (function() {
             });
 
             system.config({
+                paths: paths,
                 transpiler: 'typescript',
                 typescriptOptions: {
                     diagnostics: true,
