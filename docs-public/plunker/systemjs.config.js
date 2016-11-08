@@ -80,6 +80,10 @@
           defaultExtension: 'js',
           main: "./dist/npm/js/main.js"
       },
+      '@progress/kendo-data-query': {
+	  defaultExtension: 'js',
+	  main: "./dist/npm/js/main.js"
+      },
       '@progress/kendo-popup-common': {
           defaultExtension: 'js',
           main: "./dist/npm/js/main.js"

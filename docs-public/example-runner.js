@@ -62,6 +62,10 @@ var ExampleRunner = (function() {
                     defaultExtension: 'js',
                     main: "dist/npm/js/main.js"
                 },
+		'@progress/kendo-data-query': {
+                    defaultExtension: 'js',
+                    main: "./dist/npm/js/main.js"
+                },		
                 '@progress/kendo-angular-resize-sensor': {
                     defaultExtension: 'js',
                     main: "./dist/npm/js/main.js"
