@@ -20,6 +20,7 @@ a:hover {
     margin: 0 auto;
 }
 
+.file-list,
 pre {
   margin: 4px 0;
   overflow: auto;
@@ -89,6 +90,48 @@ a code {
   font-family: "Metric", "Roboto", Helvetica, Arial, sans-serif;
   line-height: 1em;
   letter-spacing: 0.02em;
+}
+
+.file-list {
+  margin-bottom: 16px;
+  padding: 16px 32px;
+}
+
+.file-list li.active {
+  border-bottom: 0;
+}
+
+.file-list .docs-tabstrip {
+  margin-bottom: 8px;
+}
+
+.file-list .docs-tabstrip a {
+  text-transform: none;
+  letter-spacing: normal;
+  color: #4f5d6c;
+}
+
+.file-list .docs-tabstrip a:hover {
+  color: #337ab7;
+}
+
+.file-list .docs-tabstrip li.active a:hover {
+  color: #ff6358;
+}
+
+.file-list pre {
+  border: 0;
+  padding-left: 0;
+  margin: 16px 0;
+}
+
+.file-list pre::after {
+  display: none;
+}
+
+.file-list .tab-content {
+  margin: 0;
+  border-top: 1px solid #e4e4e4;
 }
 
 /* Dialog styles */

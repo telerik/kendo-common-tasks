@@ -26,6 +26,20 @@ var previewTemplate = kendo.template(
   "<div class='tab-pane tab-code' id='code-#= index #'></div>" +
 "</div>");
 
+var fileListTemplate = kendo.template(
+    "<div class='file-list'>" +
+        "<ul class='docs-tabstrip'>" +
+            "# for (var i = 0; i < files.length; i++) { #" +
+                "#var filename = files[i].getAttribute('data-file')#" +
+                "#if(i === 0){# <li class='active'> #}else{# <li> #}#" +
+                    "<a href='\\#filename#=i#-#=index#' data-toggle='tab'>#=filename#</a>" +
+                "</li>" +
+            "# } #" +
+        "</ul>" +
+        "<div class='tab-content'></div>" +
+    "</div>"
+);
+
 var editorTemplate = kendo.template(
   "<div class='dialog-overlay'>" +
     "<div class='editor dialog dialog-enter'>" +
@@ -374,6 +388,7 @@ function CodeListing(elements) {
   this.types = $.map(this.elements.find("code"), function(element) {
       var preview = false;
       var noRun = false;
+      var multiple = false;
       var language = /lang(uage)?-([^\s]+)/.exec(element.className);
       var hideTabs = element.className.match(/hide-tabs/);
       language = language ? language[2] : "generic";
@@ -386,11 +401,28 @@ function CodeListing(elements) {
           noRun = true;
       }
 
+      if (/-multiple/.test(language)) {
+          language = language.replace(/-multiple/, "");
+          multiple = true;
+      }
+
+      if (multiple) {
+          var elems = that[language + "-multiple"] || [];
+
+          elems.push({
+              name: $(element).parent().attr("data-file"),
+              content: $(element).text()
+          });
+
+          that[language + "-multiple"] = elems;
+      }
+
       that[language] = $(element).text();
 
       return $.extend({
           language: language,
           noRun: noRun,
+          multiple: multiple,
           hideTabs: hideTabs,
           preview: preview
       }, blockTypes[language]);
@@ -416,6 +448,10 @@ CodeListing.prototype = {
                 block.preview = true;
             } else if (typeInfo.noRun) {
                 block.noRun = true;
+            }
+
+            if(typeInfo.multiple) {
+                block.multiple = true;
             }
 
             code.parent().attr("data-code-language", typeInfo.label);
@@ -457,14 +493,17 @@ function openInFiddle(jsx, html) {
     form.remove();
 }
 
-var plunkerFiles = [
+var basicPlunkerFiles = [
     'index.html',
     'systemjs.config.js',
+    'tsconfig.json'
+];
+
+var plunkerFiles = basicPlunkerFiles.concat([
     'app/main.ts',
     'app/app.component.ts',
     'app/app.module.ts',
-    'tsconfig.json'
-];
+]);
 
 function getPlunkerFile(file) {
     return $.ajax(plunkerBluePrintPath + file, { dataType: 'text' });
@@ -508,7 +547,11 @@ var tsFromTemplate = kendo.template(
 class AppComponent { \n\
 }');
 
-function openInPlunkr(ts, template, html) {
+function openInPlunkr(listing) {
+    var ts = listing['ts'];
+    var template = listing['ng-template'];
+    var html = listing['html'];
+
     if (!ts) {
         ts = tsFromTemplate({ template: template });
     }
@@ -527,9 +570,17 @@ function openInPlunkr(ts, template, html) {
     form.addField('tags[0]', 'angular2')
     form.addField('tags[1]', 'kendo')
 
+    if (listing.multiple && listing['ts-multiple']) {
+        $.each(listing['ts-multiple'], function(i, file) {
+            form.addField('files[app/' + file.name + ']', file.content);
+        });
+    }
+
     $.when.apply($, plunkerRequests).then(function() {
         $.each(arguments, function(index, arr) {
-            form.addField('files[' + plunkerFiles[index] + ']', kendo.template(arr[0])(plunkrContext));
+            if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
+                form.addField('files[' + plunkerFiles[index] + ']', kendo.template(arr[0])(plunkrContext));
+            }
         })
 
         form.submit();
@@ -544,7 +595,7 @@ $(function() {
           editor: 'plunkr',
           editButtonTemplate: '<a href="#" class="edit-online plunkr">Open as Plunker</a>',
           editOnline: function(listing) {
-              openInPlunkr(listing['ts'], listing['ng-template'], listing['html']);
+              openInPlunkr(listing);
               return false;
           },
           runnerContent: function(listing, trackjs) {
@@ -601,16 +652,30 @@ $(function() {
 
       block.updateHtml();
 
+      if (block.multiple) {
+          //list of files contained in the snippet
+          var fileListElement = $(fileListTemplate({
+              files: block.elements.not("[data-hidden]"),
+              index: idx
+          })).insertBefore(block.elements[0]);
+
+          var elements = processMultiFileSourceBlocks(block.elements, idx);
+          elements.appendTo(fileListElement.find('.tab-content'));
+      }
+
       if (block.noRun) {
       } else if (block.preview) {
           // preview snippets - start with example, allow view source
-          var previewElement =
-              $(previewTemplate({
-                  editButtonTemplate: framework.editButtonTemplate,
-                  index: idx
-              })).insertBefore(block.elements[0]);
+          var previewElement = $(previewTemplate({
+              editButtonTemplate: framework.editButtonTemplate,
+              index: idx
+          }));
 
-          previewElement.find('.tab-code').append(block.elements);
+          previewElement.insertBefore(block.multiple ? fileListElement : block.elements[0]);
+
+          // preview snippets with multiple files should display the file list
+          var codeTab = previewElement.find('.tab-code');
+          codeTab.append(block.multiple ? fileListElement : block.elements);
 
           if (block.types[0].hideTabs) {
               $(previewElement[0]).hide(); // hide the tabstrip
@@ -620,100 +685,116 @@ $(function() {
               framework.editOnline.bind(null, block)
           );
 
-          var content = framework.runnerContent(block, window.trackjs);
+          var content;
+          if (block.multiple) {
+              content = loadMultiFileRunnerContent(codeTab);
+          } else {
+              content = framework.runnerContent(block, window.trackjs);
+          }
 
           var preview = new SnippetRunner(previewElement.find('.tab-preview'))
           preview.update(content);
       } else {
-          var title = $("<h4 class='example-title'>Code Sample</h4>").insertBefore(block.elements[0]);
-          var run = $("<button class='button secondary'>Run Code</button>").insertAfter(block.elements.last());
-          run.wrap("<p class='run-code'></p>");
+          var title = $("<h4 class='example-title'>Code Sample</h4>");
+          title.insertBefore(block.multiple ? fileListElement : block.elements[0]);
 
-          // TODO: delegate run handler instead
-          run.click(function() {
-            $(document.body).css("overflow", "hidden")
-            run.hide();
-            title.hide();
+          var run = $("<button class='button secondary'></button>");
 
-            var editor = $(editorTemplate({
-                editButtonTemplate: framework.editButtonTemplate,
-                block: block
-            })).insertAfter(block.elements[0]).show();
+          if (block.multiple) {
+              run.text("Open as Plunker");
+              run.insertAfter(fileListElement);
+              run.click(framework.editOnline.bind(null, block));
+          } else {
+              run.text("Run Code");
+              run.insertAfter(block.elements.last());
+              run.wrap("<p class='run-code'></p>");
 
-            var close = function() {
-              $(document.body).css("overflow", "")
-              run.show();
-              title.show();
-              editor.remove();
-            }
+              // TODO: delegate run handler instead
+              run.click(function() {
+                $(document.body).css("overflow", "hidden")
+                run.hide();
+                title.hide();
 
-            editor.find('.button-close').click(close);
+                var editor = $(editorTemplate({
+                    editButtonTemplate: framework.editButtonTemplate,
+                    block: block
+                })).insertAfter(block.elements[0]).show();
 
-            editor.on("keyup", function(e) {
-                if (e.keyCode == 27) {
-                  close();
+                var close = function() {
+                $(document.body).css("overflow", "")
+                run.show();
+                title.show();
+                editor.remove();
                 }
-            });
 
-            var codeMirrors = block.types.map(function(typeInfo, index) {
-                var value = block[typeInfo.language];
+                editor.find('.button-close').click(close);
 
-                return CodeMirror(function(elt) {
-                  editor.find('.pane').eq(index).append(elt);
-                }, {
-                  value: value,
-                  language: typeInfo.language,
-                  mode: typeInfo.highlight,
-                  lineWrapping: true,
-                  lineNumbers: true
+                editor.on("keyup", function(e) {
+                    if (e.keyCode == 27) {
+                    close();
+                    }
                 });
-            });
 
-            function listing() {
-                return codeMirrors.reduce(function(acc, instance) {
-                    acc[instance.options.language] = instance.getValue();
+                var codeMirrors = block.types.map(function(typeInfo, index) {
+                    var value = block[typeInfo.language];
 
-                    return acc;
-                }, {});
-            }
-
-            editor.find('.edit-online').click(function() {
-                return framework.editOnline(listing());
-            });
-
-            kendo.animationFrame(function() {
-                editor.find(".dialog").removeClass("dialog-enter");
-                codeMirrors[0].focus();
-            });
-
-            var preview = new SnippetRunner(editor.find('.pane-preview'));
-
-            var onChange = debounce(function() {
-                var content = framework.runnerContent(listing(), false);
-
-                preview.update(content);
-            }, 500);
-
-            setTimeout(function() {
-                codeMirrors.forEach(function(instance) {
-                    instance.refresh();
-                    instance.on('changes', onChange);
+                    return CodeMirror(function(elt) {
+                    editor.find('.pane').eq(index).append(elt);
+                    }, {
+                    value: value,
+                    language: typeInfo.language,
+                    mode: typeInfo.highlight,
+                    lineWrapping: true,
+                    lineNumbers: true
+                    });
                 });
-            }, 400);
 
-            onChange();
-          });
+                function listing() {
+                    return codeMirrors.reduce(function(acc, instance) {
+                        acc[instance.options.language] = instance.getValue();
+
+                        return acc;
+                    }, {});
+                }
+
+                editor.find('.edit-online').click(function() {
+                    return framework.editOnline(listing());
+                });
+
+                kendo.animationFrame(function() {
+                    editor.find(".dialog").removeClass("dialog-enter");
+                    codeMirrors[0].focus();
+                });
+
+                var preview = new SnippetRunner(editor.find('.pane-preview'));
+
+                var onChange = debounce(function() {
+                    var content = framework.runnerContent(listing(), false);
+
+                    preview.update(content);
+                }, 500);
+
+                setTimeout(function() {
+                    codeMirrors.forEach(function(instance) {
+                        instance.refresh();
+                        instance.on('changes', onChange);
+                    });
+                }, 400);
+
+                onChange();
+            });
+          }
       }
 
       if (window.Clipboard) {
-          $(block.elements).before('<button class="btn copy-btn">Copy</button>');
+          $(block.elements).prepend('<button class="btn copy-btn">Copy Code</button>');
       }
   });
 
   if (window.Clipboard) {
       var clipboard = new Clipboard('.copy-btn', {
         text: function(trigger) {
-            return $(trigger).next('pre').text();
+            return $(trigger).next('code').text();
         }
       })
 
@@ -723,6 +804,7 @@ $(function() {
       });
 
       $('.copy-btn').tooltip({
+        container: 'body',
         trigger: 'click',
         placement: 'bottom'
       });
@@ -752,23 +834,48 @@ $(function() {
       return text;
   }
 
+  function loadMultiFileRunnerContent(element) {
+      var files = $.map(element.find("pre"), function(item) {
+            var pre = $(item);
+            var code = pre.find("code").text();
+
+            return {
+                name: pre.attr("data-file"),
+                content: removeJsTrackingMarks(code).replace(/"/g, '\\"').replace(/\n/g, '\\\n')
+            };
+        });
+
+        var content = angularTemplate({
+            html: "",
+            files: files,
+            trackjs: window.trackjs
+        });
+
+        return content;
+  }
+
+  function processMultiFileSourceBlocks(blockElements, blockId) {
+    var elements = blockElements.wrap("<div class='tab-pane'></div>").parent();
+    var elemIndex = 0;
+    elements.each(function(i, elem){
+        var codeBlock = $(this).find("pre");
+
+        if(codeBlock.length > 0 && !codeBlock.is("[data-hidden]")) {
+            var elemId = "filename" + elemIndex + "-" + blockId;
+            if(elemIndex === 0) { $(this).addClass("active"); }
+            elemIndex += 1;
+            $(this).attr("id", elemId);
+        }
+    });
+
+    return elements;
+  }
+
   document.addEventListener("turbolinks:load", function() {
       $(".demo-embed").each(function() {
           var embeddedDemo = $(this);
+          var content = loadMultiFileRunnerContent(embeddedDemo);
 
-          var files = $.map(embeddedDemo.find("pre"), function(item) {
-              var pre = $(item);
-              return {
-                  name: pre.attr("data-file"),
-                  content: removeJsTrackingMarks(pre.text()).replace(/"/g, '\\"').replace(/\n/g, '\\\n')
-              };
-          });
-
-          var content = angularTemplate({
-              html: "",
-              files: files,
-              trackjs: window.trackjs
-          })
           var runnerElement = embeddedDemo.find('.runner');
           var runner = new SnippetRunner(runnerElement);
           runner.update(content);

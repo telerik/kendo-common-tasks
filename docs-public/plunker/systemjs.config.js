@@ -30,6 +30,7 @@
       '@angular/platform-browser': 'npm:@angular/platform-browser@' + angularVersion +'/bundles/platform-browser.umd.js',
       '@angular/platform-browser-dynamic': 'npm:@angular/platform-browser-dynamic@' + angularVersion +'/bundles/platform-browser-dynamic.umd.js',
       '@angular/http': 'npm:@angular/http@' + angularVersion +'/bundles/http.umd.js',
+      '@angular/http/testing': 'npm:@angular/http@' + angularVersion +'/bundles/http-testing.umd.js',
       '@angular/forms': 'npm:@angular/forms@' + angularVersion + '/bundles/forms.umd.js',
       '@angular/router': 'npm:@angular/router@3.0.0-rc.3/bundles/router.umd.js',
 
