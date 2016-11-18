@@ -92,7 +92,26 @@ function SnippetRunner(container) {
 
 SnippetRunner.prototype = {
     resizeFrame: function() {
-      this.iframe.height(this.iframe.contents().outerHeight());
+      var RESIZE_THRESHOLD = 5;
+      var iframe = this.iframe;
+      var body = iframe.contents().find("body")[0];
+
+      if (!iframe || !body) {
+          return;
+      }
+
+      var height = body.offsetHeight;
+      if (Math.abs(height - iframe.height()) > RESIZE_THRESHOLD) {
+          iframe.height(height);
+      }
+    },
+
+    pollResize: function() {
+      if (this._resizeTimeout) {
+          this.resizeFrame();
+      }
+
+      this._resizeTimeout = window.setTimeout(this.pollResize.bind(this), 250);
     },
 
     call: function(name) {
@@ -104,6 +123,7 @@ SnippetRunner.prototype = {
     },
 
     update: function(content) {
+      window.clearTimeout(this._resizeTimeout);
       this.container.empty();
 
       this.iframe =
@@ -120,6 +140,8 @@ SnippetRunner.prototype = {
       var iframe = this.iframe[0];
       var iframeWnd = iframe.contentWindow || iframe;
       iframeWnd._runnerInit = this.resizeFrame.bind(this);
+
+      this.pollResize();
     }
 };
 
@@ -187,6 +209,7 @@ var angularTemplate = kendo.template(
 <head>\
     <link rel="stylesheet" href="' + npmUrl + '/@telerik/kendo-theme-default/dist/all.css" />\
     <style>\
+        html, body { overflow: hidden; }\
         body { margin: 0; font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; }\
         my-app { display: block; width: 100%; overflow: hidden; min-height: 260px; }\
         my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
