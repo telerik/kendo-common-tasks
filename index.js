@@ -336,6 +336,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
 
         app.listen(3000, function() {
             browserSync.init({
+                open: false,
                 port: 8080,
                 proxy: "localhost:3000"
             });
