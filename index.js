@@ -2,6 +2,7 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 const _ = require('lodash');
 const argv = require('yargs').argv;
 const merge = require('merge2');
@@ -322,14 +323,51 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         app.use('/', serveIndex('docs', { 'icons': true }));
         app.use('/', express.static('docs/'));
 
+        function processPlugins(content) {
+            // embed_file plugin for node, to allow multi-file examples in gulp docs
+            const encode = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+            const escapeHtml = (str) => str.replace(/[&<>]/g, (char) => encode[char]);
+
+            return content.replace(/{%\s*embed_file\s+([^%]+)%}/g, function(_, options) {
+                const params = options.split(' ');
+                const filepath = path.join("docs", "examples", params[0]);
+                let exists = false;
+
+                try {
+                    fs.accessSync(filepath, fs.F_OK);
+                    exists = true;
+                } catch (e) {
+                    exists = false;
+                }
+
+                if (!exists) {
+                    console.warn(`Demo file ${filepath} not found.`); // eslint-disable-line no-console
+                    return "";
+                }
+
+                const basename = path.basename(filepath);
+                const hidden = params.some(p => p === "hidden");
+                const preview = params.some(p => p === "preview");
+                const content = escapeHtml(fs.readFileSync(filepath, 'utf-8'));
+                return `
+<pre data-file='${basename}' ${hidden ? "data-hidden='true'" : "" }>
+<code class='language-ts-multiple${preview ? "-preview" : "" }'>${content}</code>
+</pre>`;
+            });
+        }
+
         app.use(mds.middleware({
             rootDirectory: 'docs',
             view: 'docs-layout',
             preParse: function(markdownFile) {
+                let content = markdownFile.parseContent();
+
+                content = processPlugins(content);
+
                 return {
                     scriptSrc: `js/${libraryName}.js`,
                     styleSrc: `css/${libraryName}.css`,
-                    content: markdownFile.parseContent()
+                    content: content
                 };
             }
         }));

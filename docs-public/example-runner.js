@@ -116,6 +116,9 @@ var ExampleRunner = (function() {
                 packages['@angular/'+pkgName] = { main: '/bundles/' + pkgName + '.umd.js' };
             });
 
+            // Explicitly add the http/testing package. Required for MockBackend
+            map['@angular/http/testing'] = 'https://unpkg.com/@angular/http' + ngVer + '/bundles/http-testing.umd.js';
+
             modules.forEach(function(directive) {
                 packages[directive.module] = {
                     main: directive.main || 'dist/npm/js/main.js',
