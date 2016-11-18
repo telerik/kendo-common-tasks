@@ -322,6 +322,7 @@ function jsTrackingCode() {
 function bootstrapAngular(code, resize, trackjs) {
     code = wrapAngularTemplate(code);
     var jsTracking = jsTrackingCode();
+
     var directives = analyzeDirectives(code);
     var imports = missingImports(code, directives);
     var moduleImports = directives.map(function(item) {
@@ -858,23 +859,27 @@ $(function() {
   }
 
   function loadMultiFileRunnerContent(element) {
+      var filesContent = "";
       var files = $.map(element.find("pre"), function(item) {
             var pre = $(item);
             var code = pre.find("code").text();
+            filesContent = filesContent.concat(code);
 
             return {
                 name: pre.attr("data-file"),
                 content: removeJsTrackingMarks(code).replace(/"/g, '\\"').replace(/\n/g, '\\\n')
             };
-        });
+      });
 
-        var content = angularTemplate({
-            html: "",
-            files: files,
-            trackjs: window.trackjs
-        });
+      analyzeDirectives(filesContent);
 
-        return content;
+      var content = angularTemplate({
+          html: "",
+          files: files,
+          trackjs: window.trackjs
+      });
+
+      return content;
   }
 
   function processMultiFileSourceBlocks(blockElements, blockId) {
