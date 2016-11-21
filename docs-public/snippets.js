@@ -862,7 +862,8 @@ $(function() {
       var filesContent = "";
       var files = $.map(element.find("pre"), function(item) {
             var pre = $(item);
-            var code = pre.find("code").text();
+            var codeElem = pre.find("code");
+            var code = codeElem.length > 0 ? codeElem.text() : pre.text();
             filesContent = filesContent.concat(code);
 
             return {
