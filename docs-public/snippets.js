@@ -555,7 +555,7 @@ function toModuleImport(dir) {
 
 function toSystemJsPackage(dir) {
     var key = '"' + dir.module + '"';
-    var contents = JSON.stringify({ main: './dist/npm/js/main.js', defaultExtension: 'js' });
+    var contents = JSON.stringify({ main: dir.main, defaultExtension: 'js' });
 
     return key + ": " + contents + ",";
 }

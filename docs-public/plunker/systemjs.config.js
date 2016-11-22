@@ -45,51 +45,6 @@
     packages: {
       #= systemjsPackages #
 
-      '@telerik/kendo-inputs-common': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@telerik/kendo-draggable': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/Draggable.js"
-      },
-      '@telerik/kendo-dropdowns-common': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@telerik/kendo-intl': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@progress/kendo-angular-intl': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@progress/kendo-angular-popup': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@progress/kendo-angular-resize-sensor': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@progress/kendo-charts': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@progress/kendo-drawing': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-      '@progress/kendo-data-query': {
-	  defaultExtension: 'js',
-	  main: "./dist/npm/js/main.js"
-      },
-      '@progress/kendo-popup-common': {
-          defaultExtension: 'js',
-          main: "./dist/npm/js/main.js"
-      },
-
       app: {
         main: './main.ts',
         defaultExtension: 'ts'
