@@ -93,8 +93,14 @@ function SnippetRunner(container) {
 SnippetRunner.prototype = {
     resizeFrame: function() {
       var RESIZE_THRESHOLD = 5;
-      var iframe = this.iframe;
-      var body = iframe.contents().find("body")[0];
+
+      try {
+        var iframe = this.iframe;
+        var body = iframe.contents().find("body")[0];
+      } catch(e) {
+        // iframe may not be available
+        return;
+      }
 
       if (!iframe || !body) {
           return;
