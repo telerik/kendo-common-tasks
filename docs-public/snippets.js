@@ -725,7 +725,7 @@ $(function() {
           var preview = new SnippetRunner(previewElement.find('.tab-preview'))
           preview.update(content);
       } else {
-          var title = $("<h4 class='example-title'>Code Sample</h4>");
+          var title = $("<h5>Code Sample</h5>");
           title.insertBefore(block.multiple ? fileListElement : block.elements[0]);
 
           var run = $("<button class='button secondary'></button>");
