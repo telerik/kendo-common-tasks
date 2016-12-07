@@ -340,7 +340,7 @@ function bootstrapAngular(code, resize, trackjs) {
     return (imports.concat([
         code,
         "import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';",
-        "import { NgModule } from '@angular/core';",
+        "import { NgModule, enableProdMode } from '@angular/core';",
         trackjs ? jsTracking : "",
         "@NgModule({",
             "declarations: [AppComponent],",
@@ -349,6 +349,7 @@ function bootstrapAngular(code, resize, trackjs) {
             trackjs ? "providers: [ { provide: ErrorHandler, useClass: RavenErrorHandler } ]" : "",
         "})",
         "class AppModule {}",
+        window.location.hostname === "localhost" ? "" : "enableProdMode();",
         "platformBrowserDynamic().bootstrapModule(AppModule)",
         (resize ? "\t.then(_runnerInit)" : ""),
         "\t.catch(err => console.error(err));"
