@@ -55,12 +55,13 @@ a code {
   border: 0;
   width: 100%;
   height: 30px;
+  background-color: #fff;
 }
 
 /* Docs TabStrip */
 
 .docs-tabstrip { /* ul */
-  margin: 0 0 15px 0;
+  margin: 0 0 10px 0;
   padding: 0;
   list-style: none;
 }
@@ -68,6 +69,7 @@ a code {
 .docs-tabstrip li {
   display: inline-block;
   margin-right: 25px;
+  margin-bottom: 0;
   background: none;
   padding: 0;
 }
@@ -85,7 +87,7 @@ a code {
   padding: 4px 0;
   text-decoration: none;
   text-transform: uppercase;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 500;
   font-family: "Metric", "Roboto", Helvetica, Arial, sans-serif;
   line-height: 1em;

@@ -216,9 +216,13 @@ var angularTemplate = kendo.template(
     <link rel="stylesheet" href="' + npmUrl + '/@telerik/kendo-theme-default/dist/all.css" />\
     <style>\
         html, body { overflow: hidden; }\
-        body { margin: 0; font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; }\
-        my-app { display: block; width: 100%; overflow: hidden; min-height: 260px; }\
+        body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
+        my-app { display: block; width: 100%; overflow: hidden; min-height: 280px; box-sizing: border-box; padding: 20px; }\
         my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
+        .example-wrapper { min-height: 280px; }\
+        .example-wrapper p { margin: 0 0 10px; }\
+        .example-col { display: inline-block; padding-right: 20px; }\
+        .example-config { margin: 0 0 20px; padding: 20px; background-color: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.08); }\
     </style>\
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
     <script src="https://unpkg.com/zone.js@0.6.23/dist/zone.js"></script>\
