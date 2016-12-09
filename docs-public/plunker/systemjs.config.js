@@ -55,6 +55,10 @@
       'angular2-in-memory-web-api': {
         main: './index.js',
         defaultExtension: 'js'
+      },
+      '@progress/kendo-data-query': {
+        main: 'dist/cdn/js/kendo-data-query.js',
+        defaultExtension: 'js'
       }
     }
   });
