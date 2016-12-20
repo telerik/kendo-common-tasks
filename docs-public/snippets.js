@@ -213,7 +213,7 @@ var angularTemplate = kendo.template(
 '<!doctype html>\
 <html>\
 <head>\
-    <link rel="stylesheet" href="' + npmUrl + '/@telerik/kendo-theme-default/dist/all.css" />\
+    <link rel="stylesheet" href="' + npmUrl + '/@progress/kendo-theme-default/dist/all.css" />\
     <style>\
         html, body { overflow: hidden; }\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
