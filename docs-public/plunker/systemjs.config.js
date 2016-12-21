@@ -59,6 +59,10 @@
       '@progress/kendo-data-query': {
         main: 'dist/cdn/js/kendo-data-query.js',
         defaultExtension: 'js'
+      },
+      '@progress/kendo-save-as': {
+        main: 'dist/npm/main.js',
+        defaultExtension: 'js'
       }
     }
   });
