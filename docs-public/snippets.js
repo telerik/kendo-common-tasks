@@ -381,13 +381,29 @@ var blockTypes = {
         label: 'Generic listing, set code type in docs!',
         highlight: 'htmlmixed'
     },
+    'cs': {
+        label: 'C#',
+        highlight: 'text/x-csharp'
+    },
     'html': {
         label: 'HTML',
         highlight: 'htmlmixed'
     },
+    'java': {
+        label: 'Java',
+        highlight: 'text/x-java'
+    },
+    'json': {
+        label: 'JSON',
+        highlight: 'application/json'
+    },
     'jsx': {
         label: 'JSX',
         highlight: 'jsx'
+    },
+    'php': {
+        label: 'PHP',
+        highlight: 'php'
     },
     'sh': {
         label: 'Shell',
@@ -411,6 +427,10 @@ var blockTypes = {
     'ts': {
         label: 'TypeScript',
         highlight: 'text/typescript'
+    },
+    'xml': {
+        label: 'XML',
+        highlight: 'application/xml'
     }
 };
 
