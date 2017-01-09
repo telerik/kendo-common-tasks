@@ -275,6 +275,12 @@ var directivesByModule = [
     { module: '@angular/platform-browser', match: '.', import: "BrowserModule" }
 ].concat(moduleDirectives);
 
+// replaces code characters to allow embedding in a js double-quote string ("")
+function codeToString(code) {
+    return code.replace(/"/g, '\\"') // escape nested quotes
+               .replace(/\n/g, '\\n'); // escape line endings
+}
+
 // tested in test.html
 function analyzeDirectives(code) {
     var directives = directivesByModule.filter(function(directive) {
@@ -361,7 +367,7 @@ function bootstrapAngular(code, resize, trackjs) {
 }
 
 function angularPage(ts, html, trackjs) {
-    var ts = bootstrapAngular(ts, true, trackjs).replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    var ts = codeToString(bootstrapAngular(ts, true, trackjs));
     var files = [
         { name: "main.ts", content: ts }
     ];
@@ -899,7 +905,7 @@ $(function() {
 
             return {
                 name: pre.attr("data-file"),
-                content: removeJsTrackingMarks(code).replace(/"/g, '\\"').replace(/\n/g, '\\\n')
+                content: codeToString(removeJsTrackingMarks(code))
             };
       });
 
