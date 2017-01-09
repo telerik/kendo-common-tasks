@@ -617,6 +617,10 @@ function openInPlunkr(listing) {
         ts = tsFromTemplate({ template: template });
     }
 
+    if (!plunkrDirectives.length) {
+        analyzeDirectives(ts);
+    }
+
     plunkrContext = {
         appComponentContent: ts,
         npmUrl: $("<a />").attr("href", npmUrl)[0].href + "/",
