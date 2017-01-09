@@ -20,8 +20,8 @@ var ExampleRunner = (function() {
                 '@progress':                  npmUrl + '/@progress',
                 '@angular':                   'https://unpkg.com/@angular', // sufficient if we didn't pin the version
                 'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
-                'rxjs':                       'https://unpkg.com/rxjs@5.0.0-beta.12',
-                'chroma-js':                  'https://unpkg.com/chroma-js@1.2.1',
+                'rxjs':                       'https://unpkg.com/rxjs@5.0.3',
+                'hammerjs':                   'https://unpkg.com/hammerjs@2',
                 'ts':                         'https://unpkg.com/plugin-typescript@5.0.19/lib/plugin.js',
                 'typescript':                 'https://unpkg.com/typescript@1.8.10/lib/typescript.js',
             };

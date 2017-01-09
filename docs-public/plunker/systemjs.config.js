@@ -36,7 +36,7 @@
 
       // other libraries
       'rxjs':                       'npm:rxjs',
-      'chroma-js':                  'npm:chroma-js@1.2.1',
+      'hammerjs':                   'npm:hammerjs@2',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
       'ts':                         'npm:plugin-typescript@4.0.10/lib/plugin.js',
       'typescript':                 'npm:typescript@1.9.0-dev.20160409/lib/typescript.js'
