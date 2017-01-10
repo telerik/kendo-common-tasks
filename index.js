@@ -315,7 +315,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
                 response.set('Access-Control-Allow-Origin', 'http://run.plnkr.co');
             }
         }));
-        app.use(`/npm/@progress/${libraryName}/dist`, express.static('dist/', {
+        app.use(`/npm/@progress/${libraryName}`, express.static('.', {
             setHeaders: (response) => {
                 response.set('Access-Control-Allow-Origin', 'http://run.plnkr.co');
             }
