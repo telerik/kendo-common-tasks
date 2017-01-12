@@ -282,7 +282,19 @@ function codeToString(code) {
                .replace(/\n/g, '\\n'); // escape line endings
 }
 
-// tested in test.html
+function getFullContent(listing) {
+    if (listing['ts-multiple']) {
+        var fullContent = "";
+        listing['ts-multiple'].forEach(function(file) {
+            fullContent = fullContent.concat(file.content);
+        });
+
+        return fullContent;
+    }
+
+    return listing['ts'];
+}
+
 function analyzeDirectives(code) {
     var directives = directivesByModule.filter(function(directive) {
         var match = (new RegExp(directive.match)).exec(code);
@@ -619,7 +631,7 @@ function openInPlunkr(listing) {
     }
 
     if (!plunkrDirectives.length) {
-        analyzeDirectives(ts);
+        analyzeDirectives(getFullContent(listing));
     }
 
     plunkrContext = {
