@@ -710,6 +710,12 @@ $(function() {
   }
 
   toCodeListings($("pre")).forEach(function(block, idx) {
+      var demoEmbed = $(block.elements).closest(".demo-embed");
+      if (demoEmbed.length) {
+        // fully-embedded demo, skip chrome rendering
+        return;
+      }
+
       block.updateHtml();
 
       if (block.multiple) {
