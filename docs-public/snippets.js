@@ -365,6 +365,7 @@ function bootstrapAngular(code, resize, trackjs) {
         code,
         "import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';",
         "import { NgModule, enableProdMode } from '@angular/core';",
+        "import 'hammerjs';",
         trackjs ? jsTracking : "",
         "@NgModule({",
             "declarations: [AppComponent],",

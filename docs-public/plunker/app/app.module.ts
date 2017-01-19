@@ -1,6 +1,8 @@
 import { NgModule }      from '@angular/core';
 #= appModuleImports #
 
+import 'hammerjs';
+
 import { AppComponent }   from './app.component';
 
 @NgModule({
