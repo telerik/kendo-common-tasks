@@ -7,7 +7,7 @@ const _ = require('lodash');
 const argv = require('yargs').argv;
 const merge = require('merge2');
 const named = require('vinyl-named');
-
+const protractor = require('gulp-protractor');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const webpackStream = require('webpack-stream');
@@ -39,7 +39,7 @@ const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts,js}";
 
 exports.webpack = webpack;
-
+exports.protractor = protractor;
 exports.webpackStream = webpackStream;
 
 exports.CDNSassLoader = {
