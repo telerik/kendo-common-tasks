@@ -10,6 +10,9 @@
     meta: {
       'typescript': {
         "exports": "ts"
+      },
+      '*.json': {
+        loader: 'systemjs-json-plugin'
       }
     },
     paths: {
@@ -20,8 +23,10 @@
     map: {
       // our app is within the app folder
       app: 'app',
+      'systemjs-json-plugin': 'npm:systemjs-plugin-json',
       '@progress': '#= npmUrl #@progress',
       '@telerik': '#= npmUrl #@telerik',
+      'cldr-data': '#= npmUrl #cldr-data',
 
       // angular bundles
       '@angular/core': 'npm:@angular/core@' + angularVersion +'/bundles/core.umd.js',
@@ -62,6 +67,10 @@
       },
       '@progress/kendo-file-saver': {
         main: 'dist/npm/main.js',
+        defaultExtension: 'js'
+      },
+      '@progress/kendo-angular-intl': {
+        main: 'dist/cdn/js/kendo-angular-intl.js',
         defaultExtension: 'js'
       }
     }
