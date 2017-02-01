@@ -57,6 +57,7 @@
     "merge2": "^1.0.2",
     "module-deps": "4.0.7",
     "node-sass": "^3.4.2",
+    "protractor": "4.0.9",
     "phantomjs-prebuilt": "<=2.1.13",
     "postcss-loader": "^0.8.2",
     "resolve-url-loader": "^1.5.0",
@@ -70,6 +71,7 @@
     "webpack-dev-server": "^1.14.0",
     "webpack-sources": "^0.1.0",
     "webpack-stream": "^3.1.0",
+    "webdriver-manager": "10.2.5",
     "yargs": "^3.30.0"
   },
   "engines": {
