@@ -68,6 +68,10 @@
       '@progress/kendo-file-saver': {
         main: 'dist/npm/main.js',
         defaultExtension: 'js'
+      },
+      '@progress/kendo-angular-intl': {
+        main: 'dist/cdn/js/kendo-angular-intl.js',
+        defaultExtension: 'js'
       }
     }
   });
