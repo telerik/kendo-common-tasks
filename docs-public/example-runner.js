@@ -16,6 +16,7 @@ var ExampleRunner = (function() {
             //map tells the System loader where to look for things
             var map = {
                 'app':                        '/demos-src',
+                'systemjs-json-plugin':       'npm:systemjs-plugin-json',
                 '@telerik':                   npmUrl + '/@telerik',
                 '@progress':                  npmUrl + '/@progress',
                 '@angular':                   'https://unpkg.com/@angular', // sufficient if we didn't pin the version
@@ -87,6 +88,11 @@ var ExampleRunner = (function() {
                 typescriptOptions: {
                     diagnostics: true,
                     emitDecoratorMetadata: true
+                },
+                meta: {
+                  '*.json': {
+                    loader: 'systemjs-json-plugin'
+                  }
                 },
                 map: map,
                 packages: packages

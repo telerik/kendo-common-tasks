@@ -10,6 +10,9 @@
     meta: {
       'typescript': {
         "exports": "ts"
+      },
+      '*.json': {
+        loader: 'systemjs-json-plugin'
       }
     },
     paths: {
@@ -20,6 +23,7 @@
     map: {
       // our app is within the app folder
       app: 'app',
+      'systemjs-json-plugin': 'npm:systemjs-plugin-json',
       '@progress': '#= npmUrl #@progress',
       '@telerik': '#= npmUrl #@telerik',
 
