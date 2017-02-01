@@ -26,6 +26,7 @@
       'systemjs-json-plugin': 'npm:systemjs-plugin-json',
       '@progress': '#= npmUrl #@progress',
       '@telerik': '#= npmUrl #@telerik',
+      'cldr-data': '#= npmUrl #cldr-data',
 
       // angular bundles
       '@angular/core': 'npm:@angular/core@' + angularVersion +'/bundles/core.umd.js',
