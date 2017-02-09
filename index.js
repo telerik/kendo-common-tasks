@@ -145,7 +145,10 @@ const webpackThemeConfig = (_settings, _webpackConfig) => {
         },
         postcss: () => ([
             autoprefixer
-        ])
+        ]),
+        sassLoader: {
+            precision: 10
+        }
     });
 };
 
