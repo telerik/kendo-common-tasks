@@ -227,10 +227,10 @@ var angularTemplate = kendo.template(
         .example-config { margin: 0 0 20px; padding: 20px; background-color: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.08); }\
     </style>\
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
-    <script src="https://unpkg.com/zone.js@0.6.23/dist/zone.js"></script>\
+    <script src="https://unpkg.com/zone.js@0.7/dist/zone.js"></script>\
     <script src="https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"></script>\
-    <script src="https://unpkg.com/systemjs@0.19.31/dist/system.js"></script>\
-    <script src="https://unpkg.com/typescript@2.0.10/lib/typescript.js"></script>\
+    <script src="https://unpkg.com/systemjs@0.19/dist/system.js"></script>\
+    <script src="https://unpkg.com/typescript@2.0/lib/typescript.js"></script>\
     <script src="' + runnerScript + '"></script>\
     <script>\
         var runner = new ExampleRunner();\
