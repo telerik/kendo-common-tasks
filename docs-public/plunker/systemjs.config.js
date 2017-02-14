@@ -65,6 +65,10 @@
         main: 'dist/cdn/js/kendo-data-query.js',
         defaultExtension: 'js'
       },
+      '@progress/kendo-drawing': {
+        main: 'dist/es/main.js',
+        defaultExtension: 'js'
+      },
       '@progress/kendo-file-saver': {
         main: 'dist/npm/main.js',
         defaultExtension: 'js'
