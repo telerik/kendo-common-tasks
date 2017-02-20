@@ -11,7 +11,7 @@ var ExampleRunner = (function() {
         // and cdn versions of angular / rxjs
         configure: function(system, npmUrl, modules, trackjs) {
 
-            var ngVer = '@2.4.7'; // lock in the angular package version; do not let it float to current!
+            var ngVer = '@2.4.8'; // lock in the angular package version; do not let it float to current!
 
             //map tells the System loader where to look for things
             var map = {
