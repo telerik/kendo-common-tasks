@@ -76,6 +76,10 @@
       '@progress/kendo-angular-intl': {
         main: 'dist/cdn/js/kendo-angular-intl.js',
         defaultExtension: 'js'
+      },
+      '@progress/kendo-angular-l10n': {
+        main: 'dist/cdn/js/kendo-angular-l10n.js',
+        defaultExtension: 'js'
       }
     }
   });
