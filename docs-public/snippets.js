@@ -94,6 +94,11 @@ SnippetRunner.prototype = {
     resizeFrame: function() {
       var RESIZE_THRESHOLD = 5;
 
+      if ($(this.iframe).closest("[data-height]").length) {
+        // height is set through {% meta %}
+        return;
+      }
+
       try {
         var iframe = this.iframe;
         var body = iframe.contents().find("body")[0];
@@ -112,14 +117,6 @@ SnippetRunner.prototype = {
       }
     },
 
-    pollResize: function() {
-      if (this._resizeTimeout) {
-          this.resizeFrame();
-      }
-
-      this._resizeTimeout = window.setTimeout(this.pollResize.bind(this), 250);
-    },
-
     call: function(name) {
       var iframe = this.iframe[0];
       var iframeWnd = iframe.contentWindow || iframe;
@@ -129,7 +126,6 @@ SnippetRunner.prototype = {
     },
 
     update: function(content) {
-      window.clearTimeout(this._resizeTimeout);
       this.container.empty();
 
       this.iframe =
@@ -137,6 +133,13 @@ SnippetRunner.prototype = {
               .attr("src", 'javascript:void(0)')
               .show()
               .appendTo(this.container);
+
+      var metaContainer = $(this.container).closest("[data-height]");
+      var height = metaContainer.attr("data-height");
+      if (height) {
+          this.iframe.height(+height);
+          metaContainer.height("");
+      }
 
       var contents = this.iframe.contents();
       contents[0].open();
@@ -146,8 +149,6 @@ SnippetRunner.prototype = {
       var iframe = this.iframe[0];
       var iframeWnd = iframe.contentWindow || iframe;
       iframeWnd._runnerInit = this.resizeFrame.bind(this);
-
-      this.pollResize();
     }
 };
 
