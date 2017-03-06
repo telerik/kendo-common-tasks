@@ -17,7 +17,7 @@ const mds = require('markdown-serve');
 const BrowserSync = require('browser-sync');
 const serveIndex = require('serve-index');
 const rewrite = require('express-urlrewrite');
-
+const portscanner = require('portscanner');
 const glob = require('glob');
 const $ = require('gulp-load-plugins')();
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -208,7 +208,21 @@ exports.startKarma = (done, confPath, singleRun) => (
 function ucfirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+function findPort(min, max, callBack) {
+    portscanner.findAPortNotInUse(min, max, '127.0.0.1', (error, port) =>{
+        if (error) {
+            throw Error(error);
+        }
+        if (port === false) {
+            throw Error('Port not available');
+        }
+        console.info('AVAILABLE PORT AT: ' + port); // eslint-disable-line no-console
 
+        fs.writeFileSync('.port', port, 'utf8');
+
+        callBack(port);
+    });
+}
 exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, ucfirst)(libraryName);
 
@@ -266,27 +280,28 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
     });
 
     gulp.task("start", callback => {
-        const webpackPort = 8888;
-        const host = '0.0.0.0';
+        findPort(8000, 9000, function(port) {
+            const webpackPort = port;
+            const host = '0.0.0.0';
 
-        const packageInfo = require(path.join(process.cwd(), 'package.json'));
+            const packageInfo = require(path.join(process.cwd(), 'package.json'));
 
-        const config = _.assign({}, webpackConfig.dev);
+            const config = _.assign({}, webpackConfig.dev);
+            config.resolve = Object.assign({}, config.resolve, { alias: { [packageInfo.name]: '../src/main' } });
 
-        config.resolve = Object.assign({}, config.resolve, { alias: { [packageInfo.name]: '../src/main' } });
+            const server = new WebpackDevServer(webpack(config), {
+                contentBase: './',
+                hot: true,
+                noInfo: true,
+                stats: { colors: true }
+            });
 
-        const server = new WebpackDevServer(webpack(config), {
-            contentBase: './',
-            hot: true,
-            noInfo: true,
-            stats: { colors: true }
-        });
-
-        server.listen(webpackPort, host, err => {
-            if (err) {
-                callback();
-                throw new $.util.PluginError('webpack-dev-server', err);
-            }
+            server.listen(webpackPort, host, err => {
+                if (err) {
+                    callback();
+                    throw new $.util.PluginError('webpack-dev-server', err);
+                }
+            });
         });
     });
 
