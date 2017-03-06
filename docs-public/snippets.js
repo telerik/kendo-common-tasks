@@ -125,21 +125,33 @@ SnippetRunner.prototype = {
       method.apply(iframeWnd, Array.prototype.slice.call(arguments, 1));
     },
 
+    _closestHeader: function(element) {
+      return element.closest('article > *').prevAll('h1,h2,h3,h4,h5,h6').first();
+    },
+
+    _idFromText: function(text) {
+      return $.trim(text.toLowerCase()).replace(/\s+/g, '-');
+    },
+
     update: function(content) {
       this.container.empty();
 
+      var attributes = { src: 'javascript:void(0)' };
+
+      var metaContainer = $(this.container).closest("[data-height]");
+      var height = metaContainer.attr("data-height") || 340;
+      attributes.style = 'height:' + height + 'px';
+
+      var id = metaContainer.attr("data-id") || this._idFromText(this._closestHeader(this.container).text());
+      attributes.id = 'example-' + id;
+
       this.iframe =
           $('<iframe class="snippet-runner">')
-              .attr("src", 'javascript:void(0)')
+              .attr(attributes)
               .show()
               .appendTo(this.container);
 
-      var metaContainer = $(this.container).closest("[data-height]");
-      var height = metaContainer.attr("data-height");
-      if (height) {
-          this.iframe.height(+height);
-          metaContainer.height("");
-      }
+      metaContainer.height("");
 
       var contents = this.iframe.contents();
       contents[0].open();
