@@ -17,8 +17,8 @@
   "dependencies": {
     "@telerik/eslint-config": "1.1.0",
     "autoprefixer": "^6.3.6",
-    "babel-eslint": "^4.1.6",
     "babel-core": "^6.0.0",
+    "babel-eslint": "^4.1.6",
     "browser-sync": "^2.10.0",
     "browser-sync-webpack-plugin": "^1.0.1",
     "css-loader": "^0.23.1",
@@ -58,6 +58,7 @@
     "module-deps": "4.0.7",
     "node-sass": "^3.4.2",
     "phantomjs-prebuilt": "<=2.1.13",
+    "portscanner": "^2.1.1",
     "postcss-loader": "^0.8.2",
     "resolve-url-loader": "^1.5.0",
     "sass-loader": "^3.1.2",
