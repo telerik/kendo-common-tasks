@@ -209,6 +209,23 @@ function registerDirectives(moduleDirectives) {
 var moduleDirectives = registerDirectives(window.moduleDirectives || []);
 var plunkrDirectives = [];
 
+var htmlTemplate = kendo.template(
+'<!doctype html>\
+<html>\
+<head>\
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">\
+    <link rel="stylesheet" href="' + npmUrl + '/@progress/kendo-theme-default/dist/all.css" />\
+    <style>\
+        html, body { overflow: hidden; }\
+        body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
+    </style>\
+</head>\
+<body>\
+    #= html #\
+</body>\
+</html>\
+');
+
 var angularTemplate = kendo.template(
 '<!doctype html>\
 <html>\
@@ -382,6 +399,10 @@ function bootstrapAngular(code, resize, trackjs) {
 }
 
 function angularPage(ts, html, trackjs) {
+    if (!ts) {
+      return htmlTemplate({ html: html || "" });
+    }
+
     var ts = codeToString(bootstrapAngular(ts, true, trackjs));
     var files = [
         { name: "main.ts", content: ts }
