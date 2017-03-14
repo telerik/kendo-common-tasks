@@ -227,29 +227,29 @@ var htmlTemplate = kendo.template(
 <html>\
 <head>\
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">\
-    <link rel="stylesheet" href="' + npmUrl + '/@progress/kendo-theme-default/dist/all.css" />\
+    <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" />\
     <style>\
         html, body { overflow: hidden; }\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
     </style>\
 </head>\
 <body>\
-    #= html #\
+    #= data.html #\
 </body>\
 </html>\
-');
+', { useWithBlock: false });
 
 var angularTemplate = kendo.template(
 '<!doctype html>\
 <html>\
 <head>\
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">\
-    <link rel="stylesheet" href="' + npmUrl + '/@progress/kendo-theme-default/dist/all.css" />\
+    <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" />\
     <style>\
         html, body { overflow: hidden; }\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
         my-app { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
-        my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
+        my-app > .k-loading { position: absolute; top: 10%; left: 50%; transform: translate(-50%, -50%); }\
         .example-wrapper { min-height: 280px; }\
         .example-wrapper p, .example-col p { margin: 20px 0 10px; }\
         .example-wrapper p:first-child, .example-col p:first-child { margin-top: 0; }\
@@ -261,30 +261,32 @@ var angularTemplate = kendo.template(
     <script src="https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"></script>\
     <script src="https://unpkg.com/systemjs@0.19/dist/system.js"></script>\
     <script src="https://unpkg.com/typescript@2.0/lib/typescript.js"></script>\
-    <script src="' + runnerScript + '"></script>\
+    <script src="#: data.exampleRunner #"></script>\
     <script>\
         var runner = new ExampleRunner();\
-        runner.configure(System, "' + npmUrl + '", ' + JSON.stringify(moduleDirectives) + ', #= trackjs #);\
-        # for (var i = 0; i < files.length; i++) { #\
-        runner.register("#= files[i].name #", "#= files[i].content #");\
+        runner.configure(System, "#: data.npmUrl #", ' + JSON.stringify(moduleDirectives) + ', #= data.track #);\
+        # for (var i = 0; i < data.files.length; i++) { #\
+        runner.register("#= data.files[i].name #", "#= data.files[i].content #");\
         # } #\
         runner.start(System);\
     </script>\
 </head>\
 <body>\
-    #= html #\
+    #= data.html #\
     <my-app>\
         <span class="k-loading">\
             <svg width="64px" height="64px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">\
                  <rect x="0" y="0" width="100" height="100" fill="none"></rect>\
                  <circle cx="50" cy="50" r="40" stroke="none" fill="none" stroke-width="10" stroke-linecap="round"></circle>\
-                 <circle class="animate" cx="50" cy="50" r="40" stroke="\\#ff6358" fill="none" stroke-width="6" stroke-linecap="round"></circle>\
+                 <circle class="animate" cx="50" cy="50" r="40" \
+                         stroke="#: data.theme == "bootstrap" ? "\\#0275d8" : "\\#ff6358" #"\
+                         fill="none" stroke-width="6" stroke-linecap="round"></circle>\
             </svg>\
         </span>\
     </my-app>\
 </body>\
 </html>\
-');
+', { useWithBlock: false });
 
 function wrapAngularTemplate(template) {
     if (!/^\s*</.test(template)) {
@@ -380,8 +382,8 @@ function jsTrackingCode() {
     ].join("\n");
 }
 
-function bootstrapAngular(code, resize, trackjs) {
-    code = wrapAngularTemplate(code);
+function bootstrapAngular(options) {
+    var code = wrapAngularTemplate(options.code);
     var jsTracking = jsTrackingCode();
 
     var directives = analyzeDirectives(code);
@@ -397,36 +399,45 @@ function bootstrapAngular(code, resize, trackjs) {
         "import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';",
         "import { NgModule, enableProdMode } from '@angular/core';",
         "import 'hammerjs';",
-        trackjs ? jsTracking : "",
+        options.track ? jsTracking : "",
         "@NgModule({",
             "declarations: [AppComponent],",
             "imports: [ " + moduleImports + " ],",
             "bootstrap: [AppComponent]",
-            trackjs ? "providers: [ { provide: ErrorHandler, useClass: RavenErrorHandler } ]" : "",
+            options.track ? "providers: [ { provide: ErrorHandler, useClass: RavenErrorHandler } ]" : "",
         "})",
         "class AppModule {}",
         window.location.hostname === "localhost" ? "" : "enableProdMode();",
         "platformBrowserDynamic().bootstrapModule(AppModule)",
-        (resize ? "\t.then(_runnerInit)" : ""),
+        (options.resize ? "\t.then(_runnerInit)" : ""),
         "\t.catch(err => console.error(err));"
     ]).filter(Boolean).join("\n"));
 }
 
-function angularPage(ts, html, trackjs) {
-    if (!ts) {
-      return htmlTemplate({ html: html || "" });
+function angularPage(opts) {
+    var options = $.extend({
+        npmUrl: window.npmUrl,
+        exampleRunner: window.runnerScript,
+        theme: 'default',
+        html: '',
+        track: false
+    }, opts);
+
+    if (!options.ts) {
+        return htmlTemplate(options);
     }
 
-    var ts = codeToString(bootstrapAngular(ts, true, trackjs));
-    var files = [
+    var ts = codeToString(bootstrapAngular({
+      code: options.ts,
+      resize: true,
+      track: options.track
+    }));
+
+    options.files = [
         { name: "main.ts", content: ts }
     ];
 
-    return angularTemplate({
-        html: html || "",
-        files: files,
-        trackjs: trackjs
-    });
+    return angularTemplate(options);
 }
 
 // types of code snippets
@@ -676,8 +687,8 @@ function openInPlunkr(listing) {
     };
 
     var form = new EditorForm('http://plnkr.co/edit/?p=preview');
-    form.addField('tags[0]', 'angular2')
-    form.addField('tags[1]', 'kendo')
+    form.addField('tags[0]', 'angular2');
+    form.addField('tags[1]', 'kendo');
 
     if (listing.multiple && listing['ts-multiple']) {
         $.each(listing['ts-multiple'], function(i, file) {
@@ -707,11 +718,15 @@ $(function() {
               openInPlunkr(listing);
               return false;
           },
-          runnerContent: function(listing, trackjs) {
-              return angularPage(
-                  listing['ts'] || listing['ng-template'],
-                  listing['html'], trackjs
-              );
+          runnerContent: function(options) {
+              var listing = options.listing;
+
+              return angularPage({
+                  ts: listing['ts'] || listing['ng-template'],
+                  html: listing['html'],
+                  theme: options.theme,
+                  track: options.track
+              });
           }
       },
       react: {
@@ -721,8 +736,13 @@ $(function() {
               openInFiddle(listing['jsx'], listing['html']);
               return false;
           },
-          runnerContent: function(listing) {
-              return reactPage(listing['html'], listing['jsx']);
+          runnerContent: function(options) {
+              var listing = options.listing;
+
+              return reactPage(
+                  listing['html'],
+                  listing['jsx']
+              );
           }
       }
   }[/\breact\b/i.test(window.jsCDN) ? 'react' : 'angular'];
@@ -791,7 +811,10 @@ $(function() {
           if (block.multiple) {
               content = loadMultiFileRunnerContent(codeTab);
           } else {
-              content = framework.runnerContent(block, window.trackjs);
+              content = framework.runnerContent({
+                  listing: block,
+                  track: window.trackjs
+              });
           }
 
           var preview = new SnippetRunner(previewElement.find('.tab-preview'))
@@ -871,7 +894,10 @@ $(function() {
                 var preview = new SnippetRunner(editor.find('.pane-preview'));
 
                 var onChange = debounce(function() {
-                    var content = framework.runnerContent(listing(), false);
+                    var content = framework.runnerContent({
+                        listing: listing(),
+                        track: false
+                    });
 
                     preview.update(content);
                 }, 500);
@@ -925,7 +951,7 @@ $(function() {
   }
 
   function removeJsTrackingMarks(text) {
-      if(window.trackjs) {
+      if (window.trackjs) {
           text = text.replace(/\/\/trackjs.*/, "").replace(/\/\/sjkcart.*/, "");
           text = text.replace(/\/\*trackjs\*\//, "");
       } else {
@@ -953,9 +979,12 @@ $(function() {
       analyzeDirectives(filesContent);
 
       var content = angularTemplate({
+          npmUrl: window.npmUrl,
+          exampleRunner: window.runnerScript,
           html: "",
+          theme: element.closest("[data-theme]").attr("data-theme") || 'default',
           files: files,
-          trackjs: window.trackjs
+          track: window.trackjs
       });
 
       return content;
