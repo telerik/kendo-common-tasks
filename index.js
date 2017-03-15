@@ -11,7 +11,9 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const webpackStream = require('webpack-stream');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
-
+//BrowserSync will work only on first port
+const minPort = 8888;
+const maxPort = 9999;
 const express = require('express');
 const mds = require('markdown-serve');
 const BrowserSync = require('browser-sync');
@@ -93,7 +95,7 @@ exports.uglifyJsPlugin = () =>
 const addHMRCallback = (entries, name) => {
     entries[path.basename(name).replace(/\.(ts|jsx)$/, '')] = [
         "webpack/hot/dev-server",
-        `webpack-dev-server/client?http://0.0.0.0:8888`,
+        `webpack-dev-server/client?http://0.0.0.0:` + minPort,
         `./${name}`
     ];
 
@@ -174,7 +176,7 @@ exports.webpackDevConfig = (config) => webpackThemeConfig({
                 open: false,
                 host: '0.0.0.0',
                 port: 3000,
-                proxy: 'http://0.0.0.0:8888/'
+                proxy: 'http://0.0.0.0:' + minPort + '/'
             },
             // plugin options
             {
@@ -280,7 +282,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
     });
 
     gulp.task("start", callback => {
-        findPort(8000, 9000, function(port) {
+        findPort(minPort, maxPort, function(port) {
             const webpackPort = port;
             const host = '0.0.0.0';
 
