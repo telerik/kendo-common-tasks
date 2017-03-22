@@ -652,6 +652,13 @@ function toSystemJsPackage(dir) {
     return key + ": " + contents + ",";
 }
 
+function prefixStyleUrls(content, prefix) {
+  return content.replace(
+    /styles\.component\.css/g,
+    prefix + "styles.component.css"
+  );
+}
+
 var tsFromTemplate = kendo.template(
 '@Component({ \n\
     selector: "my-app", \n\
@@ -692,7 +699,11 @@ function openInPlunkr(listing) {
 
     if (listing.multiple && listing['ts-multiple']) {
         $.each(listing['ts-multiple'], function(i, file) {
-            form.addField('files[app/' + file.name + ']', file.content);
+            var content = file.content;
+
+            content = prefixStyleUrls(content, "app/");
+
+            form.addField('files[app/' + file.name + ']', content);
         });
     }
 
@@ -969,6 +980,8 @@ $(function() {
             var codeElem = pre.find("code");
             var code = codeElem.length > 0 ? codeElem.text() : pre.text();
             filesContent = filesContent.concat(code);
+
+            code = prefixStyleUrls(code, "examples/");
 
             return {
                 name: pre.attr("data-file"),
