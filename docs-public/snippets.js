@@ -659,24 +659,13 @@ function prefixStyleUrls(content, prefix) {
   );
 }
 
-var tsFromTemplate = kendo.template(
-'@Component({ \n\
-    selector: "my-app", \n\
-    template: `\n\
-#= template #\n\
-    `\n\
-}) \n\
-\n\
-class AppComponent { \n\
-}');
-
 function openInPlunkr(listing) {
     var ts = listing['ts'];
     var template = listing['ng-template'];
     var html = listing['html'];
 
     if (!ts) {
-        ts = tsFromTemplate({ template: template });
+        ts = wrapAngularTemplate(template);
     }
 
     if (!plunkrDirectives.length) {
