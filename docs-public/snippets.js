@@ -653,9 +653,10 @@ function toSystemJsPackage(dir) {
 }
 
 function prefixStyleUrls(content, prefix) {
+  // prefix styleUrl paths with the given string
   return content.replace(
-    /styles\.component\.css/g,
-    prefix + "styles.component.css"
+    /("|')([a-z0-9\.-]+\.css)\1/g,
+    "$1" + prefix + "$2$1"
   );
 }
 
