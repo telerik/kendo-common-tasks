@@ -250,7 +250,7 @@ var angularTemplate = kendo.template(
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
         my-app { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
         my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
-        .example-wrapper { min-height: 280px; }\
+        .example-wrapper { min-height: 280px; align-content: flex-start; }\
         .example-wrapper p, .example-col p { margin: 20px 0 10px; }\
         .example-wrapper p:first-child, .example-col p:first-child { margin-top: 0; }\
         .example-col { display: inline-block; vertical-align: top; padding-right: 20px; padding-bottom: 20px; }\
