@@ -341,38 +341,63 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         app.use('/', serveIndex('docs', { 'icons': true }));
         app.use('/', express.static('docs/'));
 
-        function processPlugins(content) {
-            // embed_file plugin for node, to allow multi-file examples in gulp docs
-            const encode = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
-            const escapeHtml = (str) => str.replace(/[&<>]/g, (char) => encode[char]);
-
-            return content.replace(/{%\s*embed_file\s+([^%]+)%}/g, function(_, options) {
-                const params = options.split(' ');
-                const filepath = path.join("docs", "examples", params[0]);
-                let exists = false;
-
-                try {
-                    fs.accessSync(filepath, fs.F_OK);
-                    exists = true;
-                } catch (e) {
-                    exists = false;
+        const constant = (x) => () => x;
+        const meta = (_, options) => {
+            const opts = options.split(' ').reduce((hash, tuple) => {
+                const [ key, value ] = tuple.split(':');
+                if (key) {
+                    hash[key] = value;
                 }
+                return hash;
+            }, {});
 
-                if (!exists) {
-                    console.warn(`Demo file ${filepath} not found.`); // eslint-disable-line no-console
-                    return "";
-                }
+            const attr = Object.keys(opts).map(
+                (key) => `data-${key}='${opts[key]}'`
+            );
 
-                const basename = path.basename(filepath);
-                const hidden = params.some(p => p === "hidden");
-                const preview = params.some(p => p === "preview");
-                const content = escapeHtml(fs.readFileSync(filepath, 'utf-8'));
-                return `
+            if (opts.hasOwnProperty('height')) {
+                attr.push(`style='height: ${Number(opts['height']) + 50}px'`);
+            }
+
+            return `<div ${attr.join(' ')}>`;
+        };
+        const encode = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+        const escapeHtml = (str) => str.replace(/[&<>]/g, (char) => encode[char]);
+        const exists = (file) => {
+            try {
+                fs.accessSync(file, fs.F_OK);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        };
+        const embedFile = (_, options) => {
+            const params = options.split(' ');
+            const filepath = path.join("docs", "examples", params[0]);
+
+            if (!exists(filepath)) {
+                console.warn(`Demo file ${filepath} not found.`); // eslint-disable-line no-console
+                return "";
+            }
+
+            const basename = path.basename(filepath);
+            const hidden = params.some(p => p === "hidden");
+            const preview = params.some(p => p === "preview");
+            const content = escapeHtml(fs.readFileSync(filepath, 'utf-8'));
+            return `
 <pre data-file='${basename}' ${hidden ? "data-hidden='true'" : "" }>
 <code class='language-ts-multiple${preview ? "-preview" : "" }'>${content}</code>
 </pre>`;
+        };
+
+        const processPlugins = (content, plugins) => {
+            let result = content;
+            plugins.forEach((plugin) => {
+                const pluginRe = new RegExp(`{%\\s*${plugin.name}\\s*([^%]+)?\\s*%}`, 'g');
+                result = result.replace(pluginRe, plugin.process);
             });
-        }
+            return result;
+        };
 
         app.use(mds.middleware({
             rootDirectory: 'docs',
@@ -380,7 +405,11 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
             preParse: function(markdownFile) {
                 let content = markdownFile.parseContent();
 
-                content = processPlugins(content);
+                content = processPlugins(content, [
+                  { name: "embed_file", process: embedFile },
+                  { name: "meta", process: meta },
+                  { name: "endmeta", process: constant("</div>") }
+                ]);
 
                 return {
                     scriptSrc: `js/${libraryName}.js`,
