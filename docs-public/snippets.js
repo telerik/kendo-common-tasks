@@ -248,7 +248,6 @@ function registerDirectives(moduleDirectives) {
 }
 
 var moduleDirectives = registerDirectives(window.moduleDirectives || []);
-var plunkrDirectives = [];
 
 var htmlTemplate = kendo.template(
 '<!doctype html>\
@@ -361,20 +360,24 @@ function getFullContent(listing) {
     return listing['ts'];
 }
 
-function analyzeDirectives(code) {
-    var directives = directivesByModule.filter(function(directive) {
-        var match = (new RegExp(directive.match)).exec(code);
-
-        if (match) {
-            return true;
-        }
+function usedDirectives(code) {
+    return directivesByModule.filter(function(directive) {
+        return (new RegExp(directive.match)).test(code);
     }).filter(Boolean);
+}
 
-    window.plunkrDirectives = directives.filter(function(item) {
+function plunkrDirectives(code) {
+    var directives = usedDirectives(code);
+
+    return directives.filter(function(item) {
         if (/Module$/.test(item.import)) {
             return true;
         }
     });
+}
+
+function analyzeDirectives(code) {
+    var directives = usedDirectives(code);
 
     return directives.map(function(directive) {
         return {
@@ -701,18 +704,16 @@ function openInPlunkr(listing) {
         ts = wrapAngularTemplate(template);
     }
 
-    if (!plunkrDirectives.length) {
-        analyzeDirectives(getFullContent(listing));
-    }
+    var directives = plunkrDirectives(getFullContent(listing));
 
-    plunkrContext = {
+    var plunkrContext = {
         appComponentContent: ts,
         npmUrl: $("<a />").attr("href", npmUrl)[0].href + "/",
         htmlContent: html,
 
-        appModuleImports:   $.map(plunkrDirectives, toModuleImport).join("\n"),
-        appModules:         $.map(plunkrDirectives, function(dir) { return dir.import }).join(", "),
-        systemjsPackages:   $.map(plunkrDirectives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsPackage).join("\n")
+        appModuleImports:   $.map(directives, toModuleImport).join("\n"),
+        appModules:         $.map(directives, function(dir) { return dir.import }).join(", "),
+        systemjsPackages:   $.map(directives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsPackage).join("\n")
     };
 
     var form = new EditorForm('http://plnkr.co/edit/?p=preview');
@@ -1010,8 +1011,6 @@ $(function() {
                 content: codeToString(removeJsTrackingMarks(code))
             };
       });
-
-      analyzeDirectives(filesContent);
 
       var content = angularTemplate({
           npmUrl: window.npmUrl,
