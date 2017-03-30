@@ -199,6 +199,28 @@ function reactPage(html, jsx) {
     });
 }
 
+var groupExtractor = /^\((.*?)\)$/g;
+function extractRules(value) {
+    var result = (value || "").match(groupExtractor);
+
+    if (!result) {
+        return value;
+    }
+
+    return result
+            .map(function(m) {
+                var result = groupExtractor.exec(m);
+                return result ? result[1] : "";
+            });
+};
+
+function concatMatchers(current, additional) {
+    var currentRules = extractRules(current);
+    var additionalRules = extractRules(additional);
+
+    return '(' + currentRules.concat(additionalRules).join('|') + ')';
+}
+
 function registerDirectives(moduleDirectives) {
     var directives = [];
 
@@ -206,7 +228,13 @@ function registerDirectives(moduleDirectives) {
         var filtered = false;
 
         directives.forEach(function(uniqueDirective) {
-            if(current.module === uniqueDirective.module) {
+            if (current.module === uniqueDirective.module) {
+                uniqueDirective.import = uniqueDirective.import || current.import;
+
+                if (current.match) {
+                    uniqueDirective.match = concatMatchers(uniqueDirective.match, current.match);
+                }
+
                 filtered = true;
             }
         });
