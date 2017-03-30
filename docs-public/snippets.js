@@ -204,7 +204,7 @@ function extractRules(value) {
     var result = (value || "").match(groupExtractor);
 
     if (!result) {
-        return value;
+        return value ? [value] : [];
     }
 
     return result
