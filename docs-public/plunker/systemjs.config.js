@@ -45,7 +45,7 @@
       'hammerjs':                   'npm:hammerjs@2',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
       'ts':                         'npm:plugin-typescript@7/lib/plugin.js',
-      'typescript':                 'npm:typescript@2.1/lib/typescript.js'
+      'typescript':                 'npm:typescript@2.2/lib/typescript.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {

@@ -25,7 +25,7 @@ var ExampleRunner = (function() {
                 'rxjs':                       'https://unpkg.com/rxjs@5',
                 'hammerjs':                   'https://unpkg.com/hammerjs@2',
                 'ts':                         'https://unpkg.com/plugin-typescript@7/lib/plugin.js',
-                'typescript':                 'https://unpkg.com/typescript@2.1/lib/typescript.js',
+                'typescript':                 'https://unpkg.com/typescript@2.2/lib/typescript.js',
             };
 
             var packages = {
