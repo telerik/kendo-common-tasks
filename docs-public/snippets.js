@@ -338,7 +338,8 @@ var directivesByModule = [
     { module: '@angular/core', match: '@(Component)', import: "Component" },
     { module: '@angular/forms', match: 'ngModel', import: "FormsModule" },
     { module: '@angular/http', match: 'Http', import: "HttpModule" },
-    { module: '@angular/platform-browser', match: '.', import: "BrowserModule" }
+    { module: '@angular/platform-browser', match: '.', import: "BrowserModule" },
+    { module: '@angular/platform-browser/animations', match: '.', import: "BrowserAnimationsModule" }
 ].concat(moduleDirectives);
 
 // replaces code characters to allow embedding in a js double-quote string ("")
