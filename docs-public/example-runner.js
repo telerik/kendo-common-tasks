@@ -69,12 +69,14 @@ var ExampleRunner = (function() {
             });
 
             // Add package entries for angular packages
-            ngPackageNames.concat(['forms']).forEach(function(pkgName) {
+            ngPackageNames.concat(['forms', 'animations']).forEach(function(pkgName) {
                 packages['@angular/'+pkgName] = { main: '/bundles/' + pkgName + '.umd.js' };
             });
 
             // Explicitly add the http/testing package. Required for MockBackend
             map['@angular/http/testing'] = 'https://unpkg.com/@angular/http' + ngVer + '/bundles/http-testing.umd.js';
+            map['@angular/platform-browser/animations'] = 'https://unpkg.com/@angular/platform-browser' + ngVer + '/bundles/platform-browser-animations.umd.js';
+            map['@angular/animations/browser'] = 'https://unpkg.com/@angular/animations' + ngVer + '/bundles/animations-browser.umd.js';
 
             modules.forEach(function(directive) {
                 packages[directive.module] = {
