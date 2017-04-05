@@ -69,7 +69,7 @@
         defaultExtension: 'js'
       },
       '@progress/kendo-drawing': {
-        main: 'dist/es/main.js',
+        main: 'dist/cdn/js/kendo-drawing.js',
         defaultExtension: 'js'
       },
       '@progress/kendo-file-saver': {
