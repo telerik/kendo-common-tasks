@@ -24,7 +24,7 @@ var ExampleRunner = (function() {
                 'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
                 'rxjs':                       'https://unpkg.com/rxjs@5',
                 'hammerjs':                   'https://unpkg.com/hammerjs@2',
-                'ts':                         'https://unpkg.com/plugin-typescript@7/lib/plugin.js',
+                'ts':                         'https://unpkg.com/plugin-typescript@5/lib/plugin.js',
                 'typescript':                 'https://unpkg.com/typescript@2.2/lib/typescript.js',
             };
 
