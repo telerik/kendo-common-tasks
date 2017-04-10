@@ -94,6 +94,10 @@ a code {
   letter-spacing: 0.02em;
 }
 
+[data-height] .file-list {
+  height: calc(100% - 64px);
+}
+
 .file-list {
   margin-bottom: 16px;
   padding: 16px 32px;
