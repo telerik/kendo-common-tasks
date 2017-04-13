@@ -656,6 +656,14 @@ var plunkerFiles = basicPlunkerFiles.concat([
     'app/app.module.ts',
 ]);
 
+var systemJsDefaultKendoPackages = [
+    { module: '@progress/kendo-data-query', main: 'dist/cdn/js/kendo-data-query.js' },
+    { module: '@progress/kendo-drawing', main: 'dist/es/main.js' },
+    { module: '@progress/kendo-file-saver', main: 'dist/npm/main.js' },
+    { module: '@progress/kendo-angular-intl', main: 'dist/cdn/js/kendo-angular-intl.js' },
+    { module: '@progress/kendo-angular-l10n', main: 'dist/cdn/js/kendo-angular-l10n.js' }
+];
+
 function getPlunkerFile(file) {
     return $.ajax(plunkerBluePrintPath + file, { dataType: 'text' });
 }
@@ -687,6 +695,12 @@ function toSystemJsPackage(dir) {
     return key + ": " + contents + ",";
 }
 
+function isUniquePackage(value, index, arr) {
+    return arr.findIndex(function(current) {
+        return current.module === value.module;
+    }) === index;
+}
+
 function prefixStyleUrls(content, prefix) {
   // prefix styleUrl paths with the given string
   return content.replace(
@@ -713,7 +727,9 @@ function openInPlunkr(listing) {
 
         appModuleImports:   $.map(directives, toModuleImport).join("\n"),
         appModules:         $.map(directives, function(dir) { return dir.import }).join(", "),
-        systemjsPackages:   $.map(directives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 }), toSystemJsPackage).join("\n")
+        systemjsPackages:   $.map(directives.filter(function(dir) { return dir.module.indexOf('@angular') != 0 })
+                                            .concat(systemJsDefaultKendoPackages)
+                                            .filter(isUniquePackage), toSystemJsPackage).join("\n" + Array(7).join(" "))
     };
 
     var form = new EditorForm('http://plnkr.co/edit/?p=preview');
