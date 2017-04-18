@@ -696,9 +696,11 @@ function toSystemJsPackage(dir) {
 }
 
 function isUniquePackage(value, index, arr) {
-    return arr.findIndex(function(current) {
-        return current.module === value.module;
-    }) === index;
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i].module === value.module) {
+            return i === index;
+        }
+    }
 }
 
 function prefixStyleUrls(content, prefix) {
