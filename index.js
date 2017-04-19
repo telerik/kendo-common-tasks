@@ -289,7 +289,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
             const packageInfo = require(path.join(process.cwd(), 'package.json'));
 
             const config = _.assign({}, webpackConfig.dev);
-            config.resolve = Object.assign({}, config.resolve, { alias: { [packageInfo.name]: process.cwd() + '/src/main' } });
+            config.resolve = Object.assign({}, config.resolve, { alias: { [packageInfo.name]: process.cwd() + '/src/main' }, fallback: path.join(process.cwd(), 'node_modules') });
 
             const server = new WebpackDevServer(webpack(config), {
                 contentBase: './',
