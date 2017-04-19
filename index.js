@@ -107,7 +107,7 @@ const addHMR = (path) =>
 
 exports.resolveConfig = ( extensions, nodeModulesPath ) => ({
     extensions: [ '', '.js' ].concat(extensions, [ '.scss' ]),
-    fallback: [ nodeModulesPath, path.join(__dirname, 'node_modules') ]
+    fallback: [ nodeModulesPath, path.join(__dirname, 'node_modules'), path.join(process.cwd(), 'node_modules') ]
 });
 
 exports.inlineSassLoader = {
