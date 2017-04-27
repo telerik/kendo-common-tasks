@@ -28,6 +28,17 @@ function verifyModules(index, done) {
         });
     });
 
+    md.on('error', function(err) {
+        const error = new Error(`
+            NPM package check failed.
+            Maybe you are missing a peerDependency or have import statement with extension.
+            ===============================================================================
+            Original error: ${err}
+        `);
+
+        done(error);
+    });
+
     md.on('end', function() {
         const cycles = graphlib.alg.findCycles(g);
 
