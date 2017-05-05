@@ -475,7 +475,9 @@ exports.karmaConfig = function(config, webpackConfig, bundleFile) {
         autoWatch: true,
 
         browsers: browsers,
-
+        browserDisconnectTolerance: 5,
+        browserNoActivityTimeout: 30000,
+        retryLimit: 5,
         customLaunchers: {
             TravisCI: {
                 base: "Chrome",
