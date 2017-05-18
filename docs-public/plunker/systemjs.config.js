@@ -1,5 +1,5 @@
 (function (global) {
-  var angularVersion = '4.0.3';
+  var angularVersion = '4.1.2';
 
   System.config({
     // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
