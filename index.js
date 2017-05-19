@@ -12,14 +12,12 @@ const WebpackDevServer = require('webpack-dev-server');
 const webpackStream = require('webpack-stream');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 //BrowserSync will work only on first port
-const minPort = 8888;
-const maxPort = 9999;
+const listenAddress = process.env['LISTEN_ADDRESS'] || '0.0.0.0';
 const express = require('express');
 const mds = require('markdown-serve');
 const BrowserSync = require('browser-sync');
 const serveIndex = require('serve-index');
 const rewrite = require('express-urlrewrite');
-const portscanner = require('portscanner');
 const glob = require('glob');
 const $ = require('gulp-load-plugins')();
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -81,10 +79,10 @@ exports.resourceLoaders = resourceLoaders;
 exports.npmPackageSassLoader = exports.CDNSassLoader;
 
 exports.extractCssPlugin = () =>
-  new ExtractTextPlugin("[name].css");
+    new ExtractTextPlugin("[name].css");
 
 exports.uglifyJsPlugin = () =>
-  new webpack.optimize.UglifyJsPlugin();
+    new webpack.optimize.UglifyJsPlugin();
 
 // Used in [].reduce below, to convert each script entry in
 // the examples directory to webpack entry object with HMR scripts injected
@@ -95,7 +93,7 @@ exports.uglifyJsPlugin = () =>
 const addHMRCallback = (entries, name) => {
     entries[path.basename(name).replace(/\.(ts|jsx)$/, '')] = [
         "webpack/hot/dev-server",
-        `webpack-dev-server/client?http://0.0.0.0:` + minPort,
+        `webpack-dev-server/client?http://` + listenAddress + `:8888`,
         `./${name}`
     ];
 
@@ -103,7 +101,7 @@ const addHMRCallback = (entries, name) => {
 };
 
 const addHMR = (path) =>
-  glob.sync(path).reduce(addHMRCallback, {});
+    glob.sync(path).reduce(addHMRCallback, {});
 
 exports.resolveConfig = ( extensions, nodeModulesPath ) => ({
     extensions: [ '', '.js' ].concat(extensions, [ '.scss' ]),
@@ -174,9 +172,9 @@ exports.webpackDevConfig = (config) => webpackThemeConfig({
             // BrowserSync options
             {
                 open: false,
-                host: '0.0.0.0',
+                host: listenAddress,
                 port: 3000,
-                proxy: 'http://0.0.0.0:' + minPort + '/'
+                proxy: 'http://' + listenAddress + ':8888/'
             },
             // plugin options
             {
@@ -210,21 +208,7 @@ exports.startKarma = (done, confPath, singleRun) => (
 function ucfirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-function findPort(min, max, callBack) {
-    portscanner.findAPortNotInUse(min, max, '127.0.0.1', (error, port) =>{
-        if (error) {
-            throw Error(error);
-        }
-        if (port === false) {
-            throw Error('Port not available');
-        }
-        console.info('AVAILABLE PORT AT: ' + port); // eslint-disable-line no-console
 
-        fs.writeFileSync('.port', port, 'utf8');
-
-        callBack(port);
-    });
-}
 exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, ucfirst)(libraryName);
 
@@ -232,26 +216,26 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         const config = _.assign({}, webpackConfig.npmPackage);
 
         const srcStream = gulp.src(srcGlob)
-                .pipe(named(function(file) {
-                    const thePath = file.path;
-                    const relativeDir = path.relative(file.base, path.dirname(thePath));
-                    const fileName = path.basename(thePath, path.extname(thePath));
-                    return path.join(SRC, relativeDir, fileName);
-                }))
-                .pipe(webpackStream(config))
-                .pipe($.rename((thePath) => {
-                    if (thePath.extname === '.css') {
-                        thePath.dirname = 'css';
-                        thePath.basename = 'main';
-                    } else {
-                        thePath.dirname = path.join('js', path.relative(SRC, thePath.dirname));
-                    }
-                }));
+            .pipe(named(function(file) {
+                const thePath = file.path;
+                const relativeDir = path.relative(file.base, path.dirname(thePath));
+                const fileName = path.basename(thePath, path.extname(thePath));
+                return path.join(SRC, relativeDir, fileName);
+            }))
+            .pipe(webpackStream(config))
+            .pipe($.rename((thePath) => {
+                if (thePath.extname === '.css') {
+                    thePath.dirname = 'css';
+                    thePath.basename = 'main';
+                } else {
+                    thePath.dirname = path.join('js', path.relative(SRC, thePath.dirname));
+                }
+            }));
 
         const dtsStream = gulp.src(_.compact(_.concat([], dtsGlob)))
-                .pipe($.rename((thePath) =>
-                    thePath.dirname = path.join('js', thePath.dirname)
-                ));
+            .pipe($.rename((thePath) =>
+                thePath.dirname = path.join('js', thePath.dirname)
+            ));
 
         return merge(srcStream, dtsStream).pipe(gulp.dest('dist/npm'));
     });
@@ -272,39 +256,37 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         config.output.library = libraryClassName;
 
         return gulp.src('src/main' + SRC_EXT_GLOB)
-                   .pipe(webpackStream(config))
-                   .pipe($.rename((path) => {
-                       var dirname = path.extname.replace('.', '');
-                       path.basename = libraryName;
-                       path.dirname = dirname;
-                   }))
-                   .pipe(gulp.dest('dist/cdn'));
+            .pipe(webpackStream(config))
+            .pipe($.rename((path) => {
+                var dirname = path.extname.replace('.', '');
+                path.basename = libraryName;
+                path.dirname = dirname;
+            }))
+            .pipe(gulp.dest('dist/cdn'));
     });
 
     gulp.task("start", callback => {
-        findPort(minPort, maxPort, function(port) {
-            const webpackPort = port;
-            const host = '0.0.0.0';
+        const webpackPort = 8888;
+        const host = listenAddress;
 
-            const packageInfo = require(path.join(process.cwd(), 'package.json'));
+        const packageInfo = require(path.join(process.cwd(), 'package.json'));
 
-            const config = _.assign({}, webpackConfig.dev);
-            config.resolve = Object.assign({}, config.resolve, { alias: { [packageInfo.name]: process.cwd() + '/src/main' }, fallback: path.join(process.cwd(), 'node_modules') });
+        const config = _.assign({}, webpackConfig.dev);
+        config.resolve = Object.assign({}, config.resolve, { alias: { [packageInfo.name]: process.cwd() + '/src/main' }, fallback: path.join(process.cwd(), 'node_modules') });
 
-            const server = new WebpackDevServer(webpack(config), {
-                contentBase: './',
-                hot: true,
-                noInfo: true,
-                stats: { colors: true },
-                disableHostCheck: true
-            });
+        const server = new WebpackDevServer(webpack(config), {
+            contentBase: './',
+            hot: true,
+            noInfo: true,
+            stats: { colors: true },
+            disableHostCheck: true
+        });
 
-            server.listen(webpackPort, host, err => {
-                if (err) {
-                    callback();
-                    throw new $.util.PluginError('webpack-dev-server', err);
-                }
-            });
+        server.listen(webpackPort, host, err => {
+            if (err) {
+                callback();
+                throw new $.util.PluginError('webpack-dev-server', err);
+            }
         });
     });
 
@@ -312,10 +294,10 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
         const isFixed = (file) => file.eslint != null && file.eslint.fixed;
 
         return gulp.src([ srcGlob, 'test' ])
-                   .pipe($.eslint({ fix: argv.fix }))
-                   .pipe($.eslint.format())
-                   .pipe($.if(isFixed, gulp.dest(".")))
-                   .pipe($.eslint.failAfterError());
+            .pipe($.eslint({ fix: argv.fix }))
+            .pipe($.eslint.format())
+            .pipe($.if(isFixed, gulp.dest(".")))
+            .pipe($.eslint.failAfterError());
     });
 
     gulp.task('docs', [ 'build-cdn', 'build-npm-package' ], (done) => {
@@ -407,9 +389,9 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
                 let content = markdownFile.parseContent();
 
                 content = processPlugins(content, [
-                  { name: "embed_file", process: embedFile },
-                  { name: "meta", process: meta },
-                  { name: "endmeta", process: constant("</div>") }
+                    { name: "embed_file", process: embedFile },
+                    { name: "meta", process: meta },
+                    { name: "endmeta", process: constant("</div>") }
                 ]);
 
                 return {
