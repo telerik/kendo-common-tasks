@@ -58,7 +58,6 @@
     "module-deps": "4.0.7",
     "node-sass": "^3.4.2",
     "phantomjs-prebuilt": "<=2.1.13",
-    "portscanner": "^2.1.1",
     "postcss-loader": "^0.8.2",
     "resolve-url-loader": "^1.5.0",
     "sass-loader": "^3.1.2",
