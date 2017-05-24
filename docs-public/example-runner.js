@@ -22,10 +22,10 @@ var ExampleRunner = (function() {
                 'cldr-data':                  npmUrl + '/cldr-data',
                 '@angular':                   'https://unpkg.com/@angular', // sufficient if we didn't pin the version
                 'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
-                'rxjs':                       'https://unpkg.com/rxjs@5',
-                'hammerjs':                   'https://unpkg.com/hammerjs@2',
-                'ts':                         'https://unpkg.com/plugin-typescript@5/lib/plugin.js',
-                'typescript':                 'https://unpkg.com/typescript@2.2/lib/typescript.js',
+                'rxjs':                       'https://unpkg.com/rxjs@5.4.0',
+                'hammerjs':                   'https://unpkg.com/hammerjs@2.0.8',
+                'ts':                         'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
+                'typescript':                 'https://unpkg.com/typescript@2.2.2/lib/typescript.js',
             };
 
             var packages = {

@@ -287,10 +287,10 @@ var angularTemplate = kendo.template(
         .event-log li:last-child { margin-bottom: -1px;}\
     </style>\
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
-    <script src="https://unpkg.com/zone.js@0.8/dist/zone.js"></script>\
+    <script src="https://unpkg.com/zone.js@0.8.11/dist/zone.js"></script>\
     <script src="https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"></script>\
-    <script src="https://unpkg.com/systemjs@0.19/dist/system.js"></script>\
-    <script src="https://unpkg.com/typescript@2.2/lib/typescript.js"></script>\
+    <script src="https://unpkg.com/systemjs@0.19.27/dist/system.js"></script>\
+    <script src="https://unpkg.com/typescript@2.2.2/lib/typescript.js"></script>\
     <script src="#: data.exampleRunner #"></script>\
     <script>\
         var runner = new ExampleRunner();\
