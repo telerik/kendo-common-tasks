@@ -290,7 +290,7 @@ var angularTemplate = kendo.template(
     <script src="https://unpkg.com/zone.js@0.8.11/dist/zone.js"></script>\
     <script src="https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"></script>\
     <script src="https://unpkg.com/systemjs@0.19.27/dist/system.js"></script>\
-    <script src="https://unpkg.com/typescript@2.2.2/lib/typescript.js"></script>\
+    <script src="https://unpkg.com/typescript@2.3.2/lib/typescript.js"></script>\
     <script src="#: data.exampleRunner #"></script>\
     <script>\
         var runner = new ExampleRunner();\

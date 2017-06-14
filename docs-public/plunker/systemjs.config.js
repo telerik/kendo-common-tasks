@@ -1,5 +1,5 @@
 (function (global) {
-  var angularVersion = '4.1.2';
+  var angularVersion = '4.2.2';
 
   System.config({
     // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
@@ -47,7 +47,7 @@
       'hammerjs':                   'npm:hammerjs@2.0.8',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
       'ts':                         'npm:plugin-typescript@5.3.3/lib/plugin.js',
-      'typescript':                 'npm:typescript@2.2.2/lib/typescript.js'
+      'typescript':                 'npm:typescript@2.3.2/lib/typescript.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {

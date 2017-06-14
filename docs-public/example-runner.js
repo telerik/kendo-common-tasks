@@ -11,7 +11,7 @@ var ExampleRunner = (function() {
         // and cdn versions of angular / rxjs
         configure: function(system, npmUrl, modules, trackjs) {
 
-            var ngVer = '@4.1.2'; // lock in the angular package version; do not let it float to current!
+            var ngVer = '@4.2.2'; // lock in the angular package version; do not let it float to current!
 
             //map tells the System loader where to look for things
             var map = {
@@ -25,7 +25,7 @@ var ExampleRunner = (function() {
                 'rxjs':                       'https://unpkg.com/rxjs@5.4.0',
                 'hammerjs':                   'https://unpkg.com/hammerjs@2.0.8',
                 'ts':                         'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
-                'typescript':                 'https://unpkg.com/typescript@2.2.2/lib/typescript.js',
+                'typescript':                 'https://unpkg.com/typescript@2.3.2/lib/typescript.js',
             };
 
             var packages = {
