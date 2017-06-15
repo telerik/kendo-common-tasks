@@ -276,7 +276,7 @@ var angularTemplate = kendo.template(
         html, body { overflow: hidden; }\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
         my-app { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
-        my-app > .k-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
+        my-app > .k-icon.k-i-loading { font-size: 64px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
         .example-wrapper { min-height: 280px; align-content: flex-start; }\
         .example-wrapper p, .example-col p { margin: 20px 0 10px; }\
         .example-wrapper p:first-child, .example-col p:first-child { margin-top: 0; }\
@@ -303,15 +303,7 @@ var angularTemplate = kendo.template(
 <body>\
     #= data.html #\
     <my-app>\
-        <span class="k-loading">\
-            <svg width="64px" height="64px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">\
-                 <rect x="0" y="0" width="100" height="100" fill="none"></rect>\
-                 <circle cx="50" cy="50" r="40" stroke="none" fill="none" stroke-width="10" stroke-linecap="round"></circle>\
-                 <circle class="animate" cx="50" cy="50" r="40" \
-                         stroke="#: data.theme == "bootstrap" ? "\\#0275d8" : "\\#ff6358" #"\
-                         fill="none" stroke-width="6" stroke-linecap="round"></circle>\
-            </svg>\
-        </span>\
+        <span class="k-icon k-i-loading" style="color: \\##: data.theme == "bootstrap" ? "0275d8" : "ff6358" #"></span>\
     </my-app>\
 </body>\
 </html>\
