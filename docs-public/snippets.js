@@ -645,9 +645,7 @@ function openInFiddle(jsx, html) {
 }
 
 var basicPlunkerFiles = [
-    'index.html',
-    'systemjs.config.js',
-    'tsconfig.json'
+    'index.html'
 ];
 
 var plunkerFiles = basicPlunkerFiles.concat([
@@ -748,6 +746,15 @@ function openInPlunkr(listing) {
         });
     }
 
+    function ensureOrigin(url) {
+        var prefix = (/^[a-z]:\/\//i).test(url) ? '' : window.location.origin;
+        prefix += (/^\//).test(url) ? '' : '/';
+        return prefix + url;
+    }
+
+    var config = new ExampleRunner().systemjsConfig(ensureOrigin(window.npmUrl), moduleDirectives);
+    form.addField('files[systemjs.config.js]', 'System.config(' + JSON.stringify(config, null, 2) +');');
+
     $.when.apply($, plunkerRequests).then(function() {
         $.each(arguments, function(index, arr) {
             if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
@@ -756,7 +763,7 @@ function openInPlunkr(listing) {
         })
 
         form.submit();
-    })
+    });
 }
 
 $(function() {

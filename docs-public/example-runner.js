@@ -7,15 +7,38 @@ var ExampleRunner = (function() {
 
     function ExampleRunner() {}
     ExampleRunner.prototype = {
-        // configures SystemJS to run with modules cloned to /npm
+        // returns the runner SystemJS configuration
+        // runs with modules cloned to /npm
         // and cdn versions of angular / rxjs
-        configure: function(system, npmUrl, modules, trackjs) {
-
+        systemjsConfig: function(npmUrl, modules, trackjs) {
             var ngVer = '@4.2.2'; // lock in the angular package version; do not let it float to current!
 
-            //map tells the System loader where to look for things
+            var config = {
+              transpiler: 'ts',
+              typescriptOptions: {
+                target: 'es5',
+                module: 'commonjs',
+                moduleResolution: 'node',
+                sourceMap: true,
+                emitDecoratorMetadata: true,
+                experimentalDecorators: true,
+                removeComments: false,
+                noImplicitAny: true,
+                suppressImplicitAnyIndexErrors: true
+              },
+              meta: {
+                'typescript': {
+                  'exports': 'ts'
+                },
+                '*.json': {
+                  loader: 'systemjs-json-plugin'
+                }
+              }
+            };
+
+            // map tells the System loader where to look for things
             var map = {
-                'app':                        '/demos-src',
+                'app':                        'app',
                 'systemjs-json-plugin':       'npm:systemjs-plugin-json',
                 '@telerik':                   npmUrl + '/@telerik',
                 '@progress':                  npmUrl + '/@progress',
@@ -25,7 +48,12 @@ var ExampleRunner = (function() {
                 'rxjs':                       'https://unpkg.com/rxjs@5.4.0',
                 'hammerjs':                   'https://unpkg.com/hammerjs@2.0.8',
                 'ts':                         'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
-                'typescript':                 'https://unpkg.com/typescript@2.3.2/lib/typescript.js',
+                'typescript':                 'https://unpkg.com/typescript@2.3.4/lib/typescript.js',
+
+                // explicitly add subpackages
+                '@angular/http/testing':                'https://unpkg.com/@angular/http' + ngVer + '/bundles/http-testing.umd.js',
+                '@angular/platform-browser/animations': 'https://unpkg.com/@angular/platform-browser' + ngVer + '/bundles/platform-browser-animations.umd.js',
+                '@angular/animations/browser':          'https://unpkg.com/@angular/animations' + ngVer + '/bundles/animations-browser.umd.js'
             };
 
             var packages = {
@@ -41,14 +69,14 @@ var ExampleRunner = (function() {
                 }
             };
 
-            var paths = {};
-
-            if(trackjs) {
+            if (trackjs) {
                 packages['raven-js'] = {
                     main: 'dist/raven.js'
                 };
 
-                paths['raven-js'] = npmUrl + "/raven-js";
+                config.paths = {
+                  'raven-js': npmUrl + "/raven-js"
+                };
             }
 
             var ngPackageNames = [
@@ -59,7 +87,7 @@ var ExampleRunner = (function() {
                 'http',
                 'platform-browser',
                 'platform-browser-dynamic',
-                'upgrade',
+                'upgrade'
             ];
 
             // Add map entries for each angular package
@@ -73,11 +101,6 @@ var ExampleRunner = (function() {
                 packages['@angular/'+pkgName] = { main: '/bundles/' + pkgName + '.umd.js' };
             });
 
-            // Explicitly add the http/testing package. Required for MockBackend
-            map['@angular/http/testing'] = 'https://unpkg.com/@angular/http' + ngVer + '/bundles/http-testing.umd.js';
-            map['@angular/platform-browser/animations'] = 'https://unpkg.com/@angular/platform-browser' + ngVer + '/bundles/platform-browser-animations.umd.js';
-            map['@angular/animations/browser'] = 'https://unpkg.com/@angular/animations' + ngVer + '/bundles/animations-browser.umd.js';
-
             modules.forEach(function(directive) {
                 packages[directive.module] = {
                     main: directive.main || 'dist/npm/js/main.js',
@@ -85,21 +108,14 @@ var ExampleRunner = (function() {
                 };
             });
 
-            system.config({
-                paths: paths,
-                transpiler: 'typescript',
-                typescriptOptions: {
-                    diagnostics: true,
-                    emitDecoratorMetadata: true
-                },
-                meta: {
-                  '*.json': {
-                    loader: 'systemjs-json-plugin'
-                  }
-                },
-                map: map,
-                packages: packages
-            });
+            config.map = map;
+            config.packages = packages;
+
+            return config;
+        },
+
+        configure: function(system, npmUrl, modules, trackjs) {
+            system.config(this.systemjsConfig(npmUrl, modules, trackjs));
 
             // allow mocking of files via custom fetch function
             this.files = {};
@@ -124,7 +140,7 @@ var ExampleRunner = (function() {
             };
         },
         register: function(filename, content) {
-            this.files['demos-src/' + filename] = content;
+          this.files['app/' + filename] = content;
         },
         start: function(system) {
             system.import('app').catch(console.error.bind(console));
