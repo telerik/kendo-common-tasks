@@ -397,12 +397,12 @@ function missingImports(code, directives) {
 
 function jsTrackingCode() {
     return [
-        "import Raven = require('raven-js');",
+        "import * as Raven from 'raven-js';",
         "import { ErrorHandler } from '@angular/core';",
-        "Raven.default.config('https://e7cc5054385e4b4cb97bd7ea376c6174@sentry.io/112659').install();",
+        "Raven.config('https://e7cc5054385e4b4cb97bd7ea376c6174@sentry.io/112659').install();",
         "class RavenErrorHandler implements ErrorHandler {",
             "handleError(err:any) : void {",
-                "Raven.default.captureException(err.originalError || err);",
+                "Raven.captureException(err.originalError || err);",
             "}",
         "}"
     ].join("\n");
