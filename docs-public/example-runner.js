@@ -39,7 +39,7 @@ var ExampleRunner = (function() {
             // map tells the System loader where to look for things
             var map = {
                 'app':                        'app',
-                'systemjs-json-plugin':       'npm:systemjs-plugin-json',
+                'systemjs-json-plugin':       'https://unpkg.com/systemjs-plugin-json@0.3.0',
                 '@telerik':                   npmUrl + '/@telerik',
                 '@progress':                  npmUrl + '/@progress',
                 'cldr-data':                  npmUrl + '/cldr-data',
