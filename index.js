@@ -278,7 +278,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //e
             contentBase: './',
             hot: true,
             noInfo: true,
-            stats: { colors: true },
+            stats: { hash: false, version: false, timings: false, assets: false, chunks: false },
             disableHostCheck: true
         });
 
