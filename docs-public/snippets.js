@@ -303,7 +303,7 @@ var angularTemplate = kendo.template(
 <body>\
     #= data.html #\
     <my-app>\
-        <span class="k-icon k-i-loading" style="color: \\##: data.theme == "bootstrap" ? "0275d8" : "ff6358" #"></span>\
+        <span class="k-icon k-i-loading" style="color: #: themeAccent || "#ff6358" #"></span>\
     </my-app>\
 </body>\
 </html>\
@@ -445,6 +445,7 @@ function angularPage(opts) {
         npmUrl: window.npmUrl,
         exampleRunner: window.runnerScript,
         theme: 'default',
+        themeAccent: themeColors.default,
         html: '',
         track: false
     }, opts);
@@ -715,6 +716,8 @@ function openInPlunkr(listing) {
         appComponentContent: ts,
         npmUrl: $("<a />").attr("href", npmUrl)[0].href + "/",
         htmlContent: html,
+        theme: "default",
+        themeAccent: themeColors.default,
 
         appModuleImports:   $.map(directives, toModuleImport).join("\n"),
         appModules:         $.map(directives, function(dir) { return dir.import }).join(", "),
@@ -757,6 +760,11 @@ function openInPlunkr(listing) {
     });
 }
 
+var themeColors = {
+  default: "#ff6358",
+  bootstrap: "#0275d8"
+};
+
 $(function() {
   plunkerRequests = $.map(plunkerFiles, getPlunkerFile); // fetch the plunker templates
 
@@ -770,11 +778,13 @@ $(function() {
           },
           runnerContent: function(options) {
               var listing = options.listing;
+              var theme = options.theme || 'default';
 
               return angularPage({
                   ts: listing['ts'] || listing['ng-template'],
                   html: listing['html'],
-                  theme: options.theme,
+                  theme: theme,
+                  themeAccent: themeColors[options.theme],
                   track: options.track
               });
           }
@@ -1028,11 +1038,13 @@ $(function() {
             };
       });
 
+      var theme = element.closest("[data-theme]").attr("data-theme") || 'default';
       var content = angularTemplate({
           npmUrl: window.npmUrl,
           exampleRunner: window.runnerScript,
           html: "",
-          theme: element.closest("[data-theme]").attr("data-theme") || 'default',
+          theme: theme,
+          themeAccent: themeColors[theme],
           files: files,
           track: window.trackjs
       });
