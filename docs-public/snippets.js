@@ -303,7 +303,7 @@ var angularTemplate = kendo.template(
 <body>\
     #= data.html #\
     <my-app>\
-        <span class="k-icon k-i-loading" style="color: #: themeAccent || "#ff6358" #"></span>\
+        <span class="k-icon k-i-loading" style="color: #: data.themeAccent || "\\#ff6358" #"></span>\
     </my-app>\
 </body>\
 </html>\
