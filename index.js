@@ -35,7 +35,7 @@ const verifyModules = require('./verify-modules');
 const jsonLoaderPath = require.resolve('json-loader');
 
 const SRC = "src";
-const SRC_EXT_GLOB = ".{jsx,ts,js}";
+const SRC_EXT_GLOB = ".{jsx,ts,tsx,js}";
 
 exports.webpack = webpack;
 exports.webpackStream = webpackStream;
@@ -191,11 +191,11 @@ exports.webpackDevConfig = (config) => webpackThemeConfig({
     }
 });
 
-exports.startKarma = (done, confPath, singleRun) => (
-    new KarmaServer({
+exports.startKarma = (done, confPath, singleRun, configOverride) => (
+    new KarmaServer(Object.assign({
         singleRun: singleRun,
         configFile: confPath
-    }, function(exitStatus) {
+    }, configOverride || {}), function(exitStatus) {
         if (exitStatus !== 0) {
             done("specs failed");
         } else {
