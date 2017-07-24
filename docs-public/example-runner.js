@@ -68,6 +68,10 @@ var ExampleRunner = (function() {
                 },
                 'chroma-js': {
                     defaultExtension: 'js'
+                },
+                pako: {
+                    defaultExtension: 'js',
+                    main: './index.js'
                 }
             };
 
