@@ -91,7 +91,7 @@ exports.uglifyJsPlugin = () =>
 //  script2Name: [ script2.jsx, 'w/h/d-s', 'w-d-s/client' ]
 // }
 const addHMRCallback = (entries, name) => {
-    entries[path.basename(name).replace(/\.(ts|jsx)$/, '')] = [
+    entries[path.basename(name).replace(/\.(tsx?|jsx)$/, '')] = [
         "webpack/hot/dev-server",
         `webpack-dev-server/client?http://` + listenAddress + `:8888`,
         `./${name}`
