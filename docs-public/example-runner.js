@@ -45,7 +45,7 @@ var ExampleRunner = (function() {
                 'cldr-data':                  npmUrl + '/cldr-data',
                 '@angular':                   'https://unpkg.com/@angular', // sufficient if we didn't pin the version
                 'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
-                'rxjs':                       'https://unpkg.com/rxjs@5.4.0',
+                'rxjs':                       'https://unpkg.com/rxjs@5.4.3',
                 'hammerjs':                   'https://unpkg.com/hammerjs@2.0.8',
                 'pako':                       'https://unpkg.com/pako@1.0.5',
                 'ts':                         'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
