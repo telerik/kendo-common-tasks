@@ -30,6 +30,7 @@ const styleLoaderPath = require.resolve('style-loader');
 const sassLoaderPath = require.resolve('sass-loader');
 const postCssLoaderPath = require.resolve('postcss-loader');
 const autoprefixer = require('autoprefixer');
+const calc = require('postcss-calc');
 const urlResolverPath = require.resolve('resolve-url-loader');
 const verifyModules = require('./verify-modules');
 const jsonLoaderPath = require.resolve('json-loader');
@@ -144,6 +145,7 @@ const webpackThemeConfig = (_settings, _webpackConfig) => {
             ])
         },
         postcss: () => ([
+            calc,
             autoprefixer
         ]),
         sassLoader: {
