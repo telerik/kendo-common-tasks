@@ -196,11 +196,11 @@ a code {
 }
 
 .jsfiddle:after {
-  background-image: url("http://jsfiddle.net/img/embeddable/logo-dark.png");
+  background-image: url("https://jsfiddle.net/img/embeddable/logo-dark.png");
 }
 
 .plunkr:after {
-  background-image: url("http://plnkr.co/img/plunker.png");
+  background-image: url("https://plnkr.co/img/plunker.png");
 }
 
 .editor .editor-container {
