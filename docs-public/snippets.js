@@ -397,7 +397,7 @@ function missingImports(code, directives) {
 
 function jsTrackingCode() {
     return [
-        "import * as Raven from 'raven-js';",
+        "import Raven from 'raven-js';",
         "import { ErrorHandler } from '@angular/core';",
         "Raven.config('https://e7cc5054385e4b4cb97bd7ea376c6174@sentry.io/112659').install();",
         "class RavenErrorHandler implements ErrorHandler {",
