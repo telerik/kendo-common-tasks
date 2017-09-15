@@ -26,6 +26,19 @@ var ExampleRunner = (function() {
                 noImplicitAny: true,
                 suppressImplicitAnyIndexErrors: true
               },
+              bundles: {
+                "https://unpkg.com/rxjs-system-bundle@5.4.3/Rx.system.min.js": [
+                  "rxjs",
+                  "rxjs/*",
+                  "rxjs/operator/*",
+                  "rxjs/observable/*",
+                  "rxjs/scheduler/*",
+                  "rxjs/symbol/*",
+                  "rxjs/add/operator/*",
+                  "rxjs/add/observable/*",
+                  "rxjs/util/*"
+                ]
+              },
               meta: {
                 'typescript': {
                   'exports': 'ts'
@@ -45,7 +58,6 @@ var ExampleRunner = (function() {
                 'cldr-data':                  npmUrl + '/cldr-data',
                 '@angular':                   'https://unpkg.com/@angular', // sufficient if we didn't pin the version
                 'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
-                'rxjs':                       'https://unpkg.com/rxjs@5.4.3',
                 'hammerjs':                   'https://unpkg.com/hammerjs@2.0.8',
                 'pako':                       'https://unpkg.com/pako@1.0.5',
                 'ts':                         'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
@@ -64,7 +76,7 @@ var ExampleRunner = (function() {
                     defaultExtension: 'ts'
                 },
                 rxjs: {
-                    defaultExtension: 'js'
+                    defaultExtension: false
                 },
                 'chroma-js': {
                     defaultExtension: 'js'
