@@ -78,9 +78,6 @@ var ExampleRunner = (function() {
                 rxjs: {
                     defaultExtension: false
                 },
-                'chroma-js': {
-                    defaultExtension: 'js'
-                },
                 pako: {
                     defaultExtension: 'js',
                     main: './index.js'
