@@ -38,7 +38,9 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.0",
     "gulp-sourcemaps": "1.6.0",
+    "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.7",
+    "gulp-wrap": "^0.13.0",
     "hbs": "^4.0.0",
     "highlight.js": "^9.1.0",
     "jasmine-core": "^2.4.1",
@@ -69,6 +71,7 @@
     "webpack-dev-server": "^1.14.0",
     "webpack-sources": "^0.1.0",
     "webpack-stream": "^3.1.0",
+    "webpack-system-register": "^1.5.0",
     "yargs": "^3.30.0"
   },
   "engines": {

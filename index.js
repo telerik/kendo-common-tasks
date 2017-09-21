@@ -34,6 +34,7 @@ const calc = require('postcss-calc');
 const urlResolverPath = require.resolve('resolve-url-loader');
 const verifyModules = require('./verify-modules');
 const jsonLoaderPath = require.resolve('json-loader');
+const systemjsBundle = require('./systemjs-bundle/task');
 
 const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts,tsx,js}";
@@ -211,8 +212,10 @@ function ucfirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob) => { //eslint-disable-line max-params
+exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options = {}) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, ucfirst)(libraryName);
+
+    systemjsBundle(gulp, { distName: libraryClassName, modules: options.modules, webpackConfig });
 
     gulp.task('build-npm', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
