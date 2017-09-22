@@ -14,7 +14,7 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 //BrowserSync will work only on first port
 const listenAddress = process.env['LISTEN_ADDRESS'] || '0.0.0.0';
 const express = require('express');
-const mds = require('markdown-serve');
+const mds = require('./markdown-serve');
 const BrowserSync = require('browser-sync');
 const serveIndex = require('serve-index');
 const rewrite = require('express-urlrewrite');
