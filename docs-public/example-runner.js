@@ -12,6 +12,8 @@ var ExampleRunner = (function() {
         // and cdn versions of angular / rxjs
         systemjsConfig: function(npmUrl, modules, trackjs) {
             var ngVer = '@4.2.2'; // lock in the angular package version; do not let it float to current!
+            var SYSTEM_BUNDLES = {};
+            SYSTEM_BUNDLES["@progress/kendo-drawing"] = "kendo-drawing.js";
 
             var config = {
               transpiler: 'ts',
@@ -105,6 +107,11 @@ var ExampleRunner = (function() {
                 'upgrade'
             ];
 
+            for (var bundlePackageName in SYSTEM_BUNDLES) {
+                config.bundles[npmUrl + "/" + bundlePackageName + "/dist/systemjs/" + SYSTEM_BUNDLES[bundlePackageName]] =
+                    [bundlePackageName, bundlePackageName + "/*"];
+            }
+
             // Add map entries for each angular package
             // only because we're pinning the version with `ngVer`.
             ngPackageNames.forEach(function(pkgName) {
@@ -117,10 +124,12 @@ var ExampleRunner = (function() {
             });
 
             modules.forEach(function(directive) {
-                packages[directive.module] = {
-                    main: directive.main || 'dist/npm/js/main.js',
-                    defaultExtension: directive.defaultExtension || 'js'
-                };
+                if (!SYSTEM_BUNDLES[directive.module]) {
+                    packages[directive.module] = {
+                        main: directive.main || 'dist/npm/js/main.js',
+                        defaultExtension: directive.defaultExtension || 'js'
+                    };
+                }
             });
 
             config.map = map;

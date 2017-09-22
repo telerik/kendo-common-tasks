@@ -305,7 +305,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
             .pipe($.eslint.failAfterError());
     });
 
-    gulp.task('docs', [ 'build-cdn', 'build-npm-package' ], (done) => {
+    gulp.task('docs', [ 'build-cdn', 'build-npm-package', 'build-systemjs-bundle' ], (done) => {
         const browserSync = BrowserSync.create();
         const app = express();
 
