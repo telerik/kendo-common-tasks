@@ -215,7 +215,7 @@ function ucfirst(str) {
 exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options = {}) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, ucfirst)(libraryName);
 
-    systemjsBundle(gulp, { distName: libraryClassName, modules: options.modules, webpackConfig });
+    systemjsBundle(gulp, { distName: libraryName, modules: options.modules, webpackConfig });
 
     gulp.task('build-npm', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
