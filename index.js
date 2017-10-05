@@ -21,6 +21,9 @@ const rewrite = require('express-urlrewrite');
 const glob = require('glob');
 const $ = require('gulp-load-plugins')();
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const contains = require('gulp-contains');
+const gutil = require('gulp-util');
+const packageName = require('./package.json').name;
 
 const KarmaServer = require('karma').Server;
 
@@ -295,7 +298,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
         });
     });
 
-    gulp.task('lint', () => {
+    gulp.task('lint', [ 'lint-slugs' ], () => {
         const isFixed = (file) => file.eslint != null && file.eslint.fixed;
 
         return gulp.src([ srcGlob, 'test' ])
@@ -305,7 +308,21 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
             .pipe($.eslint.failAfterError());
     });
 
-    gulp.task('docs', [ 'build-cdn', 'build-npm-package', 'build-systemjs-bundle' ], (done) => {
+    gulp.task('lint-slugs', () =>
+      gulp.src('docs/**/*.{md,hbs}')
+        .pipe(contains({
+            search: /{%\s*slug\s+\w*[:#\/\\]\w*/,
+            onFound: (string, file, cb) => {
+                const error = `
+    The file ${/\/(docs.*)$/.exec(file.path)[1]} contains slugs with invalid characters.
+    I can't tell you exactly where due to technical limitations, sorry.
+    See ${packageName} for the source.`;
+                cb(new gutil.PluginError('gulp-contains', error));
+            }
+        }))
+    );
+
+    gulp.task('docs', [ 'lint-slugs', 'build-cdn', 'build-npm-package', 'build-systemjs-bundle' ], (done) => {
         const browserSync = BrowserSync.create();
         const app = express();
 
@@ -414,7 +431,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
                 proxy: "localhost:3000"
             });
 
-            gulp.watch("docs/**/*.{md,hbs}").on('change', browserSync.reload);
+            gulp.watch("docs/**/*.{md,hbs}", [ 'lint-slugs' ]).on('change', browserSync.reload);
             gulp.watch("public/**/*.{css,js}").on('change', browserSync.reload);
             gulp.watch("dist/cdn/**/*.{css,js}").on('change', browserSync.reload);
             gulp.watch("src/**/*" + SRC_EXT_GLOB, [ "build-cdn", "build-npm-package" ]);
