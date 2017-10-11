@@ -1,6 +1,7 @@
 {
   "name": "@telerik/kendo-common-tasks",
   "description": "Build infrastructure helpers and gulp tasks for Kendo UI Angular 2 / React components",
+  "version": "0.0.0-semantically-released",
   "repository": {
     "type": "git",
     "url": "https://github.com/telerik/kendo-common-tasks.git"
@@ -8,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint ./*.js",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "semantic-release": "semantic-release pre && semantic-prerelease publish && semantic-release post",
     "test": "npm run lint"
   },
   "keywords": [
@@ -84,6 +85,7 @@
   "author": "Telerik",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@telerik/semantic-prerelease": "^1.2.1",
     "cz-conventional-changelog": "^1.1.5",
     "gulp-debug": "^2.1.2",
     "ghooks": "^1.0.3",
@@ -98,5 +100,19 @@
       "pre-commit": "npm run lint",
       "commit-msg": "validate-commit-msg"
     }
+  },
+  "release": {
+    "debug": false,
+    "branchTags": {
+      "develop": "dev"
+    },
+    "fallbackTags": {
+      "dev": "latest"
+    },
+    "analyzeCommits": "@telerik/semantic-prerelease/analyzeCommits",
+    "generateNotes": "@telerik/semantic-prerelease/generateNotes",
+    "getLastRelease": "@telerik/semantic-prerelease/getLastRelease",
+    "verifyConditions": "@telerik/semantic-prerelease/verifyConditions",
+    "verifyRelease": "@telerik/semantic-prerelease/verifyRelease"
   }
 }
