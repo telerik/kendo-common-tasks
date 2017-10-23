@@ -1,12 +1,12 @@
 import { NgModule }      from '@angular/core';
-#= appModuleImports #
+#= appImports #
 
 import 'hammerjs';
 
 import { AppComponent }   from './app.component';
 
 @NgModule({
-  imports:      [ #= appModules # ],
+  imports:      [ #= appModuleImports # ],
   declarations: [ AppComponent ],
   bootstrap:    [ AppComponent ]
 })

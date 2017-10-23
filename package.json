@@ -8,7 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "lint": "./node_modules/.bin/eslint ./*.js",
+    "lint": "./node_modules/.bin/eslint ./*.js ./docs-public/*[!min].js",
     "semantic-release": "semantic-release pre && semantic-prerelease publish && semantic-release post",
     "test": "npm run lint"
   },

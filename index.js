@@ -419,7 +419,8 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
                 return {
                     scriptSrc: `js/${libraryName}.js`,
                     styleSrc: `css/${libraryName}.css`,
-                    content: content
+                    content: content,
+                    platform: /react/.test(libraryName) ? 'react' : 'angular'
                 };
             }
         }));
