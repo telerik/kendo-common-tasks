@@ -146,7 +146,8 @@ const webpackThemeConfig = (_settings, _webpackConfig) => {
                 webpackConfig.module && webpackConfig.module.loaders,
                 sassLoader,
                 options.stubResources ? stubLoader : resourceLoaders
-            ])
+            ]),
+            noParse: webpackConfig.module.noParse
         },
         postcss: () => ([
             calc,
@@ -193,7 +194,8 @@ exports.webpackDevConfig = (config) => webpackThemeConfig({
     ],
 
     module: {
-        loaders: config.loaders
+        loaders: config.loaders,
+        noParse: config.noParse
     }
 });
 
