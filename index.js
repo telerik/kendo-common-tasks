@@ -147,7 +147,7 @@ const webpackThemeConfig = (_settings, _webpackConfig) => {
                 sassLoader,
                 options.stubResources ? stubLoader : resourceLoaders
             ]),
-            noParse: webpackConfig.module.noParse
+            noParse: (webpackConfig.module || {}).noParse
         },
         postcss: () => ([
             calc,
