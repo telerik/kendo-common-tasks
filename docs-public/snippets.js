@@ -642,8 +642,12 @@ function prefixStyleUrls(content, prefix) {
     );
 }
 
+// fetch plunker templates for platform
+// this must be cached before the button is clicked,
+// otherwise the popup blocker blocks the new tab
+var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getPlunkerFile);
+
 window.openInPlunker = function(listing) {
-    var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getPlunkerFile); // fetch the plunker templates
     var code = listing['ts'] || listing['jsx'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
