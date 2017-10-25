@@ -68,7 +68,7 @@ window.ExampleRunner = (function() {
             return config;
         },
         angular: function(npmUrl, modules, trackjs) {
-            var ngVer = '@4.2.2'; // lock in the angular package version; do not let it float to current!
+            var ngVer = '@4.4.6'; // lock in the angular package version; do not let it float to current!
             var SYSTEM_BUNDLES = {};
             SYSTEM_BUNDLES["@progress/kendo-drawing"] = "kendo-drawing.js";
 
