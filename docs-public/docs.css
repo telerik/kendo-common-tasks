@@ -256,24 +256,6 @@ a code {
   margin: 0;
 }
 
-.button-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  border: 0;
-  width: 32px;
-  height: 32px;
-  background: url('close.svg') no-repeat 50% 50%;
-}
-
-.button-close span {
-  display: none;
-}
-
-.button-close:focus {
-  outline: none;
-}
-
 .editor h5 {
   text-align: right;
 }
