@@ -158,7 +158,6 @@ window.ExampleRunner = (function() {
                 'compiler',
                 'forms',
                 'core',
-                'http',
                 'platform-browser',
                 'platform-browser-dynamic',
                 'upgrade'
