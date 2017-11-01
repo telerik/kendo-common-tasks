@@ -124,7 +124,7 @@ window.ExampleRunner = (function() {
                 'typescript': 'https://unpkg.com/typescript@2.3.4/lib/typescript.js',
 
                 // explicitly add subpackages
-                '@angular/http/testing': 'https://unpkg.com/@angular/http' + ngVer + '/bundles/http-testing.umd.js',
+                '@angular/common/http': 'https://unpkg.com/@angular/common' + ngVer + '/bundles/common-http.umd.js',
                 '@angular/platform-browser/animations': 'https://unpkg.com/@angular/platform-browser' + ngVer + '/bundles/platform-browser-animations.umd.js',
                 '@angular/animations/browser': 'https://unpkg.com/@angular/animations' + ngVer + '/bundles/animations-browser.umd.js'
             };
@@ -158,7 +158,6 @@ window.ExampleRunner = (function() {
                 'compiler',
                 'forms',
                 'core',
-                'http',
                 'platform-browser',
                 'platform-browser-dynamic',
                 'upgrade'
