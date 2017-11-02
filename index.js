@@ -322,7 +322,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
     gulp.task('lint-slugs', () =>
       gulp.src('docs/**/*.{md,hbs}')
         .pipe(contains({
-            search: /{%\s*(?!asset_path|embed_file|endmeta|meta|slug)\s+\w+/,
+            search: /{%\s*(?!(asset_path|embed_file|endmeta|meta|slug)\b)\w+/,
             onFound: reportError("Unknown Liquid tags found in 'FILE'.")
         }))
         .pipe(contains({
