@@ -68,7 +68,7 @@ window.ExampleRunner = (function() {
             return config;
         },
         angular: function(npmUrl, modules, trackjs) {
-            var ngVer = '@4.4.6'; // lock in the angular package version; do not let it float to current!
+            var ngVer = '@5.0.0'; // lock in the angular package version; do not let it float to current!
             var SYSTEM_BUNDLES = {};
             SYSTEM_BUNDLES["@progress/kendo-drawing"] = "kendo-drawing.js";
 
@@ -121,7 +121,7 @@ window.ExampleRunner = (function() {
                 'pako': 'https://unpkg.com/pako@1.0.5',
                 'ts': 'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
                 'tslib': 'https://unpkg.com/tslib@1.7.1',
-                'typescript': 'https://unpkg.com/typescript@2.3.4/lib/typescript.js',
+                'typescript': 'https://unpkg.com/typescript@2.4.2/lib/typescript.js',
 
                 // explicitly add subpackages
                 '@angular/common/http': 'https://unpkg.com/@angular/common' + ngVer + '/bundles/common-http.umd.js',

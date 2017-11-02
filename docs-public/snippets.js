@@ -217,7 +217,7 @@ var CDNResources = {
     react: [
     ],
     angular: [
-        "https://unpkg.com/zone.js@0.8.11/dist/zone.js",
+        "https://unpkg.com/zone.js@0.8.12/dist/zone.js",
         "https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"
     ]
 };
