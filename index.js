@@ -310,17 +310,24 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
             .pipe($.eslint.failAfterError());
     });
 
+    const reportError = message => (string, file, cb) => {
+        const filename = /\/(docs.*)$/.exec(file.path)[1];
+        const error = `
+    ${message.replace(/FILE/, filename)}
+    I can't tell you exactly where due to technical limitations, sorry.
+    Validation provided by ${packageName}.`;
+        cb(new gutil.PluginError('gulp-contains', error));
+    };
+
     gulp.task('lint-slugs', () =>
       gulp.src('docs/**/*.{md,hbs}')
         .pipe(contains({
-            search: /{%\s*slug\s+\w*[:#\/\\]\w*/,
-            onFound: (string, file, cb) => {
-                const error = `
-    The file ${/\/(docs.*)$/.exec(file.path)[1]} contains slugs with invalid characters.
-    I can't tell you exactly where due to technical limitations, sorry.
-    See ${packageName} for the source.`;
-                cb(new gutil.PluginError('gulp-contains', error));
-            }
+            search: /{%\s*(?!asset_path|embed_file|endmeta|meta|slug)\s+\w+/,
+            onFound: reportError("Unknown Liquid tags found in 'FILE'.")
+        }))
+        .pipe(contains({
+            search: /{%\s*slug\s+(\w*)[:#\/\\]\w*/,
+            onFound: reportError("Slugs with invalid characters found in 'FILE'.")
         }))
     );
 
