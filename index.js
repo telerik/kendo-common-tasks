@@ -334,6 +334,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
     gulp.task('docs', [ 'lint-slugs', 'build-cdn', 'build-npm-package', 'build-systemjs-bundle' ], (done) => {
         const browserSync = BrowserSync.create();
         const app = express();
+        const platform = argv.platform || (/react/.test(libraryName) ? 'react' : 'angular');
 
         app.use(rewrite(/(.+)\.md$/, '/$1'));
 
@@ -403,12 +404,14 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
 <code class='language-ts-multiple${preview ? "-preview" : "" }'>${content}</code>
 </pre>`;
         };
+        const platformContent = (_, platformCapture, contentCapture) => // eslint-disable-line no-arrow-condition
+            (platformCapture === platform ? contentCapture : '');
 
         const processPlugins = (content, plugins) => {
             let result = content;
             plugins.forEach((plugin) => {
                 const pluginRe = new RegExp(`{%\\s*${plugin.name}\\s*([^%]+)?\\s*%}`, 'g');
-                result = result.replace(pluginRe, plugin.process);
+                result = result.replace(plugin.regExp || pluginRe, plugin.process);
             });
             return result;
         };
@@ -420,6 +423,11 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
                 let content = markdownFile.parseContent();
 
                 content = processPlugins(content, [
+                    {
+                        name: "platform_content",
+                        regExp: new RegExp('{%\\s*platform_content\\s*([^%]+?)\\s*%}((.|\\n)*?){%\\s*endplatform_content\\s*%}', 'g'),
+                        process: platformContent
+                    },
                     { name: "embed_file", process: embedFile },
                     { name: "meta", process: meta },
                     { name: "endmeta", process: constant("</div>") }
@@ -429,7 +437,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
                     scriptSrc: `js/${libraryName}.js`,
                     styleSrc: `css/${libraryName}.css`,
                     content: content,
-                    platform: /react/.test(libraryName) ? 'react' : 'angular'
+                    platform: platform
                 };
             }
         }));
