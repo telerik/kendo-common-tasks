@@ -311,7 +311,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
     });
 
     const reportError = message => (string, file, cb) => {
-        const filename = /\/(docs.*)$/.exec(file.path)[1];
+        const filename = /[\/\\](docs.*)$/.exec(file.path)[1];
         const error = `
     ${message.replace(/FILE/, filename)}
     I can't tell you exactly where due to technical limitations, sorry.
