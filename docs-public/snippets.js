@@ -675,7 +675,8 @@ window.openInPlunker = function(listing) {
         }
     };
 
-    var form = new EditorForm('http://plnkr.co/edit/?p=preview');
+    var proto = document.location.protocol === 'https:' ? 'https://' : 'http://';
+    var form = new EditorForm(proto + 'plnkr.co/edit/?p=preview');
     var tags = {
         'react': 'react',
         'angular': 'angular2'
