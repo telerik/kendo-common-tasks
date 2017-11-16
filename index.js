@@ -326,7 +326,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
             onFound: reportError("Unknown Liquid tags found in 'FILE'.")
         }))
         .pipe(contains({
-            search: /{%\s*slug\s+(\w*)[:#\/\\]\w*/,
+            search: /{%\s*slug\s+(?!([a-zA-Z0-9_\-])+\s*%})/,
             onFound: reportError("Slugs with invalid characters found in 'FILE'.")
         }))
     );
