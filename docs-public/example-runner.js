@@ -37,6 +37,10 @@ window.ExampleRunner = (function() {
                     //React packages
                     "react": "https://unpkg.com/react@16.0.0/umd/react.production.min.js",
                     "react-dom": "https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js",
+                    "redux": "https://unpkg.com/redux@3.7.2/dist/redux.min.js",
+                    "react-redux": "https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js",
+                    "react-router": "https://unpkg.com/react-router@4.2.0/umd/react-router.min.js",
+                    "react-router-dom": "https://unpkg.com/react-router-dom@4.2.2/umd/react-router-dom.min.js",
                     "react-transition-group": "https://unpkg.com/react-transition-group@2.2.1/dist/react-transition-group.min.js",
                     "prop-types": "https://unpkg.com/prop-types@15.6.0/prop-types.js",
                     // Misc packages used by the kendo-react-* packages
