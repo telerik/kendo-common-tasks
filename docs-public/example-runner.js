@@ -73,13 +73,33 @@ window.ExampleRunner = (function() {
         },
         angular: function(npmUrl, modules, trackjs) {
             var ngVer = '@5.0.0'; // lock in the angular package version; do not let it float to current!
-            var SYSTEM_BUNDLES = {};
-            SYSTEM_BUNDLES["@progress/kendo-drawing"] = "kendo-drawing.js";
-            SYSTEM_BUNDLES["@progress/kendo-charts"] = "kendo-charts.js";
-            SYSTEM_BUNDLES["@progress/kendo-angular-charts"] = "kendo-angular-charts.js";
-            SYSTEM_BUNDLES["@progress/kendo-angular-gauges"] = "kendo-angular-gauges.js";
-            SYSTEM_BUNDLES["@telerik/kendo-intl"] = "kendo-intl.js";
-            SYSTEM_BUNDLES["@progress/kendo-angular-intl"] = "kendo-angular-intl.js";
+            var SYSTEM_BUNDLES = [ {
+                name: "@progress/kendo-drawing",
+                file: "kendo-drawing.js",
+                modules: true
+            }, {
+                name: "@progress/kendo-charts",
+                file: "kendo-charts.js"
+            }, {
+                name: "@progress/kendo-angular-charts",
+                file: "kendo-angular-charts.js"
+            }, {
+                name: "@progress/kendo-angular-gauges",
+                file: "kendo-angular-gauges.js"
+            }, {
+                name: "@progress/kendo-angular-gauges",
+                file: "kendo-angular-gauges.js"
+            }, {
+                name: "@progress/kendo-angular-resize-sensor",
+                file: "kendo-angular-resize-sensor.js"
+            }, {
+                name: "@telerik/kendo-intl",
+                file: "kendo-intl.js"
+            }, {
+                name: "@telerik/kendo-angular-intl",
+                file: "kendo-angular-intl.js",
+                map: true
+            } ];
 
             var config = {
                 transpiler: 'ts',
@@ -172,11 +192,6 @@ window.ExampleRunner = (function() {
                 'upgrade'
             ];
 
-            for (var bundlePackageName in SYSTEM_BUNDLES) {
-                config.bundles[npmUrl + "/" + bundlePackageName + "/dist/systemjs/" + SYSTEM_BUNDLES[bundlePackageName]] =
-                    [ bundlePackageName, bundlePackageName + "/*" ];
-            }
-
             // Add map entries for each angular package
             // only because we're pinning the version with `ngVer`.
             ngPackageNames.forEach(function(pkgName) {
@@ -193,6 +208,20 @@ window.ExampleRunner = (function() {
                     packages[directive.module] = {
                         main: directive.main || 'dist/npm/js/main.js',
                         defaultExtension: directive.defaultExtension || 'js'
+                    };
+                }
+            });
+
+            SYSTEM_BUNDLES.forEach(function(bundle) {
+                var paths = [ bundle.name ];
+                if (bundle.modules) {
+                    paths.push(bundle.name + '/*');
+                }
+                config.bundles[npmUrl + "/" + bundle.name + "/dist/systemjs/" + bundle.file] = paths;
+
+                if (bundle.map) {
+                    packages[bundle.name] = {
+                        defaultExtension: 'js'
                     };
                 }
             });
