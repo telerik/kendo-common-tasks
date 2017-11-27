@@ -75,6 +75,11 @@ window.ExampleRunner = (function() {
             var ngVer = '@5.0.0'; // lock in the angular package version; do not let it float to current!
             var SYSTEM_BUNDLES = {};
             SYSTEM_BUNDLES["@progress/kendo-drawing"] = "kendo-drawing.js";
+            SYSTEM_BUNDLES["@progress/kendo-charts"] = "kendo-charts.js";
+            SYSTEM_BUNDLES["@progress/kendo-angular-charts"] = "kendo-angular-charts.js";
+            SYSTEM_BUNDLES["@progress/kendo-angular-gauges"] = "kendo-angular-gauges.js";
+            SYSTEM_BUNDLES["@telerik/kendo-intl"] = "kendo-intl.js";
+            SYSTEM_BUNDLES["@progress/kendo-angular-intl"] = "kendo-angular-intl.js";
 
             var config = {
                 transpiler: 'ts',
