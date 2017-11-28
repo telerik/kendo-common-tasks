@@ -96,7 +96,7 @@ window.ExampleRunner = (function() {
                 name: "@telerik/kendo-intl",
                 file: "kendo-intl.js"
             }, {
-                name: "@telerik/kendo-angular-intl",
+                name: "@progress/kendo-angular-intl",
                 file: "kendo-angular-intl.js",
                 map: true
             } ];
