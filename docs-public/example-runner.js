@@ -204,7 +204,7 @@ window.ExampleRunner = (function() {
             });
 
             modules.forEach(function(directive) {
-                if (!SYSTEM_BUNDLES.find(bundle => bundle.name === directive.module)) {
+                if (!SYSTEM_BUNDLES.filter(function(bundle) { return bundle.name === directive.module; }).length) {
                     packages[directive.module] = {
                         main: directive.main || 'dist/npm/js/main.js',
                         defaultExtension: directive.defaultExtension || 'js'
