@@ -31,6 +31,7 @@ window.ExampleRunner = (function() {
 
                 map: {
                     "app": "app",
+                    'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
                     //Babel transpiler
                     "plugin-babel": "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js",
                     'systemjs-babel-build': 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
@@ -45,6 +46,7 @@ window.ExampleRunner = (function() {
                     "prop-types": "https://unpkg.com/prop-types@15.6.0/prop-types.js",
                     // Misc packages used by the kendo-react-* packages
                     "classnames": "https://unpkg.com/classnames",
+                    'cldr-data': npmUrl + '/cldr-data',
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress'
