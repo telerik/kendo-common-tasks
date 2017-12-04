@@ -384,10 +384,12 @@ function bootstrapReact(options) {
     var imports = moduleImports(code, directives);
     return [].concat([
         "import React from 'react';",
-        "import ReactDOM from 'react-dom';",
-        imports,
-        code
-    ]).filter(Boolean).join('\n');
+        "import ReactDOM from 'react-dom';"
+    ])
+    .concat(imports)
+    .concat(code)
+    .filter(Boolean)
+    .join('\n');
 }
 
 function bootstrapAngular(options) {
