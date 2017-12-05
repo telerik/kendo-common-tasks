@@ -214,12 +214,15 @@ SnippetRunner.prototype = {
 };
 
 var CDNResources = {
-    react: [
-    ],
     angular: [
         "https://unpkg.com/zone.js@0.8.12/dist/zone.js",
         "https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"
+    ],
+    react: [
+    ],
+    vue: [
     ]
+
 };
 
 function resourceLinks(resources) {
@@ -301,12 +304,14 @@ var directivesByModule = {
         { module: '@angular/platform-browser', match: '.', import: "BrowserModule" },
         { module: '@angular/platform-browser/animations', match: '.', import: "BrowserAnimationsModule" }
     ].concat(moduleDirectives),
-    react: [].concat(moduleDirectives)
+    react: [].concat(moduleDirectives),
+    vue: [].concat(moduleDirectives)
 };
 
 var demoFileExtension = {
     react: 'jsx',
-    angular: 'ts'
+    angular: 'ts',
+    vue: 'js'
 };
 
 /* The following method replaces code characters to allow embedding in a js double-quote string ("") */
@@ -325,7 +330,7 @@ function getFullContent(listing) {
         return fullContent;
     }
 
-    return listing['ts'] || listing['jsx'];
+    return listing['ts'] || listing['jsx'] || listing['js'];
 }
 
 /* The following block deals with the imports from the kendo-*-packages(s) */
@@ -393,6 +398,19 @@ function bootstrapReact(options) {
     return [].concat([
         "import React from 'react';",
         "import ReactDOM from 'react-dom';"
+    ])
+    .concat(imports)
+    .concat(code)
+    .filter(Boolean)
+    .join('\n');
+}
+
+function bootstrapVue(options) {
+    var code = options.code;
+    var directives = usedModules(code);
+    var imports = moduleImports(code, directives);
+    return [].concat([
+        "import Vue from 'vue';"
     ])
     .concat(imports)
     .concat(code)
@@ -497,8 +515,7 @@ var blockTypes = {
     },
     'js': {
         label: 'JavaScript',
-        highlight: 'javascript',
-        noRun: true
+        highlight: 'javascript'
     },
     'scss': {
         label: 'SCSS',
@@ -609,16 +626,21 @@ var basicPlunkerFiles = [
 ];
 
 var plunker = {
-    react: {
-        plunkerFiles: [
-            'app/main.jsx'
-        ].concat(basicPlunkerFiles)
-    },
     angular: {
         plunkerFiles: [
             'app/main.ts',
             'app/app.component.ts',
             'app/app.module.ts'
+        ].concat(basicPlunkerFiles)
+    },
+    react: {
+        plunkerFiles: [
+            'app/main.jsx'
+        ].concat(basicPlunkerFiles)
+    },
+    vue: {
+        plunkerFiles: [
+            'app/main.js'
         ].concat(basicPlunkerFiles)
     }
 };
@@ -657,7 +679,7 @@ function prefixStyleUrls(content, prefix) {
 var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getPlunkerFile);
 
 window.openInPlunker = function(listing) {
-    var code = listing['ts'] || listing['jsx'];
+    var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
 
@@ -681,6 +703,9 @@ window.openInPlunker = function(listing) {
             appModuleImports: angularAppModuleImports(directives)
         },
         react: {
+            appImports: imports.join('\n')
+        },
+        vue: {
             appImports: imports.join('\n')
         }
     };
@@ -770,6 +795,21 @@ $(function() {
                 return plunkerPage({
                     bootstrap: bootstrapReact,
                     ts: listing['jsx'],
+                    html: listing['html'],
+                    theme: theme,
+                    themeAccent: themeColors[options.theme],
+                    track: options.track
+                });
+            }
+        },
+        vue: {
+            runnerContent: function(options) {
+                var listing = options.listing;
+                var theme = options.theme || 'default';
+
+                return plunkerPage({
+                    bootstrap: bootstrapVue,
+                    ts: listing['js'],
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
