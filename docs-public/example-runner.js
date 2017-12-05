@@ -179,6 +179,7 @@ window.ExampleRunner = (function() {
 
             /* Add Kendo Packages */
             modules.forEach(function(kendoPackage) {
+                console.log(kendoPackage);
                 config.packages[kendoPackage.module] = {
                     main: kendoPackage.main,
                     defaultExtension: kendoPackage.defaultExtension || 'js'

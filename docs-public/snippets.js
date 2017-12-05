@@ -392,7 +392,7 @@ function jsTrackingCode() {
 }
 
 function bootstrapReact(options) {
-    var code = options.code;
+    var code = options.example.code;
     var directives = usedModules(code);
     var imports = moduleImports(code, directives);
     return [].concat([
@@ -406,9 +406,11 @@ function bootstrapReact(options) {
 }
 
 function bootstrapVue(options) {
-    var code = options.code;
-    var directives = usedModules(code);
-    var imports = moduleImports(code, directives);
+    // in vue we extract the imports from html
+    var code = options.example.ts;
+    var html = options.example.html;
+    var directives = usedModules(html);
+    var imports = moduleImports(html, directives);
     return [].concat([
         "import Vue from 'vue';"
     ])
@@ -419,7 +421,8 @@ function bootstrapVue(options) {
 }
 
 function bootstrapAngular(options) {
-    var code = wrapAngularTemplate(options.code);
+    var source = options.example.ts;
+    var code = wrapAngularTemplate(source);
     var jsTracking = jsTrackingCode();
 
     var directives = usedModules(code);
@@ -464,7 +467,7 @@ function plunkerPage(opts) {
     }
 
     var codeContent = codeToString(bootstrap.call(this, {
-        code: options.ts,
+        example: options,
         resize: true,
         track: options.track
     }));
