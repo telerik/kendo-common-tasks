@@ -37,6 +37,7 @@ window.ExampleRunner = (function() {
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress',
+
                     //Legacy kendo
                     "jquery": "https://unpkg.com/jquery@3.2.1/dist/jquery.js",
                     "kendo.culture.en-GB.min": npmUrl + '/@progress' + "/cultures/kendo.culture.en-GB.min.js",
