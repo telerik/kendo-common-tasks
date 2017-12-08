@@ -320,7 +320,10 @@ function codeToString(code) {
         .replace(/\n/g, '\\n'); // escape line endings
 }
 
-function getFullContent(listing) {
+function getFullContent(options) {
+    var listing = options.listing;
+    var platform = options.platform;
+
     if (listing['ts-multiple']) {
         var fullContent = "";
         listing['ts-multiple'].forEach(function(file) {
@@ -328,6 +331,10 @@ function getFullContent(listing) {
         });
 
         return fullContent;
+    }
+
+    if (listing['html'] && platform === 'vue') {
+        return listing['html'];
     }
 
     return listing['ts'] || listing['jsx'] || listing['js'];
@@ -690,7 +697,7 @@ window.openInPlunker = function(listing) {
         code = wrapAngularTemplate(template);
     }
 
-    var directives = usedModules(getFullContent(listing));
+    var directives = usedModules(getFullContent({ listing: listing, platform: window.platform }));
     var imports = moduleImports(code, directives);
 
     var plunkerContext = {
@@ -709,7 +716,8 @@ window.openInPlunker = function(listing) {
             appImports: imports.join('\n')
         },
         vue: {
-            appImports: imports.join('\n')
+            /* this is sad */
+            appImports: imports.concat(moduleImports(html, directives)).join('\n')
         }
     };
 
