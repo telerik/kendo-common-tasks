@@ -18,8 +18,7 @@ window.ExampleRunner = (function() {
         };
 
         config.packages['app'] = {
-            main: './main.' + language,
-            defaultExtension: 'language'
+            main: './main.' + language
         };
 
         config.map['plugin-babel'] = "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js";
@@ -47,8 +46,7 @@ window.ExampleRunner = (function() {
             'exports': 'ts'
         };
         config.packages['app'] = {
-            main: './main.ts',
-            defaultExtension: 'ts'
+            main: './main.ts'
         };
 
         config.map['ts'] = "https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js";
