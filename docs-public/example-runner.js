@@ -6,35 +6,73 @@ window.ExampleRunner = (function() {
         return lastIndex !== -1 && lastIndex === position;
     }
 
-    var systemjsConfig = {
-        react: function(npmUrl, modules, trackjs) {
-            var config = {
-                transpiler: "plugin-babel",
+    /**
+     * SystemJS config for jsx/js demos.
+     */
+    function addBabelConfiguration(config, language) {
+        config.transpiler = "plugin-babel";
+        config.meta['*.' + language] = {
+            babelOptions: {
+                react: true
+            }
+        };
 
+        config.packages['app'] = {
+            main: './main.' + language,
+            defaultExtension: 'language'
+        };
+
+        config.map['plugin-babel'] = "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js";
+        config.map['systemjs-babel-build'] = 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js';
+    }
+
+    /**
+     * SystemJS config for ts demos.
+     */
+    function addTSConfiguration(config) {
+        config.transpiler = 'ts';
+        config.typescriptOptions = {
+            target: 'es5',
+            module: 'system',
+            moduleResolution: 'node',
+            sourceMap: true,
+            jsx: "react",
+            emitDecoratorMetadata: true,
+            experimentalDecorators: true,
+            removeComments: false,
+            noImplicitAny: true,
+            suppressImplicitAnyIndexErrors: true
+        };
+        config.meta['typescript'] = {
+            'exports': 'ts'
+        };
+        config.packages['app'] = {
+            main: './main.ts',
+            defaultExtension: 'ts'
+        };
+
+        config.map['ts'] = "https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js";
+        config.map['typescript'] = 'https://unpkg.com/typescript@2.4.2/lib/typescript.js';
+    }
+
+    var systemjsConfig = {
+        react: function(options) {
+            var npmUrl = options.npmUrl;
+            var modules = options.modules;
+            var trackjs = options.trackjs;
+            var language = options.language;
+            var config = {
                 meta: {
                     '*.json': {
                         loader: 'systemjs-json-plugin'
-                    },
-                    '*.jsx': {
-                        babelOptions: {
-                            react: true
-                        }
                     }
                 },
 
-                packages: {
-                    'app': {
-                        main: './main.jsx',
-                        defaultExtension: 'jsx'
-                    }
-                },
+                packages: { },
 
                 map: {
                     "app": "app",
                     'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
-                    //Babel transpiler
-                    "plugin-babel": "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js",
-                    'systemjs-babel-build': 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
                     //React packages
                     "react": "https://unpkg.com/react@16.0.0/umd/react.production.min.js",
                     "react-dom": "https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js",
@@ -52,6 +90,14 @@ window.ExampleRunner = (function() {
                     '@progress': npmUrl + '/@progress'
                 }
             };
+
+            /* Use appropriate configuration based on demo language */
+            if (language === 'ts') {
+                addTSConfiguration(config);
+            } else {
+                /* Support both js and jsx */
+                addBabelConfiguration(config, language);
+            }
 
             /* Add Kendo Packages */
             modules.forEach(function(kendoPackage) {
@@ -73,7 +119,10 @@ window.ExampleRunner = (function() {
 
             return config;
         },
-        angular: function(npmUrl, modules, trackjs) {
+        angular: function(options) {
+            var npmUrl = options.npmUrl;
+            var modules = options.modules;
+            var trackjs = options.trackjs;
             var ngVer = '@5.0.0'; // lock in the angular package version; do not let it float to current!
             var SYSTEM_BUNDLES = [ {
                 name: "@progress/kendo-drawing",
@@ -240,8 +289,8 @@ window.ExampleRunner = (function() {
     }
 
     ExampleRunner.prototype = {
-        configure: function(system, npmUrl, modules, trackjs) {
-            system.config(systemjsConfig[this.platform](npmUrl, modules, trackjs));
+        configure: function(system, options) {
+            system.config(systemjsConfig[this.platform](options));
 
             // allow mocking of files via custom fetch function
             this.files = {};

@@ -396,13 +396,14 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
             }
 
             const basename = path.basename(filepath);
+            const language = path.extname(basename).replace('.','');
             const hidden = params.some(p => p === "hidden");
             const preview = params.some(p => p === "preview");
             const content = escapeHtml(fs.readFileSync(filepath, 'utf-8'));
             return `
-<pre data-file='${basename}' ${hidden ? "data-hidden='true'" : "" }>
-<code class='language-ts-multiple${preview ? "-preview" : "" }'>${content}</code>
-</pre>`;
+    <pre data-file='${basename}' ${hidden ? "data-hidden='true'" : "" }>
+    <code class='language-${language}-multiple${preview ? "-preview" : "" }'>${content}</code>
+    </pre>`;
         };
         const platformContent = (_, platformCapture, contentCapture) => // eslint-disable-line no-arrow-condition
             (platformCapture === platform ? contentCapture : '');

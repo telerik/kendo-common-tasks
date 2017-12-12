@@ -1,4 +1,3 @@
-
 /* eslint no-var: 0 */
 /* eslint no-invalid-this: 0 */
 /* eslint consistent-this: 0 */
@@ -116,7 +115,7 @@ var plunkerTemplate = kendo.template(
     <script src="#: data.exampleRunner #"></script>\
     <script>\
         var runner = new ExampleRunner("#= data.platform #");\
-        runner.configure(System, "#: data.npmUrl #", ' + JSON.stringify(moduleDirectives) + ', #= data.track #);\
+        runner.configure(System, { npmUrl: "#: data.npmUrl #", modules: ' + JSON.stringify(moduleDirectives) + ', language: "#: data.language #", trackjs: #= data.track # });\
         # for (var i = 0; i < data.files.length; i++) { #\
         runner.register("#= data.files[i].name #", "#= data.files[i].content #");\
         # } #\
@@ -304,11 +303,6 @@ var directivesByModule = {
     react: [].concat(moduleDirectives)
 };
 
-var demoFileExtension = {
-    react: 'jsx',
-    angular: 'ts'
-};
-
 /* The following method replaces code characters to allow embedding in a js double-quote string ("") */
 function codeToString(code) {
     return code.replace(/"/g, '\\"') // escape nested quotes
@@ -316,16 +310,16 @@ function codeToString(code) {
 }
 
 function getFullContent(listing) {
-    if (listing['ts-multiple']) {
+    if (listing['multifile-listing']) {
         var fullContent = "";
-        listing['ts-multiple'].forEach(function(file) {
+        listing['multifile-listing'].forEach(function(file) {
             fullContent = fullContent.concat(file.content);
         });
 
         return fullContent;
     }
 
-    return listing['ts'] || listing['jsx'];
+    return listing['ts'] || listing['jsx'] || listing['js'];
 }
 
 /* The following block deals with the imports from the kendo-*-packages(s) */
@@ -428,23 +422,24 @@ function plunkerPage(opts) {
         platform: window.platform,
         exampleRunner: window.runnerScript,
         theme: 'default',
+        language: opts.language,
         themeAccent: themeColors.default,
         html: '',
         track: false
     }, opts);
 
-    if (!options.ts) {
+    if (!options.code) {
         return htmlTemplate(options);
     }
 
     var codeContent = codeToString(bootstrap.call(this, {
-        code: options.ts,
+        code: options.code,
         resize: true,
         track: options.track
     }));
 
     options.files = [
-        { name: "main." + demoFileExtension[window.platform], content: codeContent }
+        { name: "main." + opts.language, content: codeContent }
     ];
 
     return plunkerTemplate(options);
@@ -489,8 +484,7 @@ var blockTypes = {
     },
     'js': {
         label: 'JavaScript',
-        highlight: 'javascript',
-        noRun: true
+        highlight: 'javascript'
     },
     'scss': {
         label: 'SCSS',
@@ -516,6 +510,8 @@ function CodeListing(elements) {
     var that = this;
 
     this.elements = elements;
+    /* Assume runnable examples are in `ts` by default */
+    this.runtimeLanguage = 'ts';
 
     this.types = $.map(this.elements.find("code"), function(element) {
         var preview = false;
@@ -539,14 +535,19 @@ function CodeListing(elements) {
         }
 
         if (multiple) {
-            var elems = that[language + "-multiple"] || [];
+            var elems = that["multifile-listing"] || [];
 
             elems.push({
                 name: $(element).parent().attr("data-file"),
                 content: $(element).text()
             });
 
-            that[language + "-multiple"] = elems;
+            that["multifile-listing"] = elems;
+        }
+
+        /* Change runtime language only if it is one of the other two supported ones */
+        if (/js|jsx/i.test(language)) {
+            that.runtimeLanguage = language;
         }
 
         that[language] = $(element).text();
@@ -603,7 +604,9 @@ var basicPlunkerFiles = [
 var plunker = {
     react: {
         plunkerFiles: [
-            'app/main.jsx'
+            'app/main.js',
+            'app/main.jsx',
+            'app/main.ts'
         ].concat(basicPlunkerFiles)
     },
     angular: {
@@ -649,9 +652,10 @@ function prefixStyleUrls(content, prefix) {
 var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getPlunkerFile);
 
 window.openInPlunker = function(listing) {
-    var code = listing['ts'] || listing['jsx'];
+    var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
+    var language = listing.runtimeLanguage;
 
     if (!code) {
         code = wrapAngularTemplate(template);
@@ -687,8 +691,8 @@ window.openInPlunker = function(listing) {
     form.addField('tags[0]', tags[window.platform]);
     form.addField('tags[1]', 'kendo');
 
-    if (listing.multiple && listing['ts-multiple']) {
-        $.each(listing['ts-multiple'], function(i, file) {
+    if (listing.multiple && listing['multifile-listing']) {
+        $.each(listing['multifile-listing'], function(i, file) {
             var contentRoot = 'app/';
             var content = file.content;
             content = prefixStyleUrls(content, contentRoot);
@@ -703,20 +707,45 @@ window.openInPlunker = function(listing) {
         return prefix + url;
     }
 
-    var config = window.ExampleRunner.systemjsConfig(window.platform)(ensureOrigin(window.npmUrl), moduleDirectives);
+    var config = window.ExampleRunner.systemjsConfig(window.platform)({
+        npmUrl: ensureOrigin(window.npmUrl),
+        modules: moduleDirectives,
+        language: language
+    });
 
     form.addField('files[systemjs.config.js]', 'System.config(' + JSON.stringify(config, null, 2) + ');');
 
+    var filterFunction = function(file) {
+        return (file.indexOf('html') >= 0 || file.split('.').pop() === language);
+    };
     $.when.apply($, plunkerRequests).then(function() {
-        $.each(arguments, function(index, arr) {
-            var plunkerFiles = plunker[window.platform].plunkerFiles;
+        var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
+        /**
+         * The react platfrom supports multiple languages: ts, js and jsx.
+         * Due to that reason we need to filterout the "main" files which are not for the current language.
+         * The order is [js, jsx, ts, html].
+         */
+        if (window.platform === 'react') {
+            switch (language) {
+            case 'js':
+                plunkerTemplates.splice(1, 2);
+                break;
+            case 'ts':
+                plunkerTemplates.splice(0, 2);
+                break;
+            default:
+                plunkerTemplates = plunkerTemplates
+                    .filter(function(tmp, idx, arr) { return (idx === 1 || idx === arr.length - 1); });
+            }
+        }
+        $.each(plunkerTemplates, function(index, templateContent) {
+            var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
             var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
             var add = function(file, template) {
                 form.addField('files[' + file + ']', kendo.template(template)(context));
             };
-
             if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
-                add(plunkerFiles[index], arr[0]);
+                add(plunkerFiles[index], templateContent);
             }
         });
 
@@ -746,8 +775,9 @@ $(function() {
 
                 return plunkerPage({
                     bootstrap: bootstrapAngular,
-                    ts: listing['ts'] || listing['ng-template'],
+                    code: listing['ts'] || listing['ng-template'],
                     html: listing['html'],
+                    language: listing.runtimeLanguage,
                     theme: theme,
                     themeAccent: themeColors[options.theme],
                     track: options.track
@@ -761,7 +791,8 @@ $(function() {
 
                 return plunkerPage({
                     bootstrap: bootstrapReact,
-                    ts: listing['jsx'],
+                    code: listing['jsx'] || listing['js'] || listing['ts'],
+                    language: listing.runtimeLanguage,
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
@@ -907,7 +938,7 @@ $(function() {
                             acc[instance.options.language] = instance.getValue();
 
                             return acc;
-                        }, {});
+                        }, { runtimeLanguage: block.runtimeLanguage });
                     }
 
                     editor.find('.edit-online').click(function() {
@@ -1007,7 +1038,9 @@ $(function() {
                 content: codeToString(removeJsTrackingMarks(code))
             };
         });
-
+        /* If this is multifile runnable example there must be a main file, locate it and infer the runtime language from it */
+        var mainFile = files.filter(function(file) { return file.name.indexOf('main.') >= 0; }).pop();
+        var runtimeLanguage = mainFile.name.split('.').pop();
         var theme = element.closest("[data-theme]").attr("data-theme") || 'default';
         var content = plunkerTemplate({
             npmUrl: window.npmUrl,
@@ -1016,6 +1049,7 @@ $(function() {
             exampleRunner: window.runnerScript,
             html: "",
             theme: theme,
+            language: runtimeLanguage,
             themeAccent: themeColors[theme],
             files: files,
             track: window.trackjs
