@@ -7,6 +7,25 @@ window.ExampleRunner = (function() {
     }
 
     /**
+     * Add legacy Kendo UI configuration to the SystemJs config. This is used in the React wrappers demos.
+     */
+    var jqueryConfiguration = {
+        module: "jquery",
+        path: "https://unpkg.com/jquery@3.2.1/dist/jquery.min.js"
+    };
+
+    var kendoConfiguration = {
+        module: "@progress/kendo-ui",
+        path: "https://unpkg.com/@progress/kendo-ui/"
+    };
+
+    function mapKendoConfiguration(config) {
+        /* Add jquery and kendo-ui */
+        config.map[jqueryConfiguration.module] = jqueryConfiguration.path;
+        config.map[kendoConfiguration.module] = kendoConfiguration.path;
+    }
+
+    /**
      * SystemJS config for jsx/js demos.
      */
     function addBabelConfiguration(config, language) {
@@ -103,6 +122,11 @@ window.ExampleRunner = (function() {
                     main: kendoPackage.main,
                     defaultExtension: kendoPackage.defaultExtension || 'js'
                 };
+
+                /* Only include legacy Kendo UI configuration when it is included into the auto imports */
+                if (kendoPackage.module === '@progress/kendo-ui') {
+                    mapKendoConfiguration(config);
+                }
             });
 
             if (trackjs) {

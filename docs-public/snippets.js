@@ -331,7 +331,15 @@ function usedModules(code) {
 }
 
 function toModuleImport(directive) {
-    return "import { " + directive.import + " } from '" + directive.module + "';";
+    var exportStatement = " from '" + directive.module + "';";
+
+    if (directive.defaultExport) {
+        exportStatement = "import " + directive.import + exportStatement;
+    } else {
+        exportStatement = "import { " + directive.import + " }" + exportStatement;
+    }
+
+    return exportStatement;
 }
 
 function moduleImports(code, directives) {
