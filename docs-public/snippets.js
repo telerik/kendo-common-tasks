@@ -485,6 +485,11 @@ var blockTypes = {
         label: 'PHP',
         highlight: 'php'
     },
+    'bash': {
+        label: 'Shell',
+        highlight: 'bash',
+        noRun: true
+    },
     'sh': {
         label: 'Shell',
         highlight: 'bash',
