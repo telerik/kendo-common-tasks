@@ -65,10 +65,12 @@ window.ExampleRunner = (function() {
             'exports': 'ts'
         };
         config.packages['app'] = {
-            main: './main.ts'
+            main: './main.ts',
+            defaultExtension: 'ts'
         };
 
         config.map['ts'] = "https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js";
+        config.map['tslib'] = "https://unpkg.com/tslib@1.7.1";
         config.map['typescript'] = 'https://unpkg.com/typescript@2.4.2/lib/typescript.js';
     }
 
@@ -103,6 +105,7 @@ window.ExampleRunner = (function() {
                     // Misc packages used by the kendo-react-* packages
                     "classnames": "https://unpkg.com/classnames",
                     'cldr-data': npmUrl + '/cldr-data',
+                    'tslib': 'https://unpkg.com/tslib@1.7.1',
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress'
