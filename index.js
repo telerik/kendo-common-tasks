@@ -220,7 +220,9 @@ function ucfirst(str) {
 const startDocsServer = (gulp, libraryName, done) => {
     const browserSync = BrowserSync.create();
     const app = express();
-    const platform = argv.platform || (/react/.test(libraryName) ? 'react' : (/vue/.test(libraryName) ? 'vue' : 'angular'));
+    const vuePlatform = /vue/.test(libraryName) ? 'vue' : null;
+    const reactPlatform = /react/.test(libraryName) ? 'react' : null;
+    const platform = argv.platform || reactPlatform || vuePlatform || 'angular';
 
     app.use(rewrite(/(.+)\.md$/, '/$1'));
 
