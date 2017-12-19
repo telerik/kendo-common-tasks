@@ -717,7 +717,7 @@ window.openInPlunker = function(listing) {
         },
         vue: {
             /* this is sad */
-            appImports: imports.concat(moduleImports(html, directives)).join('\n')
+            appImports: imports.join('\n')
         }
     };
 
