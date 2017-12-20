@@ -6,8 +6,80 @@ window.ExampleRunner = (function() {
         return lastIndex !== -1 && lastIndex === position;
     }
 
+    /**
+     * Add legacy Kendo UI configuration to the SystemJs config. This is used in the React wrappers demos.
+     */
+    var jqueryConfiguration = {
+        module: "jquery",
+        path: "https://unpkg.com/jquery@3.2.1/dist/jquery.min.js"
+    };
+
+    var kendoConfiguration = {
+        module: "@progress/kendo-ui",
+        path: "https://unpkg.com/@progress/kendo-ui/"
+    };
+
+    function mapKendoConfiguration(config) {
+        /* Add jquery and kendo-ui */
+        config.map[jqueryConfiguration.module] = jqueryConfiguration.path;
+        config.map[kendoConfiguration.module] = kendoConfiguration.path;
+    }
+
+    /**
+     * SystemJS config for jsx/js demos.
+     */
+    function addBabelConfiguration(config, language) {
+        config.transpiler = "plugin-babel";
+        config.meta['*.' + language] = {
+            babelOptions: {
+                react: true
+            }
+        };
+
+        config.packages['app'] = {
+            main: './main.' + language
+        };
+
+        config.map['plugin-babel'] = "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js";
+        config.map['systemjs-babel-build'] = 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js';
+    }
+
+    /**
+     * SystemJS config for ts demos.
+     */
+    function addTSConfiguration(config) {
+        config.transpiler = 'ts';
+        config.typescriptOptions = {
+            target: 'es5',
+            module: 'system',
+            moduleResolution: 'node',
+            sourceMap: true,
+            jsx: "react",
+            emitDecoratorMetadata: true,
+            experimentalDecorators: true,
+            removeComments: false,
+            noImplicitAny: true,
+            suppressImplicitAnyIndexErrors: true
+        };
+        config.meta['typescript'] = {
+            'exports': 'ts'
+        };
+        config.packages['app'] = {
+            main: './main.ts',
+            defaultExtension: 'ts'
+        };
+
+        config.map['ts'] = "https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js";
+        config.map['tslib'] = "https://unpkg.com/tslib@1.7.1";
+        config.map['typescript'] = 'https://unpkg.com/typescript@2.4.2/lib/typescript.js';
+    }
+
     var systemjsConfig = {
-        vue: function(npmUrl, modules, trackjs) {
+        vue: function(options) {
+            var npmUrl = options.npmUrl;
+            var modules = options.modules;
+            var trackjs = options.trackjs;
+            var language = options.language;
             var config = {
                 transpiler: "plugin-babel",
 
@@ -37,144 +109,6 @@ window.ExampleRunner = (function() {
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress',
-
-                    //Legacy kendo
-                    "jquery": "https://unpkg.com/jquery@3.2.1/dist/jquery.js",
-                    "kendo.culture.en-GB.min": npmUrl + '/@progress' + "/cultures/kendo.culture.en-GB.min.js",
-                    "kendo.messages.en-GB.min": npmUrl + '/@progress' + "/messages/kendo.messages.en-GB.min.js",
-                    "kendo.autocomplete.min": npmUrl + '/@progress' + "/kendo.autocomplete.min.js",
-                    "kendo.binder.min": npmUrl + '/@progress' + "/kendo.binder.min.js",
-                    "kendo.button.min": npmUrl + '/@progress' + "/kendo.button.min.js",
-                    "kendo.calendar.min": npmUrl + '/@progress' + "/kendo.calendar.min.js",
-                    "kendo.color.min": npmUrl + '/@progress' + "/kendo.color.min.js",
-                    "kendo.colorpicker.min": npmUrl + '/@progress' + "/kendo.colorpicker.min.js",
-                    "kendo.columnmenu.min": npmUrl + '/@progress' + "/kendo.columnmenu.min.js",
-                    "kendo.columnsorter.min": npmUrl + '/@progress' + "/kendo.columnsorter.min.js",
-                    "kendo.combobox.min": npmUrl + '/@progress' + "/kendo.combobox.min.js",
-                    "kendo.core.min": npmUrl + '/@progress' + "/kendo.core.min.js",
-                    "kendo.data.min": npmUrl + '/@progress' + "/kendo.data.min.js",
-                    "kendo.data.odata.min": npmUrl + '/@progress' + "/kendo.data.odata.min.js",
-                    "kendo.data.signalr.min": npmUrl + '/@progress' + "/kendo.data.signalr.min.js",
-                    "kendo.data.xml.min": npmUrl + '/@progress' + "/kendo.data.xml.min.js",
-                    "kendo.datepicker.min": npmUrl + '/@progress' + "/kendo.datepicker.min.js",
-                    "kendo.datetimepicker.min": npmUrl + '/@progress' + "/kendo.datetimepicker.min.js",
-                    "kendo.dialog.min": npmUrl + '/@progress' + "/kendo.dialog.min.js",
-                    "kendo.dom.min": npmUrl + '/@progress' + "/kendo.dom.min.js",
-                    "kendo.draganddrop.min": npmUrl + '/@progress' + "/kendo.draganddrop.min.js",
-                    "kendo.dropdownlist.min": npmUrl + '/@progress' + "/kendo.dropdownlist.min.js",
-                    "kendo.editable.min": npmUrl + '/@progress' + "/kendo.editable.min.js",
-                    "kendo.excel.min": npmUrl + '/@progress' + "/kendo.excel.min.js",
-                    "kendo.filebrowser.min": npmUrl + '/@progress' + "/kendo.filebrowser.min.js",
-                    "kendo.filtercell.min": npmUrl + '/@progress' + "/kendo.filtercell.min.js",
-                    "kendo.filtermenu.min": npmUrl + '/@progress' + "/kendo.filtermenu.min.js",
-                    "kendo.fx.min": npmUrl + '/@progress' + "/kendo.fx.min.js",
-                    "kendo.gantt.list.min": npmUrl + '/@progress' + "/kendo.gantt.list.min.js",
-                    "kendo.gantt.timeline.min": npmUrl + '/@progress' + "/kendo.gantt.timeline.min.js",
-                    "kendo.groupable.min": npmUrl + '/@progress' + "/kendo.groupable.min.js",
-                    "kendo.imagebrowser.min": npmUrl + '/@progress' + "/kendo.imagebrowser.min.js",
-                    "kendo.list.min": npmUrl + '/@progress' + "/kendo.list.min.js",
-                    "kendo.listview.min": npmUrl + '/@progress' + "/kendo.listview.min.js",
-                    "kendo.maskedtextbox.min": npmUrl + '/@progress' + "/kendo.maskedtextbox.min.js",
-                    "kendo.mediaplayer.min": npmUrl + '/@progress' + "/kendo.mediaplayer.min.js",
-                    "kendo.menu.min": npmUrl + '/@progress' + "/kendo.menu.min.js",
-                    "kendo.mobile.actionsheet.min": npmUrl + '/@progress' + "/kendo.mobile.actionsheet.min.js",
-                    "kendo.mobile.application.min": npmUrl + '/@progress' + "/kendo.mobile.application.min.js",
-                    "kendo.mobile.button.min": npmUrl + '/@progress' + "/kendo.mobile.button.min.js",
-                    "kendo.mobile.buttongroup.min": npmUrl + '/@progress' + "/kendo.mobile.buttongroup.min.js",
-                    "kendo.mobile.collapsible.min": npmUrl + '/@progress' + "/kendo.mobile.collapsible.min.js",
-                    "kendo.mobile.drawer.min": npmUrl + '/@progress' + "/kendo.mobile.drawer.min.js",
-                    "kendo.mobile.listview.min": npmUrl + '/@progress' + "/kendo.mobile.listview.min.js",
-                    "kendo.mobile.loader.min": npmUrl + '/@progress' + "/kendo.mobile.loader.min.js",
-                    "kendo.mobile.modalview.min": npmUrl + '/@progress' + "/kendo.mobile.modalview.min.js",
-                    "kendo.mobile.navbar.min": npmUrl + '/@progress' + "/kendo.mobile.navbar.min.js",
-                    "kendo.mobile.pane.min": npmUrl + '/@progress' + "/kendo.mobile.pane.min.js",
-                    "kendo.mobile.popover.min": npmUrl + '/@progress' + "/kendo.mobile.popover.min.js",
-                    "kendo.mobile.scroller.min": npmUrl + '/@progress' + "/kendo.mobile.scroller.min.js",
-                    "kendo.mobile.scrollview.min": npmUrl + '/@progress' + "/kendo.mobile.scrollview.min.js",
-                    "kendo.mobile.shim.min": npmUrl + '/@progress' + "/kendo.mobile.shim.min.js",
-                    "kendo.mobile.splitview.min": npmUrl + '/@progress' + "/kendo.mobile.splitview.min.js",
-                    "kendo.mobile.switch.min": npmUrl + '/@progress' + "/kendo.mobile.switch.min.js",
-                    "kendo.mobile.tabstrip.min": npmUrl + '/@progress' + "/kendo.mobile.tabstrip.min.js",
-                    "kendo.mobile.view.min": npmUrl + '/@progress' + "/kendo.mobile.view.min.js",
-                    "kendo.multiselect.min": npmUrl + '/@progress' + "/kendo.multiselect.min.js",
-                    "kendo.notification.min": npmUrl + '/@progress' + "/kendo.notification.min.js",
-                    "kendo.numerictextbox.min": npmUrl + '/@progress' + "/kendo.numerictextbox.min.js",
-                    "kendo.ooxml.min": npmUrl + '/@progress' + "/kendo.ooxml.min.js",
-                    "kendo.pager.min": npmUrl + '/@progress' + "/kendo.pager.min.js",
-                    "kendo.panelbar.min": npmUrl + '/@progress' + "/kendo.panelbar.min.js",
-                    "kendo.pivot.configurator.min": npmUrl + '/@progress' + "/kendo.pivot.configurator.min.js",
-                    "kendo.pivot.fieldmenu.min": npmUrl + '/@progress' + "/kendo.pivot.fieldmenu.min.js",
-                    "kendo.pivotgrid.min": npmUrl + '/@progress' + "/kendo.pivotgrid.min.js",
-                    "kendo.popup.min": npmUrl + '/@progress' + "/kendo.popup.min.js",
-                    "kendo.progressbar.min": npmUrl + '/@progress' + "/kendo.progressbar.min.js",
-                    "kendo.reorderable.min": npmUrl + '/@progress' + "/kendo.reorderable.min.js",
-                    "kendo.resizable.min": npmUrl + '/@progress' + "/kendo.resizable.min.js",
-                    "kendo.responsivepanel.min": npmUrl + '/@progress' + "/kendo.responsivepanel.min.js",
-                    "kendo.router.min": npmUrl + '/@progress' + "/kendo.router.min.js",
-                    "kendo.scheduler.agendaview.min": npmUrl + '/@progress' + "/kendo.scheduler.agendaview.min.js",
-                    "kendo.scheduler.dayview.min": npmUrl + '/@progress' + "/kendo.scheduler.dayview.min.js",
-                    "kendo.scheduler.monthview.min": npmUrl + '/@progress' + "/kendo.scheduler.monthview.min.js",
-                    "kendo.scheduler.recurrence.min": npmUrl + '/@progress' + "/kendo.scheduler.recurrence.min.js",
-                    "kendo.scheduler.timelineview.min": npmUrl + '/@progress' + "/kendo.scheduler.timelineview.min.js",
-                    "kendo.scheduler.view.min": npmUrl + '/@progress' + "/kendo.scheduler.view.min.js",
-                    "kendo.selectable.min": npmUrl + '/@progress' + "/kendo.selectable.min.js",
-                    "kendo.slider.min": npmUrl + '/@progress' + "/kendo.slider.min.js",
-                    "kendo.sortable.min": npmUrl + '/@progress' + "/kendo.sortable.min.js",
-                    "kendo.splitter.min": npmUrl + '/@progress' + "/kendo.splitter.min.js",
-                    "kendo.tabstrip.min": npmUrl + '/@progress' + "/kendo.tabstrip.min.js",
-                    "kendo.timepicker.min": npmUrl + '/@progress' + "/kendo.timepicker.min.js",
-                    "kendo.timezones.min": npmUrl + '/@progress' + "/kendo.timezones.min.js",
-                    "kendo.toolbar.min": npmUrl + '/@progress' + "/kendo.toolbar.min.js",
-                    "kendo.tooltip.min": npmUrl + '/@progress' + "/kendo.tooltip.min.js",
-                    "kendo.touch.min": npmUrl + '/@progress' + "/kendo.touch.min.js",
-                    "kendo.treelist.min": npmUrl + '/@progress' + "/kendo.treelist.min.js",
-                    "kendo.treeview.draganddrop.min": npmUrl + '/@progress' + "/kendo.treeview.draganddrop.min.js",
-                    "kendo.treeview.min": npmUrl + '/@progress' + "/kendo.treeview.min.js",
-                    "kendo.upload.min": npmUrl + '/@progress' + "/kendo.upload.min.js",
-                    "kendo.userevents.min": npmUrl + '/@progress' + "/kendo.userevents.min.js",
-                    "kendo.validator.min": npmUrl + '/@progress' + "/kendo.validator.min.js",
-                    "kendo.view.min": npmUrl + '/@progress' + "/kendo.view.min.js",
-                    "kendo.virtuallist.min": npmUrl + '/@progress' + "/kendo.virtuallist.min.js",
-                    "kendo.window.min": npmUrl + '/@progress' + "/kendo.window.min.js",
-                    "pako_deflate.min": npmUrl + '/@progress' + "/pako_deflate.min.js",
-                    "kendoaspnetmvc": npmUrl + '/@progress' + "/kendo.aspnetmvc.min.js",
-                    "kendodatavizbarcode": npmUrl + '/@progress' + "/kendo.dataviz.barcode.min.js",
-                    "kendodatavizchart": npmUrl + '/@progress' + "/kendo.dataviz.chart.min.js",
-                    "kendodatavizcore": npmUrl + '/@progress' + "/kendo.dataviz.core.min.js",
-                    "kendodatavizdiagram": npmUrl + '/@progress' + "/kendo.dataviz.diagram.min.js",
-                    "kendodatavizgauge": npmUrl + '/@progress' + "/kendo.dataviz.gauge.min.js",
-                    "kendodatavizmap": npmUrl + '/@progress' + "/kendo.dataviz.map.min.js",
-                    "kendodatavizqrcode": npmUrl + '/@progress' + "/kendo.dataviz.qrcode.min.js",
-                    "kendodatavizsparkline": npmUrl + '/@progress' + "/kendo.dataviz.sparkline.min.js",
-                    "kendodatavizstock": npmUrl + '/@progress' + "/kendo.dataviz.stock.min.js",
-                    "kendodatavizthemes": npmUrl + '/@progress' + "/kendo.dataviz.themes.min.js",
-                    "kendodataviztreemap": npmUrl + '/@progress' + "/kendo.dataviz.treemap.min.js",
-                    "kendodrawing": npmUrl + '/@progress' + "/kendo.drawing.min.js",
-                    "kendoeditor": npmUrl + '/@progress' + "/kendo.editor.min.js",
-                    "kendogantt": npmUrl + '/@progress' + "/kendo.gantt.min.js",
-                    "kendogrid": npmUrl + '/@progress' + "/kendo.grid.min.js",
-                    "kendopdf": npmUrl + '/@progress' + "/kendo.pdf.min.js",
-                    "kendoscheduler": npmUrl + '/@progress' + "/kendo.scheduler.min.js"
-                },
-                bundles: {
-                    "kendogrid": [ "kendo.grid.min" ],
-                    "kendoaspnetmvc": [ "kendo.aspnetmvc.min" ],
-                    "kendodatavizbarcode": [ "kendo.dataviz.barcode.min" ],
-                    "kendodatavizchart": [ "kendo.dataviz.chart.min" ],
-                    "kendodatavizcore": [ "kendo.dataviz.core.min" ],
-                    "kendodatavizdiagram": [ "kendo.dataviz.diagram.min" ],
-                    "kendodatavizgauge": [ "kendo.dataviz.gauge.min" ],
-                    "kendodatavizmap": [ "kendo.dataviz.map.min" ],
-                    "kendodatavizqrcode": [ "kendo.dataviz.qrcode.min" ],
-                    "kendodatavizsparkline": [ "kendo.dataviz.sparkline.min" ],
-                    "kendodatavizstock": [ "kendo.dataviz.stock.min" ],
-                    "kendodatavizthemes": [ "kendo.dataviz.themes.min" ],
-                    "kendodataviztreemap": [ "kendo.dataviz.treemap.min" ],
-                    "kendodrawing": [ "kendo.drawing.min" ],
-                    "kendoeditor": [ "kendo.editor.min" ],
-                    "kendogantt": [ "kendo.gantt.min" ],
-                    "kendopdf": [ "kendo.pdf.min" ],
-                    "kendoscheduler": [ "kendo.scheduler.min" ]
                 }
             };
 
@@ -185,6 +119,11 @@ window.ExampleRunner = (function() {
                     main: kendoPackage.main,
                     defaultExtension: kendoPackage.defaultExtension || 'js'
                 };
+
+                /* Only include legacy Kendo UI configuration when it is included into the auto imports */
+                if (kendoPackage.module === '@progress/kendo-ui') {
+                    mapKendoConfiguration(config);
+                }
             });
 
             if (trackjs) {
@@ -199,37 +138,27 @@ window.ExampleRunner = (function() {
 
             return config;
         },
-        react: function(npmUrl, modules, trackjs) {
+        react: function(options) {
+            var npmUrl = options.npmUrl;
+            var modules = options.modules;
+            var trackjs = options.trackjs;
+            var language = options.language;
             var config = {
-                transpiler: "plugin-babel",
-
                 meta: {
                     '*.json': {
                         loader: 'systemjs-json-plugin'
-                    },
-                    '*.jsx': {
-                        babelOptions: {
-                            react: true
-                        }
                     }
                 },
 
-                packages: {
-                    'app': {
-                        main: './main.jsx',
-                        defaultExtension: 'jsx'
-                    }
-                },
+                packages: { },
 
                 map: {
                     "app": "app",
                     'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
-                    //Babel transpiler
-                    "plugin-babel": "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js",
-                    'systemjs-babel-build': 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
                     //React packages
                     "react": "https://unpkg.com/react@16.0.0/umd/react.production.min.js",
                     "react-dom": "https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js",
+                    "react-dom/server": "https://unpkg.com/react-dom@16.0.0/umd/react-dom-server.browser.production.min.js",
                     "redux": "https://unpkg.com/redux@3.7.2/dist/redux.min.js",
                     "react-redux": "https://unpkg.com/react-redux@5.0.6/dist/react-redux.min.js",
                     "react-router": "https://unpkg.com/react-router@4.2.0/umd/react-router.min.js",
@@ -239,148 +168,20 @@ window.ExampleRunner = (function() {
                     // Misc packages used by the kendo-react-* packages
                     "classnames": "https://unpkg.com/classnames",
                     'cldr-data': npmUrl + '/cldr-data',
+                    'tslib': 'https://unpkg.com/tslib@1.7.1',
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
-                    '@progress': npmUrl + '/@progress',
-                    //Legacy kendo
-                    "jquery": "https://unpkg.com/jquery@3.2.1/dist/jquery.js",
-                    "kendo.culture.en-GB.min": npmUrl + '/@progress' + "/cultures/kendo.culture.en-GB.min.js",
-                    "kendo.messages.en-GB.min": npmUrl + '/@progress' + "/messages/kendo.messages.en-GB.min.js",
-                    "kendo.autocomplete.min": npmUrl + '/@progress' + "/kendo.autocomplete.min.js",
-                    "kendo.binder.min": npmUrl + '/@progress' + "/kendo.binder.min.js",
-                    "kendo.button.min": npmUrl + '/@progress' + "/kendo.button.min.js",
-                    "kendo.calendar.min": npmUrl + '/@progress' + "/kendo.calendar.min.js",
-                    "kendo.color.min": npmUrl + '/@progress' + "/kendo.color.min.js",
-                    "kendo.colorpicker.min": npmUrl + '/@progress' + "/kendo.colorpicker.min.js",
-                    "kendo.columnmenu.min": npmUrl + '/@progress' + "/kendo.columnmenu.min.js",
-                    "kendo.columnsorter.min": npmUrl + '/@progress' + "/kendo.columnsorter.min.js",
-                    "kendo.combobox.min": npmUrl + '/@progress' + "/kendo.combobox.min.js",
-                    "kendo.core.min": npmUrl + '/@progress' + "/kendo.core.min.js",
-                    "kendo.data.min": npmUrl + '/@progress' + "/kendo.data.min.js",
-                    "kendo.data.odata.min": npmUrl + '/@progress' + "/kendo.data.odata.min.js",
-                    "kendo.data.signalr.min": npmUrl + '/@progress' + "/kendo.data.signalr.min.js",
-                    "kendo.data.xml.min": npmUrl + '/@progress' + "/kendo.data.xml.min.js",
-                    "kendo.datepicker.min": npmUrl + '/@progress' + "/kendo.datepicker.min.js",
-                    "kendo.datetimepicker.min": npmUrl + '/@progress' + "/kendo.datetimepicker.min.js",
-                    "kendo.dialog.min": npmUrl + '/@progress' + "/kendo.dialog.min.js",
-                    "kendo.dom.min": npmUrl + '/@progress' + "/kendo.dom.min.js",
-                    "kendo.draganddrop.min": npmUrl + '/@progress' + "/kendo.draganddrop.min.js",
-                    "kendo.dropdownlist.min": npmUrl + '/@progress' + "/kendo.dropdownlist.min.js",
-                    "kendo.editable.min": npmUrl + '/@progress' + "/kendo.editable.min.js",
-                    "kendo.excel.min": npmUrl + '/@progress' + "/kendo.excel.min.js",
-                    "kendo.filebrowser.min": npmUrl + '/@progress' + "/kendo.filebrowser.min.js",
-                    "kendo.filtercell.min": npmUrl + '/@progress' + "/kendo.filtercell.min.js",
-                    "kendo.filtermenu.min": npmUrl + '/@progress' + "/kendo.filtermenu.min.js",
-                    "kendo.fx.min": npmUrl + '/@progress' + "/kendo.fx.min.js",
-                    "kendo.gantt.list.min": npmUrl + '/@progress' + "/kendo.gantt.list.min.js",
-                    "kendo.gantt.timeline.min": npmUrl + '/@progress' + "/kendo.gantt.timeline.min.js",
-                    "kendo.groupable.min": npmUrl + '/@progress' + "/kendo.groupable.min.js",
-                    "kendo.imagebrowser.min": npmUrl + '/@progress' + "/kendo.imagebrowser.min.js",
-                    "kendo.list.min": npmUrl + '/@progress' + "/kendo.list.min.js",
-                    "kendo.listview.min": npmUrl + '/@progress' + "/kendo.listview.min.js",
-                    "kendo.maskedtextbox.min": npmUrl + '/@progress' + "/kendo.maskedtextbox.min.js",
-                    "kendo.mediaplayer.min": npmUrl + '/@progress' + "/kendo.mediaplayer.min.js",
-                    "kendo.menu.min": npmUrl + '/@progress' + "/kendo.menu.min.js",
-                    "kendo.mobile.actionsheet.min": npmUrl + '/@progress' + "/kendo.mobile.actionsheet.min.js",
-                    "kendo.mobile.application.min": npmUrl + '/@progress' + "/kendo.mobile.application.min.js",
-                    "kendo.mobile.button.min": npmUrl + '/@progress' + "/kendo.mobile.button.min.js",
-                    "kendo.mobile.buttongroup.min": npmUrl + '/@progress' + "/kendo.mobile.buttongroup.min.js",
-                    "kendo.mobile.collapsible.min": npmUrl + '/@progress' + "/kendo.mobile.collapsible.min.js",
-                    "kendo.mobile.drawer.min": npmUrl + '/@progress' + "/kendo.mobile.drawer.min.js",
-                    "kendo.mobile.listview.min": npmUrl + '/@progress' + "/kendo.mobile.listview.min.js",
-                    "kendo.mobile.loader.min": npmUrl + '/@progress' + "/kendo.mobile.loader.min.js",
-                    "kendo.mobile.modalview.min": npmUrl + '/@progress' + "/kendo.mobile.modalview.min.js",
-                    "kendo.mobile.navbar.min": npmUrl + '/@progress' + "/kendo.mobile.navbar.min.js",
-                    "kendo.mobile.pane.min": npmUrl + '/@progress' + "/kendo.mobile.pane.min.js",
-                    "kendo.mobile.popover.min": npmUrl + '/@progress' + "/kendo.mobile.popover.min.js",
-                    "kendo.mobile.scroller.min": npmUrl + '/@progress' + "/kendo.mobile.scroller.min.js",
-                    "kendo.mobile.scrollview.min": npmUrl + '/@progress' + "/kendo.mobile.scrollview.min.js",
-                    "kendo.mobile.shim.min": npmUrl + '/@progress' + "/kendo.mobile.shim.min.js",
-                    "kendo.mobile.splitview.min": npmUrl + '/@progress' + "/kendo.mobile.splitview.min.js",
-                    "kendo.mobile.switch.min": npmUrl + '/@progress' + "/kendo.mobile.switch.min.js",
-                    "kendo.mobile.tabstrip.min": npmUrl + '/@progress' + "/kendo.mobile.tabstrip.min.js",
-                    "kendo.mobile.view.min": npmUrl + '/@progress' + "/kendo.mobile.view.min.js",
-                    "kendo.multiselect.min": npmUrl + '/@progress' + "/kendo.multiselect.min.js",
-                    "kendo.notification.min": npmUrl + '/@progress' + "/kendo.notification.min.js",
-                    "kendo.numerictextbox.min": npmUrl + '/@progress' + "/kendo.numerictextbox.min.js",
-                    "kendo.ooxml.min": npmUrl + '/@progress' + "/kendo.ooxml.min.js",
-                    "kendo.pager.min": npmUrl + '/@progress' + "/kendo.pager.min.js",
-                    "kendo.panelbar.min": npmUrl + '/@progress' + "/kendo.panelbar.min.js",
-                    "kendo.pivot.configurator.min": npmUrl + '/@progress' + "/kendo.pivot.configurator.min.js",
-                    "kendo.pivot.fieldmenu.min": npmUrl + '/@progress' + "/kendo.pivot.fieldmenu.min.js",
-                    "kendo.pivotgrid.min": npmUrl + '/@progress' + "/kendo.pivotgrid.min.js",
-                    "kendo.popup.min": npmUrl + '/@progress' + "/kendo.popup.min.js",
-                    "kendo.progressbar.min": npmUrl + '/@progress' + "/kendo.progressbar.min.js",
-                    "kendo.reorderable.min": npmUrl + '/@progress' + "/kendo.reorderable.min.js",
-                    "kendo.resizable.min": npmUrl + '/@progress' + "/kendo.resizable.min.js",
-                    "kendo.responsivepanel.min": npmUrl + '/@progress' + "/kendo.responsivepanel.min.js",
-                    "kendo.router.min": npmUrl + '/@progress' + "/kendo.router.min.js",
-                    "kendo.scheduler.agendaview.min": npmUrl + '/@progress' + "/kendo.scheduler.agendaview.min.js",
-                    "kendo.scheduler.dayview.min": npmUrl + '/@progress' + "/kendo.scheduler.dayview.min.js",
-                    "kendo.scheduler.monthview.min": npmUrl + '/@progress' + "/kendo.scheduler.monthview.min.js",
-                    "kendo.scheduler.recurrence.min": npmUrl + '/@progress' + "/kendo.scheduler.recurrence.min.js",
-                    "kendo.scheduler.timelineview.min": npmUrl + '/@progress' + "/kendo.scheduler.timelineview.min.js",
-                    "kendo.scheduler.view.min": npmUrl + '/@progress' + "/kendo.scheduler.view.min.js",
-                    "kendo.selectable.min": npmUrl + '/@progress' + "/kendo.selectable.min.js",
-                    "kendo.slider.min": npmUrl + '/@progress' + "/kendo.slider.min.js",
-                    "kendo.sortable.min": npmUrl + '/@progress' + "/kendo.sortable.min.js",
-                    "kendo.splitter.min": npmUrl + '/@progress' + "/kendo.splitter.min.js",
-                    "kendo.tabstrip.min": npmUrl + '/@progress' + "/kendo.tabstrip.min.js",
-                    "kendo.timepicker.min": npmUrl + '/@progress' + "/kendo.timepicker.min.js",
-                    "kendo.timezones.min": npmUrl + '/@progress' + "/kendo.timezones.min.js",
-                    "kendo.toolbar.min": npmUrl + '/@progress' + "/kendo.toolbar.min.js",
-                    "kendo.tooltip.min": npmUrl + '/@progress' + "/kendo.tooltip.min.js",
-                    "kendo.touch.min": npmUrl + '/@progress' + "/kendo.touch.min.js",
-                    "kendo.treelist.min": npmUrl + '/@progress' + "/kendo.treelist.min.js",
-                    "kendo.treeview.draganddrop.min": npmUrl + '/@progress' + "/kendo.treeview.draganddrop.min.js",
-                    "kendo.treeview.min": npmUrl + '/@progress' + "/kendo.treeview.min.js",
-                    "kendo.upload.min": npmUrl + '/@progress' + "/kendo.upload.min.js",
-                    "kendo.userevents.min": npmUrl + '/@progress' + "/kendo.userevents.min.js",
-                    "kendo.validator.min": npmUrl + '/@progress' + "/kendo.validator.min.js",
-                    "kendo.view.min": npmUrl + '/@progress' + "/kendo.view.min.js",
-                    "kendo.virtuallist.min": npmUrl + '/@progress' + "/kendo.virtuallist.min.js",
-                    "kendo.window.min": npmUrl + '/@progress' + "/kendo.window.min.js",
-                    "pako_deflate.min": npmUrl + '/@progress' + "/pako_deflate.min.js",
-                    "kendoaspnetmvc": npmUrl + '/@progress' + "/kendo.aspnetmvc.min.js",
-                    "kendodatavizbarcode": npmUrl + '/@progress' + "/kendo.dataviz.barcode.min.js",
-                    "kendodatavizchart": npmUrl + '/@progress' + "/kendo.dataviz.chart.min.js",
-                    "kendodatavizcore": npmUrl + '/@progress' + "/kendo.dataviz.core.min.js",
-                    "kendodatavizdiagram": npmUrl + '/@progress' + "/kendo.dataviz.diagram.min.js",
-                    "kendodatavizgauge": npmUrl + '/@progress' + "/kendo.dataviz.gauge.min.js",
-                    "kendodatavizmap": npmUrl + '/@progress' + "/kendo.dataviz.map.min.js",
-                    "kendodatavizqrcode": npmUrl + '/@progress' + "/kendo.dataviz.qrcode.min.js",
-                    "kendodatavizsparkline": npmUrl + '/@progress' + "/kendo.dataviz.sparkline.min.js",
-                    "kendodatavizstock": npmUrl + '/@progress' + "/kendo.dataviz.stock.min.js",
-                    "kendodatavizthemes": npmUrl + '/@progress' + "/kendo.dataviz.themes.min.js",
-                    "kendodataviztreemap": npmUrl + '/@progress' + "/kendo.dataviz.treemap.min.js",
-                    "kendodrawing": npmUrl + '/@progress' + "/kendo.drawing.min.js",
-                    "kendoeditor": npmUrl + '/@progress' + "/kendo.editor.min.js",
-                    "kendogantt": npmUrl + '/@progress' + "/kendo.gantt.min.js",
-                    "kendogrid": npmUrl + '/@progress' + "/kendo.grid.min.js",
-                    "kendopdf": npmUrl + '/@progress' + "/kendo.pdf.min.js",
-                    "kendoscheduler": npmUrl + '/@progress' + "/kendo.scheduler.min.js"
-                },
-                bundles: {
-                    "kendogrid": [ "kendo.grid.min" ],
-                    "kendoaspnetmvc": [ "kendo.aspnetmvc.min" ],
-                    "kendodatavizbarcode": [ "kendo.dataviz.barcode.min" ],
-                    "kendodatavizchart": [ "kendo.dataviz.chart.min" ],
-                    "kendodatavizcore": [ "kendo.dataviz.core.min" ],
-                    "kendodatavizdiagram": [ "kendo.dataviz.diagram.min" ],
-                    "kendodatavizgauge": [ "kendo.dataviz.gauge.min" ],
-                    "kendodatavizmap": [ "kendo.dataviz.map.min" ],
-                    "kendodatavizqrcode": [ "kendo.dataviz.qrcode.min" ],
-                    "kendodatavizsparkline": [ "kendo.dataviz.sparkline.min" ],
-                    "kendodatavizstock": [ "kendo.dataviz.stock.min" ],
-                    "kendodatavizthemes": [ "kendo.dataviz.themes.min" ],
-                    "kendodataviztreemap": [ "kendo.dataviz.treemap.min" ],
-                    "kendodrawing": [ "kendo.drawing.min" ],
-                    "kendoeditor": [ "kendo.editor.min" ],
-                    "kendogantt": [ "kendo.gantt.min" ],
-                    "kendopdf": [ "kendo.pdf.min" ],
-                    "kendoscheduler": [ "kendo.scheduler.min" ]
+                    '@progress': npmUrl + '/@progress'
                 }
             };
+
+            /* Use appropriate configuration based on demo language */
+            if (language === 'ts') {
+                addTSConfiguration(config);
+            } else {
+                /* Support both js and jsx */
+                addBabelConfiguration(config, language);
+            }
 
             /* Add Kendo Packages */
             modules.forEach(function(kendoPackage) {
@@ -388,6 +189,11 @@ window.ExampleRunner = (function() {
                     main: kendoPackage.main,
                     defaultExtension: kendoPackage.defaultExtension || 'js'
                 };
+
+                /* Only include legacy Kendo UI configuration when it is included into the auto imports */
+                if (kendoPackage.module === '@progress/kendo-ui') {
+                    mapKendoConfiguration(config);
+                }
             });
 
             if (trackjs) {
@@ -402,7 +208,10 @@ window.ExampleRunner = (function() {
 
             return config;
         },
-        angular: function(npmUrl, modules, trackjs) {
+        angular: function(options) {
+            var npmUrl = options.npmUrl;
+            var modules = options.modules;
+            var trackjs = options.trackjs;
             var ngVer = '@5.0.0'; // lock in the angular package version; do not let it float to current!
             var SYSTEM_BUNDLES = [ {
                 name: "@progress/kendo-drawing",
@@ -569,8 +378,8 @@ window.ExampleRunner = (function() {
     }
 
     ExampleRunner.prototype = {
-        configure: function(system, npmUrl, modules, trackjs) {
-            system.config(systemjsConfig[this.platform](npmUrl, modules, trackjs));
+        configure: function(system, options) {
+            system.config(systemjsConfig[this.platform](options));
 
             // allow mocking of files via custom fetch function
             this.files = {};
