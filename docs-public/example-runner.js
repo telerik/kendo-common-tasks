@@ -75,6 +75,67 @@ window.ExampleRunner = (function() {
     }
 
     var systemjsConfig = {
+        vue: function(options) {
+            var npmUrl = options.npmUrl;
+            var modules = options.modules;
+            var trackjs = options.trackjs;
+            var language = options.language;
+            var config = {
+                meta: {
+                    '*.json': {
+                        loader: 'systemjs-json-plugin'
+                    }
+                },
+
+                packages: {
+                    'app': {
+                        main: './main.js',
+                        defaultExtension: 'js'
+                    }
+                },
+
+                map: {
+                    "app": "app",
+                    'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
+                    //Babel transpiler
+                    "plugin-babel": "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js",
+                    'systemjs-babel-build': 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
+                    //Vue packages
+                    "vue": "https://unpkg.com/vue/dist/vue.min.js",
+                    // Misc packages used by the kendo-vue-* packages
+
+                    //Inhouse pacakges
+                    '@telerik': npmUrl + '/@telerik',
+                    '@progress': npmUrl + '/@progress',
+                }
+            };
+
+            /* Add Kendo Packages */
+            modules.forEach(function(kendoPackage) {
+                console.log(kendoPackage);
+                config.packages[kendoPackage.module] = {
+                    main: kendoPackage.main,
+                    defaultExtension: kendoPackage.defaultExtension || 'js'
+                };
+
+                /* Only include legacy Kendo UI configuration when it is included into the auto imports */
+                if (kendoPackage.module === '@progress/kendo-ui') {
+                    mapKendoConfiguration(config);
+                }
+            });
+
+            if (trackjs) {
+                config.packages['raven-js'] = {
+                    main: 'dist/raven.js'
+                };
+
+                config.paths = {
+                    'raven-js': npmUrl + "/raven-js"
+                };
+            }
+
+            return config;
+        },
         react: function(options) {
             var npmUrl = options.npmUrl;
             var modules = options.modules;

@@ -213,12 +213,15 @@ SnippetRunner.prototype = {
 };
 
 var CDNResources = {
-    react: [
-    ],
     angular: [
         "https://unpkg.com/zone.js@0.8.12/dist/zone.js",
         "https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"
+    ],
+    react: [
+    ],
+    vue: [
     ]
+
 };
 
 function resourceLinks(resources) {
@@ -300,7 +303,14 @@ var directivesByModule = {
         { module: '@angular/platform-browser', match: '.', import: "BrowserModule" },
         { module: '@angular/platform-browser/animations', match: '.', import: "BrowserAnimationsModule" }
     ].concat(moduleDirectives),
-    react: [].concat(moduleDirectives)
+    react: [].concat(moduleDirectives),
+    vue: [].concat(moduleDirectives)
+};
+
+var demoFileExtension = {
+    react: 'jsx',
+    angular: 'ts',
+    vue: 'js'
 };
 
 /* The following method replaces code characters to allow embedding in a js double-quote string ("") */
@@ -309,14 +319,21 @@ function codeToString(code) {
         .replace(/\n/g, '\\n'); // escape line endings
 }
 
-function getFullContent(listing) {
-    if (listing['multifile-listing']) {
+function getFullContent(options) {
+    var listing = options.listing;
+    var platform = options.platform;
+
+    if (listing['ts-multiple']) {
         var fullContent = "";
         listing['multifile-listing'].forEach(function(file) {
             fullContent = fullContent.concat(file.content);
         });
 
         return fullContent;
+    }
+
+    if (listing['html'] && platform === 'vue') {
+        return listing['html'];
     }
 
     return listing['ts'] || listing['jsx'] || listing['js'];
@@ -381,7 +398,7 @@ function jsTrackingCode() {
 }
 
 function bootstrapReact(options) {
-    var code = options.code;
+    var code = options.example.code;
     var directives = usedModules(code);
     var imports = moduleImports(code, directives);
     return [].concat([
@@ -394,8 +411,24 @@ function bootstrapReact(options) {
     .join('\n');
 }
 
+function bootstrapVue(options) {
+    // in vue we extract the imports from html
+    var code = options.example.ts;
+    var html = options.example.html;
+    var directives = usedModules(html);
+    var imports = moduleImports(html, directives);
+    return [].concat([
+        "import Vue from 'vue';"
+    ])
+    .concat(imports)
+    .concat(code)
+    .filter(Boolean)
+    .join('\n');
+}
+
 function bootstrapAngular(options) {
-    var code = wrapAngularTemplate(options.code);
+    var source = options.example.ts;
+    var code = wrapAngularTemplate(source);
     var jsTracking = jsTrackingCode();
 
     var directives = usedModules(code);
@@ -442,6 +475,7 @@ function plunkerPage(opts) {
 
     var codeContent = codeToString(bootstrap.call(this, {
         code: options.code,
+        example: options,
         resize: true,
         track: options.track
     }));
@@ -615,6 +649,13 @@ var basicPlunkerFiles = [
 ];
 
 var plunker = {
+    angular: {
+        plunkerFiles: [
+            'app/main.ts',
+            'app/app.component.ts',
+            'app/app.module.ts'
+        ].concat(basicPlunkerFiles)
+    },
     react: {
         plunkerFiles: [
             'app/main.js',
@@ -622,11 +663,9 @@ var plunker = {
             'app/main.ts'
         ].concat(basicPlunkerFiles)
     },
-    angular: {
+    vue: {
         plunkerFiles: [
-            'app/main.ts',
-            'app/app.component.ts',
-            'app/app.module.ts'
+            'app/main.js'
         ].concat(basicPlunkerFiles)
     }
 };
@@ -674,7 +713,7 @@ window.openInPlunker = function(listing) {
         code = wrapAngularTemplate(template);
     }
 
-    var directives = usedModules(getFullContent(listing));
+    var directives = usedModules(getFullContent({ listing: listing, platform: window.platform }));
     var imports = moduleImports(code, directives);
 
     var plunkerContext = {
@@ -690,6 +729,10 @@ window.openInPlunker = function(listing) {
             appModuleImports: angularAppModuleImports(directives)
         },
         react: {
+            appImports: imports.join('\n')
+        },
+        vue: {
+            /* this is sad */
             appImports: imports.join('\n')
         }
     };
@@ -806,6 +849,21 @@ $(function() {
                     bootstrap: bootstrapReact,
                     code: listing['jsx'] || listing['js'] || listing['ts'],
                     language: listing.runtimeLanguage,
+                    html: listing['html'],
+                    theme: theme,
+                    themeAccent: themeColors[options.theme],
+                    track: options.track
+                });
+            }
+        },
+        vue: {
+            runnerContent: function(options) {
+                var listing = options.listing;
+                var theme = options.theme || 'default';
+
+                return plunkerPage({
+                    bootstrap: bootstrapVue,
+                    ts: listing['js'],
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
