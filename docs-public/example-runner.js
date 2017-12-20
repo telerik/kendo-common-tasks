@@ -81,6 +81,8 @@ window.ExampleRunner = (function() {
             var trackjs = options.trackjs;
             var language = options.language;
             var config = {
+                transpiler: "plugin-babel",
+
                 meta: {
                     '*.json': {
                         loader: 'systemjs-json-plugin'

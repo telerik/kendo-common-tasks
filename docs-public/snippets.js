@@ -413,7 +413,7 @@ function bootstrapReact(options) {
 
 function bootstrapVue(options) {
     // in vue we extract the imports from html
-    var code = options.example.ts;
+    var code = options.example.code;
     var html = options.example.html;
     var directives = usedModules(html);
     var imports = moduleImports(html, directives);
@@ -863,7 +863,8 @@ $(function() {
 
                 return plunkerPage({
                     bootstrap: bootstrapVue,
-                    ts: listing['js'],
+                    code: listing['js'],
+                    language: listing.runtimeLanguage,
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
