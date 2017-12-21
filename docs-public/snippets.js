@@ -416,7 +416,7 @@ function bootstrapVue(options) {
     var code = options.example.code;
     var html = options.example.html;
     var directives = usedModules(html);
-    var imports = moduleImports(html, directives);
+    var imports = moduleImports(html, directives.filter(function(item){ return !/react|angular/gi.test(item.module); }));
     return [].concat([
         "import Vue from 'vue';"
     ])
