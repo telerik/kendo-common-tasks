@@ -12,6 +12,11 @@ module.exports = (libraryName, onServerStart, done) => {
     const app = express();
     const platformMatch = new RegExp(/kendo.*(react|angular|vue)/g).exec(libraryName);
     const platform = argv.platform || (platformMatch && platformMatch[1]) || 'angular';
+    const staticContentOptions = {
+        setHeaders: (response) => {
+            response.set('Access-Control-Allow-Origin', 'http://run.plnkr.co');
+        }
+    };
 
     app.use(rewrite(/(.+)\.md$/, '/$1'));
 
@@ -20,16 +25,9 @@ module.exports = (libraryName, onServerStart, done) => {
 
     app.use('/internals', express.static(path.join(__dirname, 'docs-public')));
     app.use('/cdn', express.static('dist/cdn/'));
-    app.use('/npm', express.static('node_modules', {
-        setHeaders: (response) => {
-            response.set('Access-Control-Allow-Origin', 'http://run.plnkr.co');
-        }
-    }));
-    app.use(`/npm/@progress/${libraryName}`, express.static('.', {
-        setHeaders: (response) => {
-            response.set('Access-Control-Allow-Origin', 'http://run.plnkr.co');
-        }
-    }));
+    app.use('/npm', express.static('node_modules', staticContentOptions));
+    app.use('/npm', express.static('../../node_modules', staticContentOptions));
+    app.use(`/npm/@progress/${libraryName}`, express.static('.', staticContentOptions));
     app.use('/', serveIndex('docs', { 'icons': true }));
     app.use('/', express.static('docs/'));
 
