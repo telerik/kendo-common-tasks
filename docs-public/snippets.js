@@ -392,7 +392,7 @@ function jsTrackingCode() {
 }
 
 function bootstrapReact(options) {
-    var code = options.example.code;
+    var code = options.code;
     var directives = usedModules(code);
     var imports = moduleImports(code, directives);
     return [].concat([
