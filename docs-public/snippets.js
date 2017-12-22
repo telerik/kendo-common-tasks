@@ -523,8 +523,18 @@ function CodeListing(elements) {
     var that = this;
 
     this.elements = elements;
-    /* Assume runnable examples are in `ts` by default */
-    this.runtimeLanguage = 'ts';
+
+    /**
+        Search for the "main" file and infer language by its extension.
+        This covers the case with embed_file content inclusion.
+     */
+    for (var i = 0; i < elements.length; i++) {
+        var lang = /main?.(jsx|js|ts)/.exec(elements.eq(i).attr('data-file'));
+        if (lang) {
+            this.runtimeLanguage = lang[1];
+            break;
+        }
+    }
 
     this.types = $.map(this.elements.find("code"), function(element) {
         var preview = false;
@@ -558,11 +568,6 @@ function CodeListing(elements) {
             that["multifile-listing"] = elems;
         }
 
-        /* Change runtime language only if it is one of the other two supported ones */
-        if (/js|jsx/i.test(language)) {
-            that.runtimeLanguage = language;
-        }
-
         that[language] = $(element).text();
 
         return $.extend({
@@ -573,6 +578,20 @@ function CodeListing(elements) {
             preview: preview
         }, blockTypes[language]);
     });
+
+    /**
+        If no runtimeLanguage is set assume we are dealing with inline content.
+        Infer the language from the object instance.
+     */
+    if (this.runtimeLanguage === undefined) {
+        if (Object.prototype.hasOwnProperty.call(this, 'ts')) {
+            this.runtimeLanguage = 'ts';
+        } else if (Object.prototype.hasOwnProperty.call(this, 'js')) {
+            this.runtimeLanguage = 'js';
+        } else if (Object.prototype.hasOwnProperty.call(this, 'jsx')) {
+            this.runtimeLanguage = 'jsx';
+        }
+    }
 }
 
 CodeListing.prototype = {

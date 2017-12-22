@@ -30,7 +30,7 @@ window.ExampleRunner = (function() {
      */
     function addBabelConfiguration(config, language) {
         config.transpiler = "plugin-babel";
-        config.meta['*.' + language] = {
+        config.meta['*.jsx'] = {
             babelOptions: {
                 react: true
             }
