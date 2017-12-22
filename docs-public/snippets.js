@@ -726,7 +726,6 @@ window.openInPlunker = function(listing) {
             appImports: imports.join('\n')
         },
         vue: {
-            /* this is sad */
             appImports: imports.join('\n')
         }
     };
