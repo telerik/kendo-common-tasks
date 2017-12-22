@@ -80,6 +80,11 @@ window.ExampleRunner = (function() {
             var modules = options.modules;
             var trackjs = options.trackjs;
             var language = options.language;
+            var SYSTEM_BUNDLES = [ {
+                name: "@progress/kendo-drawing",
+                file: "kendo-drawing.js",
+                modules: true
+            } ];
             var config = {
                 meta: {
                     '*.json': {
@@ -87,7 +92,14 @@ window.ExampleRunner = (function() {
                     }
                 },
 
-                packages: { },
+                packages: {
+                    pako: {
+                        defaultExtension: 'js',
+                        main: './index.js'
+                    }
+                },
+
+                bundles: { },
 
                 map: {
                     "app": "app",
@@ -102,6 +114,7 @@ window.ExampleRunner = (function() {
                     "react-router-dom": "https://unpkg.com/react-router-dom@4.2.2/umd/react-router-dom.min.js",
                     "react-transition-group": "https://unpkg.com/react-transition-group@2.2.1/dist/react-transition-group.min.js",
                     "prop-types": "https://unpkg.com/prop-types@15.6.0/prop-types.js",
+                    "pako": "https://unpkg.com/pako@1.0.5",
                     // Misc packages used by the kendo-react-* packages
                     "classnames": "https://unpkg.com/classnames",
                     'cldr-data': npmUrl + '/cldr-data',
@@ -142,6 +155,29 @@ window.ExampleRunner = (function() {
                     'raven-js': npmUrl + "/raven-js"
                 };
             }
+
+            modules.forEach(function(directive) {
+                if (!SYSTEM_BUNDLES.filter(function(bundle) { return bundle.name === directive.module; }).length) {
+                    config.packages[directive.module] = {
+                        main: directive.main || 'dist/npm/js/main.js',
+                        defaultExtension: directive.defaultExtension || 'js'
+                    };
+                }
+            });
+
+            SYSTEM_BUNDLES.forEach(function(bundle) {
+                var paths = [ bundle.name ];
+                if (bundle.modules) {
+                    paths.push(bundle.name + '/*');
+                }
+                config.bundles[npmUrl + "/" + bundle.name + "/dist/systemjs/" + bundle.file] = paths;
+
+                if (bundle.map) {
+                    config.packages[bundle.name] = {
+                        defaultExtension: 'js'
+                    };
+                }
+            });
 
             return config;
         },
