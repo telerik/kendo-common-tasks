@@ -108,9 +108,12 @@ window.ExampleRunner = (function() {
 
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
-                    '@progress': npmUrl + '/@progress',
+                    '@progress': npmUrl + '/@progress'
                 }
             };
+
+            /* Support both js and jsx */
+            addBabelConfiguration(config, language);
 
             /* Add Kendo Packages */
             modules.forEach(function(kendoPackage) {
