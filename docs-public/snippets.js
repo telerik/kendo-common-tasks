@@ -98,8 +98,8 @@ var plunkerTemplate = kendo.template(
     <style>\
         html, body { overflow: hidden; }\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
-        my-app, .vue-app { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
-        my-app > .k-icon.k-i-loading { font-size: 64px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
+        my-app, \\#vueapp { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
+        my-app > .k-icon.k-i-loading, \\#vueapp > .k-icon.k-i-loading { font-size: 64px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
         .example-wrapper { min-height: 280px; align-content: flex-start; }\
         .example-wrapper p, .example-col p { margin: 20px 0 10px; }\
         .example-wrapper p:first-child, .example-col p:first-child { margin-top: 0; }\
@@ -108,6 +108,7 @@ var plunkerTemplate = kendo.template(
         .event-log { margin: 0; padding: 0; max-height: 100px; overflow-y: auto; list-style-type: none; border: 1px solid rgba(0,0,0,.08); background-color: \\#fff; }\
         .event-log li {margin: 0; padding: .3em; line-height: 1.2em; border-bottom: 1px solid rgba(0,0,0,.08); }\
         .event-log li:last-child { margin-bottom: -1px;}\
+        \\#vueapp > .k-icon.k-i-loading:not([v-cloak]) {display: none }\
     </style>\
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
     #= data.cdnResources #\
@@ -124,9 +125,20 @@ var plunkerTemplate = kendo.template(
 </head>\
 <body>\
     #= data.html #\
+    # if (data.platform !== "vue") { #\
     <my-app>\
         <span class="k-icon k-i-loading" style="color: #: data.themeAccent || "\\#ff6358" #"></span>\
     </my-app>\
+    # } else {#\
+    <script>\
+        var loadingIcon = document.createElement("span");\
+        loadingIcon.className = "k-icon k-i-loading";\
+        loadingIcon.style.color = "#: data.themeAccent || "\\#ff6358" #";\
+        loadingIcon.setAttribute("v-cloak", null);\
+        var vueapp = document.getElementById("vueapp");\
+        vueapp.appendChild(loadingIcon);\
+    </script>\
+    # }#\
 </body>\
 </html>\
 ', { useWithBlock: false });
