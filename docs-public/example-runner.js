@@ -19,12 +19,6 @@ window.ExampleRunner = (function() {
         path: "https://unpkg.com/@progress/kendo-ui/"
     };
 
-    function mapKendoConfiguration(config) {
-        /* Add jquery and kendo-ui */
-        config.map[jqueryConfiguration.module] = jqueryConfiguration.path;
-        config.map[kendoConfiguration.module] = kendoConfiguration.path;
-    }
-
     /**
      * SystemJS config for jsx/js demos.
      */
@@ -164,7 +158,7 @@ window.ExampleRunner = (function() {
                     }
                 },
 
-                bundles: { },
+                bundles: {},
 
                 map: {
                     "app": "app",
@@ -200,14 +194,23 @@ window.ExampleRunner = (function() {
 
             /* Add Kendo Packages */
             modules.forEach(function(kendoPackage) {
-                config.packages[kendoPackage.module] = {
-                    main: kendoPackage.main,
-                    defaultExtension: kendoPackage.defaultExtension || 'js'
-                };
-
                 /* Only include legacy Kendo UI configuration when it is included into the auto imports */
                 if (kendoPackage.module === '@progress/kendo-ui') {
-                    mapKendoConfiguration(config);
+                    /* Map kendo-ui && add package configuration */
+                    config.map[kendoConfiguration.module] = kendoConfiguration.path;
+
+                    config.packages[kendoConfiguration.module] = {
+                        main: kendoPackage.main || 'js/kendo.all.js',
+                        defaultExtension: 'js'
+                    };
+                } else if (kendoPackage.module === 'jquery') {
+                    /* Map jQuery */
+                    config.map[jqueryConfiguration.module] = jqueryConfiguration.path;
+                } else if (!SYSTEM_BUNDLES.filter(function(bundle) { return bundle.name === kendoPackage.module; }).length) {
+                    config.packages[kendoPackage.module] = {
+                        main: kendoPackage.main || 'dist/npm/js/main.js',
+                        defaultExtension: kendoPackage.defaultExtension || 'js'
+                    };
                 }
             });
 
@@ -220,15 +223,6 @@ window.ExampleRunner = (function() {
                     'raven-js': npmUrl + "/raven-js"
                 };
             }
-
-            modules.forEach(function(directive) {
-                if (!SYSTEM_BUNDLES.filter(function(bundle) { return bundle.name === directive.module; }).length) {
-                    config.packages[directive.module] = {
-                        main: directive.main || 'dist/npm/js/main.js',
-                        defaultExtension: directive.defaultExtension || 'js'
-                    };
-                }
-            });
 
             SYSTEM_BUNDLES.forEach(function(bundle) {
                 var paths = [ bundle.name ];

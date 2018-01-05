@@ -625,12 +625,12 @@ function CodeListing(elements) {
         Infer the language from the object instance.
      */
     if (this.runtimeLanguage === undefined) {
-        if (Object.prototype.hasOwnProperty.call(this, 'ts')) {
-            this.runtimeLanguage = 'ts';
-        } else if (Object.prototype.hasOwnProperty.call(this, 'js')) {
+        if (Object.prototype.hasOwnProperty.call(this, 'js')) {
             this.runtimeLanguage = 'js';
         } else if (Object.prototype.hasOwnProperty.call(this, 'jsx')) {
             this.runtimeLanguage = 'jsx';
+        } else {
+            this.runtimeLanguage = 'ts';
         }
     }
 }
