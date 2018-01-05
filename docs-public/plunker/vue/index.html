@@ -33,7 +33,8 @@
       .event-log { margin: 0; padding: 0; max-height: 100px; overflow-y: auto; list-style-type: none; border: 1px solid rgba(0,0,0,.08); background-color: \\#fff; }
       .event-log li {margin: 0; padding: .3em; line-height: 1.2em; border-bottom: 1px solid rgba(0,0,0,.08); }
       .event-log li:last-child { margin-bottom: -1px;}
-      \\#vueapp > .k-icon.k-i-loading:not([v-cloak]) {display: none }
+      \\#vueapp:not([v-cloak]) > .k-icon.k-i-loading {display: none }
+      \\#vueapp[v-cloak] :not(.k-i-loading) { display: none; }
     </style>
   </head>
 
@@ -46,9 +47,9 @@
       var loadingIcon = document.createElement("span");
       loadingIcon.className = "k-icon k-i-loading";
       loadingIcon.style.color = "#: data.themeAccent || '\\#ff6358' #";
-      loadingIcon.setAttribute("v-cloak", null);
       var vueapp = document.getElementById("vueapp");
       vueapp.appendChild(loadingIcon);
+      vueapp.setAttribute("v-cloak", null);
   </script>
   </body>
 </html>
