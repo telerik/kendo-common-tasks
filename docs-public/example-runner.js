@@ -217,7 +217,7 @@ window.ExampleRunner = (function() {
                     config.map[jqueryConfiguration.module] = jqueryConfiguration.path;
                 } else if (!SYSTEM_BUNDLES.filter(function(bundle) { return bundle.name === kendoPackage.module; }).length) {
                     config.packages[kendoPackage.module] = {
-                        main: kendoPackage.main || 'dist/npm/js/main.js',
+                        main: kendoPackage.main || 'dist/cdn/js/'.concat(kendoPackage.module.replace(/(@progress\/|@telerik\/)/, ''), '.js'),
                         defaultExtension: kendoPackage.defaultExtension || 'js'
                     };
                 }
