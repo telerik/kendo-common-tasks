@@ -73,7 +73,7 @@ window.ExampleRunner = (function() {
             var npmUrl = options.npmUrl;
             var modules = options.modules;
             var trackjs = options.trackjs;
-            var language = options.language;
+
             var config = {
                 transpiler: "plugin-babel",
 
@@ -105,9 +105,6 @@ window.ExampleRunner = (function() {
                     '@progress': npmUrl + '/@progress'
                 }
             };
-
-            /* Support both js and jsx */
-            addBabelConfiguration(config, language);
 
             /* Add Kendo Packages */
             modules.forEach(function(kendoPackage) {

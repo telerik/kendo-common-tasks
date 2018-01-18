@@ -691,7 +691,7 @@ var plunker = {
     },
     vue: {
         plunkerFiles: [
-            'app/main.js'
+            'app/main.es'
         ].concat(basicPlunkerFiles)
     }
 };
@@ -794,10 +794,22 @@ window.openInPlunker = function(listing) {
         language: language
     });
 
+    // Make sure that es file is uploaded due to PLunker
+    if (window.platform === 'vue') {
+        config['packages']['app'] = {
+            'main': './main.es',
+            'defaultExtension': 'es'
+        };
+    }
+
     form.addField('files[systemjs.config.js]', 'System.config(' + JSON.stringify(config, null, 2) + ');');
 
     var filterFunction = function(file) {
-        return (file.indexOf('html') >= 0 || file.split('.').pop() === language);
+        var shouldUseEsFile = window.platform === 'vue' &&
+                                language === 'js' &&
+                                file.split('.').pop() === 'es';
+
+        return (file.indexOf('html') >= 0 || file.split('.').pop() === language || shouldUseEsFile);
     };
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
