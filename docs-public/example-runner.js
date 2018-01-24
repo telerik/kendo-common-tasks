@@ -226,6 +226,7 @@ window.ExampleRunner = (function() {
                         "rxjs",
                         "rxjs/*",
                         "rxjs/operator/*",
+                        "rxjs/operators/*",
                         "rxjs/observable/*",
                         "rxjs/scheduler/*",
                         "rxjs/symbol/*",
