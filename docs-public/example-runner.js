@@ -222,7 +222,7 @@ window.ExampleRunner = (function() {
                     suppressImplicitAnyIndexErrors: true
                 },
                 bundles: {
-                    "https://unpkg.com/rxjs-system-bundle@5.5.2/Rx.system.min.js": [
+                    "https://unpkg.com/rxjs-system-bundle@5.5.6/Rx.system.min.js": [
                         "rxjs",
                         "rxjs/*",
                         "rxjs/operator/*",
