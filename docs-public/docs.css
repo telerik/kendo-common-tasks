@@ -181,28 +181,6 @@ a code {
   box-shadow: 0 2px 25px rgba(0,0,0,0.2);
 }
 
-.jsfiddle:after,
-.plunkr:after {
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  margin-left: 8px;
-  vertical-align: text-top;
-  background-size: 16px;
-  background-position: right center;
-  background-repeat: no-repeat;
-  background-color: transparent;
-}
-
-.jsfiddle:after {
-  background-image: url("https://jsfiddle.net/img/embeddable/logo-dark.png");
-}
-
-.plunkr:after {
-  background-image: url("https://plnkr.co/img/plunker.png");
-}
-
 .editor .editor-container {
   float: none;
   position: absolute;

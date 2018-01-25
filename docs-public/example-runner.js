@@ -270,9 +270,6 @@ window.ExampleRunner = (function() {
                 name: "@progress/kendo-angular-gauges",
                 file: "kendo-angular-gauges.js"
             }, {
-                name: "@progress/kendo-angular-gauges",
-                file: "kendo-angular-gauges.js"
-            }, {
                 name: "@progress/kendo-angular-resize-sensor",
                 file: "kendo-angular-resize-sensor.js"
             }, {

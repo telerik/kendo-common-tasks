@@ -760,15 +760,43 @@ window.openInPlunker = function(listing) {
         }
     };
 
-    var proto = document.location.protocol === 'https:' ? 'https://' : 'http://';
-    var form = new EditorForm(proto + 'plnkr.co/edit/?p=preview');
-    var tags = {
-        'react': 'react',
-        'angular': 'angular2'
+    var form = new EditorForm('https://run.stackblitz.com/api/angular/v1/');
+
+    var dependencies = {
+        'angular': {
+            'core-js': '2.5.3',
+            'rxjs': '5.5.6',
+            'zone.js': '0.8.12',
+            '@angular/core': '5.2.2',
+            '@angular/common': '5.2.2',
+            '@angular/compiler': '5.2.2',
+            '@angular/platform-browser': '5.2.2',
+            '@angular/platform-browser-dynamic': '5.2.2',
+            '@angular/http': '5.2.2',
+            '@angular/router': '5.2.2',
+            '@angular/forms': '5.2.2',
+
+            'hammerjs': '*',
+            '@progress/kendo-drawing': '*',
+            '@progress/kendo-charts': '*',
+            '@progress/kendo-angular-l10n': '*',
+            '@progress/kendo-angular-charts': '*',
+            '@progress/kendo-angular-gauges': '*',
+            '@progress/kendo-angular-resize-sensor': '*',
+            '@telerik/kendo-intl': '*',
+            '@progress/kendo-angular-intl': '*'
+        }
     };
 
-    form.addField('tags[0]', tags[window.platform]);
-    form.addField('tags[1]', 'kendo');
+    var capitalize = function(s) { return s[0].toUpperCase() + s.substring(1); };
+    var platform = capitalize(window.platform);
+
+    form.addField('tags[0]', platform);
+    form.addField('tags[1]', 'Kendo UI');
+
+    form.addField('description', 'Example usage of Kendo UI for ' + platform + ', see ' + window.location.href);
+
+    form.addField('dependencies', JSON.stringify(dependencies[window.platform]));
 
     if (listing.multiple && listing['multifile-listing']) {
         $.each(listing['multifile-listing'], function(i, file) {
@@ -780,27 +808,20 @@ window.openInPlunker = function(listing) {
         });
     }
 
-    function ensureOrigin(url) {
-        var prefix = (/^[a-z]:\/\//i).test(url) ? '' : window.location.origin;
-        prefix += (/^\//).test(url) ? '' : '/';
-        return prefix + url;
+    if (window.platform === "angular") {
+        form.addField('.angular-cli.json', JSON.stringify({
+            apps: [ {
+                styles: [ "styles.css" ]
+            } ]
+        }, null, 2));
     }
 
-    var config = window.ExampleRunner.systemjsConfig(window.platform)({
-        npmUrl: ensureOrigin(window.npmUrl),
-        modules: moduleDirectives,
-        language: language
-    });
-
-    // Make sure that es file is uploaded due to PLunker
-    if (window.platform === 'vue') {
-        config['packages']['app'] = {
-            'main': './main.es',
-            'defaultExtension': 'es'
-        };
-    }
-
-    form.addField('files[systemjs.config.js]', 'System.config(' + JSON.stringify(config, null, 2) + ');');
+    //if (window.platform === 'vue') {
+        //config['packages']['app'] = {
+            //'main': './main.es',
+            //'defaultExtension': 'es'
+        //};
+    //}
 
     var filterFunction = function(file) {
         var shouldUseEsFile = window.platform === 'vue' &&
@@ -854,7 +875,7 @@ var themeColors = {
 $(function() {
     var framework = $.extend({
         editor: 'plunkr',
-        editButtonTemplate: '<a href="#" class="edit-online plunkr">Open as Plunker</a>',
+        editButtonTemplate: '<a href="#" class="edit-online plunkr">Open in StackBlitz</a>',
         editOnline: function(listing) {
             window.openInPlunker(listing);
             return false;
@@ -994,7 +1015,7 @@ $(function() {
             var run = $("<button class='button secondary'></button>");
 
             if (block.multiple) {
-                run.text("Open as Plunker");
+                run.text("Open in StackBlitz");
                 run.insertAfter(fileListElement);
                 run.click(framework.editOnline.bind(null, block));
             } else {
