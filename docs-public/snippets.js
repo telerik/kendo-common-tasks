@@ -779,16 +779,35 @@ window.openInPlunker = function(listing) {
             '@angular/router': '5.2.2',
             '@angular/forms': '5.2.2',
 
+            // TODO: generate dependencies from example
             'hammerjs': '*',
-            '@progress/kendo-drawing': '*',
-            '@progress/kendo-charts': '*',
+            //'@telerik/kendo-intl': '*',
+            //'@progress/kendo-drawing': '*',
+            //'@progress/kendo-data-query': '*',
+            //'@progress/kendo-charts': '*',
+            //'@progress/kendo-angular-buttons': '*',
+            //'@progress/kendo-angular-charts': '*',
+            //'@progress/kendo-angular-dateinputs': '*',
+            //'@progress/kendo-angular-dialog': '*',
+            //'@progress/kendo-angular-dropdowns': '*',
+            //'@progress/kendo-angular-excel-export': '*',
+            //'@progress/kendo-angular-gauges': '*',
+            //'@progress/kendo-angular-grid': '*',
+            //'@progress/kendo-angular-inputs': '*',
+            //'@progress/kendo-angular-intl': '*',
             '@progress/kendo-angular-l10n': '*',
-            '@progress/kendo-angular-charts': '*',
-            '@progress/kendo-angular-layout': '*',
-            '@progress/kendo-angular-gauges': '*',
-            '@progress/kendo-angular-resize-sensor': '*',
-            '@telerik/kendo-intl': '*',
-            '@progress/kendo-angular-intl': '*'
+            //'@progress/kendo-angular-label': '*',
+            '@progress/kendo-angular-layout': '*'
+            //'@progress/kendo-angular-menu': '*',
+            //'@progress/kendo-angular-pdf-export': '*',
+            //'@progress/kendo-angular-popup': '*',
+            //'@progress/kendo-angular-resize-sensor': '*',
+            //'@progress/kendo-angular-ripple': '*',
+            //'@progress/kendo-angular-scrollview': '*',
+            //'@progress/kendo-angular-sortable': '*',
+            //'@progress/kendo-angular-tasks': '*',
+            //'@progress/kendo-angular-treeview': '*',
+            //'@progress/kendo-angular-upload': '*'
         }
     };
 
@@ -798,22 +817,48 @@ window.openInPlunker = function(listing) {
     form.addField('tags[0]', platform);
     form.addField('tags[1]', 'Kendo UI');
 
-    form.addField('description', 'Example usage of Kendo UI for ' + platform + ', see ' + window.location.href);
+    var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
+    form.addField('description', 'Example usage of Kendo UI for ' + platform + link);
 
     form.addField('dependencies', JSON.stringify(dependencies[window.platform]));
+
+    var filterFunction = function(file) {
+        var ext = file.split('.').pop();
+        return (file.indexOf('html') >= 0 || ext === 'css' || ext === language);
+    };
 
     if (listing.multiple && listing['multifile-listing']) {
         $.each(listing['multifile-listing'], function(i, file) {
             var contentRoot = 'app/';
             var content = file.content;
             content = prefixStyleUrls(content, contentRoot);
+            if (file.name !== 'main.ts') {
+                // StackBlitz requires main.ts to be on the root level, get from template
+                form.addField('files[' + contentRoot + file.name + ']', content);
+                contentRoot = '';
+                content = content.replace(/\.\/app\.module/g, "./app/app.module");
+            }
 
-            form.addField('files[' + contentRoot + file.name + ']', content);
+        });
+
+        // TODO: this block adds only styles.css, very dirty.
+        $.when.apply($, plunkerRequests).then(function() {
+            var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
+            $.each(plunkerTemplates, function(index, templateContent) {
+                var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
+                var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+                var add = function(file, template) {
+                    if (file === "styles.css" || file === "main.ts") {
+                        form.addField('files[' + file + ']', kendo.template(template)(context));
+                    }
+                };
+                add(plunkerFiles[index], templateContent);
+            });
         });
     }
 
     if (window.platform === "angular") {
-        form.addField('.angular-cli.json', JSON.stringify({
+        form.addField('files[.angular-cli.json]', JSON.stringify({
             apps: [ {
                 styles: [ "styles.css" ]
             } ]
@@ -832,6 +877,7 @@ window.openInPlunker = function(listing) {
         var shouldUseEsFile = window.platform === 'vue' && language === 'js' && ext === 'es';
         return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile);
     };
+
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
         /**
