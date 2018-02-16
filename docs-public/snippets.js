@@ -762,7 +762,7 @@ window.openInPlunker = function(listing) {
         }
     };
 
-    var form = new EditorForm('https://run.stackblitz.com/api/angular/v1/');
+    var form = new EditorForm('https://stackblitz.com/run/');
 
     var dependencies = {
         'angular': {
@@ -814,13 +814,14 @@ window.openInPlunker = function(listing) {
     var capitalize = function(s) { return s[0].toUpperCase() + s.substring(1); };
     var platform = capitalize(window.platform);
 
-    form.addField('tags[0]', platform);
-    form.addField('tags[1]', 'Kendo UI');
+    form.addField('project[template]', 'angular-cli');
+    form.addField('project[tags][0]', platform);
+    form.addField('project[tags][1]', 'Kendo UI');
 
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
-    form.addField('description', 'Example usage of Kendo UI for ' + platform + link);
+    form.addField('project[description]', 'Example usage of Kendo UI for ' + platform + link);
 
-    form.addField('dependencies', JSON.stringify(dependencies[window.platform]));
+    form.addField('project[dependencies]', JSON.stringify(dependencies[window.platform]));
 
     var filterFunction = function(file) {
         var ext = file.split('.').pop();
@@ -834,7 +835,7 @@ window.openInPlunker = function(listing) {
             content = prefixStyleUrls(content, contentRoot);
             if (file.name !== 'main.ts') {
                 // StackBlitz requires main.ts to be on the root level, get from template
-                form.addField('files[' + contentRoot + file.name + ']', content);
+                form.addField('project[files][' + contentRoot + file.name + ']', content);
                 contentRoot = '';
                 content = content.replace(/\.\/app\.module/g, "./app/app.module");
             }
@@ -849,7 +850,7 @@ window.openInPlunker = function(listing) {
                 var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
                 var add = function(file, template) {
                     if (file === "styles.css" || file === "main.ts") {
-                        form.addField('files[' + file + ']', kendo.template(template)(context));
+                        form.addField('project[files][' + file + ']', kendo.template(template)(context));
                     }
                 };
                 add(plunkerFiles[index], templateContent);
@@ -858,7 +859,7 @@ window.openInPlunker = function(listing) {
     }
 
     if (window.platform === "angular") {
-        form.addField('files[.angular-cli.json]', JSON.stringify({
+        form.addField('project[files][.angular-cli.json]', JSON.stringify({
             apps: [ {
                 styles: [ "styles.css" ]
             } ]
@@ -902,7 +903,7 @@ window.openInPlunker = function(listing) {
             var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
             var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
             var add = function(file, template) {
-                form.addField('files[' + file + ']', kendo.template(template)(context));
+                form.addField('project[files][' + file + ']', kendo.template(template)(context));
             };
             if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
                 add(plunkerFiles[index], templateContent);
