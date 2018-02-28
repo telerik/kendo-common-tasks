@@ -688,6 +688,7 @@ window.openInPlunker = function(listing) {
     var template = listing['ng-template'];
     var html = listing['html'] || '';
     var language = listing.runtimeLanguage;
+    var theme = listing.theme || "default";
 
     if (!code) {
         code = wrapAngularTemplate(template);
@@ -701,8 +702,8 @@ window.openInPlunker = function(listing) {
             appComponentContent: code,
             npmUrl: $("<a />").attr("href", window.npmUrl)[0].href + "/",
             htmlContent: html,
-            theme: "default",
-            themeAccent: themeColors.default
+            theme: theme,
+            themeAccent: themeColors[theme]
         },
         angular: {
             appImports: imports.join('\n'),
@@ -787,7 +788,8 @@ window.openInPlunker = function(listing) {
 
 var themeColors = {
     default: "#ff6358",
-    bootstrap: "#0275d8"
+    bootstrap: "#0275d8",
+    material: "#3f51b5"
 };
 
 /* Transform code listings (pre tags) into runnable examples */
@@ -865,6 +867,7 @@ $(function() {
         }
 
         block.updateHtml();
+        block.theme = block.elements.closest("[data-theme]").attr("data-theme") || 'default';
 
         if (block.multiple) {
             //list of files contained in the snippet
