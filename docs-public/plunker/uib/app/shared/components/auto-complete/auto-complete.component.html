@@ -1,0 +1,11 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<div [formGroup]="formGroup" [title]="config.title" class="kb-auto-complete">
+    <kendo-autocomplete #kendoComponent [id]="id" [filterable]="true" [data]="filteredData" [formControlName]="id" [valueField]="config.dataTextField" (valueChange)="changeHandler($event)" (filterChange)="filterHandler($event)">
+    </kendo-autocomplete>
+</div>
+<div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+    {{ this._errorMessage }}
+</div>

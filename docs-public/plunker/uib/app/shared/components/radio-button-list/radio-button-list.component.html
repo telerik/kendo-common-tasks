@@ -1,0 +1,12 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<ul [formGroup]="formGroup" class="kb-radio-button-list" [ngClass]="{ '-horizontal': config.orientation.toLowerCase() === 'horizontal' }" [ngStyle]="style">
+    <li *ngFor="let item of data; let i = index">
+        <input type="radio" class="k-radio" [id]="getInputId(i)" [formControlName]="id" [value]="item" (change)="changeHandler($event)" [checked]="isChecked(item)" />
+        <label class="k-radio-label" [for]="getInputId(i)">
+            {{item[config.dataTextField]}}
+        </label>
+    </li>
+</ul>

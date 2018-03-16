@@ -1,0 +1,17 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<span [formGroup]="formGroup">
+    <input #checkBox type="checkbox"
+        title="{{config.title}}"
+        class="k-checkbox"
+        [id]="id"
+        [name]="config.name"
+        [formControlName]="id"
+        (change)="changeHandler($event)"/>
+    <label class="k-checkbox-label" [for]="id"></label>
+</span>
+<div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+    {{ this._errorMessage }}
+</div>

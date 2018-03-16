@@ -1,0 +1,12 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<div [formGroup]="formGroup" class="kb-combo-box">
+    <kendo-combobox #kendoComponent [id]="id" [data]="filteredData" [title]="config.title" [textField]="config.textField" [valueField]="config.valueField" [valuePrimitive]="config.valuePrimitive" [formControlName]="id" [filterable]="config.filter !== 'None'"
+        [suggest]="config.filter === 'None'" (valueChange)="changeHandler($event)" (selectionChange)="selectionHandler($event)" (filterChange)="filterHandler($event)">
+        </kendo-combobox>
+        <div>
+            <div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+                {{ this._errorMessage }}
+            </div>

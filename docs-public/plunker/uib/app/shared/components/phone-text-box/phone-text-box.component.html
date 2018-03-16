@@ -1,0 +1,18 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<span [formGroup]="formGroup">
+    <kendo-maskedtextbox
+        #phoneInput
+        title="{{config.title}}"
+        [mask]="config.mask"
+        [maskValidation]="true"
+        [formControlName]="id"
+        (valueChange)="valueChange($event)"
+        >
+    </kendo-maskedtextbox>
+</span>
+<div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+    {{ this._errorMessage }}
+</div>

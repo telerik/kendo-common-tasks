@@ -1,0 +1,12 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<div [formGroup]="formGroup" class="kb-drop-down-list">
+    <kendo-dropdownlist #kendoComponent [id]="id" [data]="data" [title]="config.title" [textField]="config.textField" [valueField]="config.valueField" [defaultItem]="defaultItem" [valuePrimitive]="config.valuePrimitive" [formControlName]="id" (valueChange)="changeHandler($event)"
+        (selectionChange)="selectionHandler($event)">
+        </kendo-dropdownlist>
+        <div>
+            <div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+                {{ this._errorMessage }}
+            </div>

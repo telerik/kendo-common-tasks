@@ -120,14 +120,15 @@ var plunkerTemplate = kendo.template(
         runner.register("#= data.files[i].name #", "#= data.files[i].content #");\
         # } #\
         runner.start(System);\
+        alert(\'foo\');\
     </script>\
 </head>\
 <body>\
     #= data.html #\
     # if (data.platform !== "vue") { #\
-    <my-app>\
+    <app-root>\
         <span class="k-icon k-i-loading" style="color: #: data.themeAccent || "\\#ff6358" #"></span>\
-    </my-app>\
+    </app-root>\
     # } else {#\
     <script>\
         var loadingIcon = document.createElement("span");\
@@ -476,6 +477,9 @@ function bootstrapVue(options) {
     .concat(code)
     .filter(Boolean)
     .join('\n');
+}
+
+function bootstrapUib() {
 }
 
 function bootstrapAngular(options) {
@@ -965,6 +969,23 @@ $(function() {
             return false;
         }
     }, {
+
+        uib: {
+            runnerContent: function(options) {
+                var listing = options.listing;
+                var theme = options.theme || 'default';
+
+                return plunkerPage({
+                    bootstrap: bootstrapUib,
+                    code: listing['ts'] || listing['ng-template'],
+                    html: listing['html'],
+                    language: listing.runtimeLanguage,
+                    theme: theme,
+                    themeAccent: themeColors[options.theme],
+                    track: options.track
+                });
+            }
+        },
         angular: {
             runnerContent: function(options) {
                 var listing = options.listing;
@@ -1013,7 +1034,9 @@ $(function() {
                 });
             }
         }
-    }[window.platform]);
+    }['uib']);
+/* DONT FORGET TO REMOVVE THE ABOVE :) */
+
 
     function toCodeListings(tags) {
         var blocks = [];

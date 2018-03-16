@@ -1,0 +1,17 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<span [formGroup]="formGroup">
+    <input kendoTextBox #input
+        title="{{config.title}}"
+        [id]="id"
+        [name]="config.name"
+        [placeholder]="config.placeholder"
+        [formControlName]="id"
+        (ngModelChange)="valueChange($event)"
+    />
+</span>
+<div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+    {{ this._errorMessage }}
+</div>

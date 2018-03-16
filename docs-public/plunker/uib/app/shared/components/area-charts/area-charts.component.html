@@ -1,0 +1,14 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<kendo-chart #kendoComponent [id]="id" [title]="config.title" [legend]="config.legend" [seriesDefaults]="config.seriesDefaults" [tooltip]="config.tooltip" [valueAxis]="config.valueAxis" (seriesClick)="seriesClickHandler($event)">
+    <kendo-chart-category-axis>
+        <kendo-chart-category-axis-item [labels]="config.categoryAxis.labels" [categories]="categories">
+        </kendo-chart-category-axis-item>
+    </kendo-chart-category-axis>
+    <kendo-chart-series>
+        <kendo-chart-series-item *ngFor="let seriesItem of config.series" type="area" [name]="seriesItem.name" [field]="seriesItem.field" [line]="seriesItem.line" [labels]="seriesItem.labels" [data]="data">
+        </kendo-chart-series-item>
+    </kendo-chart-series>
+</kendo-chart>
