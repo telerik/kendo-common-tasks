@@ -108,11 +108,11 @@ window.ExampleRunner = (function() {
                     "react-router-dom": "https://unpkg.com/react-router-dom@4.2.2/umd/react-router-dom.min.js",
                     "react-transition-group": "https://unpkg.com/react-transition-group@2.2.1/dist/react-transition-group.min.js",
                     "prop-types": "https://unpkg.com/prop-types@15.6.0/prop-types.js",
-                    "pako": "https://unpkg.com/pako@1.0.5",
                     // Misc packages used by the kendo-react-* packages
-                    "classnames": "https://unpkg.com/classnames",
-                    'cldr-data': npmUrl + '/cldr-data',
                     'tslib': 'https://unpkg.com/tslib@1.7.1',
+                    'hammerjs': 'https://unpkg.com/hammerjs@2.0.8',
+                    "pako": "https://unpkg.com/pako@1.0.5",
+                    'cldr-data': npmUrl + '/cldr-data',
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress'
