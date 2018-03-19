@@ -76,7 +76,7 @@ var htmlTemplate = kendo.template(
     '<!doctype html>\
 <html>\
 <head>\
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">\
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
     <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" />\
     <style>\
         html, body { overflow: hidden; }\
@@ -93,7 +93,7 @@ var plunkerTemplate = kendo.template(
     '<!doctype html>\
 <html>\
 <head>\
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">\
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
     <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" />\
     <style>\
         html, body { overflow: hidden; }\
@@ -734,6 +734,7 @@ window.openInPlunker = function(listing) {
     var template = listing['ng-template'];
     var html = listing['html'] || '';
     var language = listing.runtimeLanguage;
+    var theme = listing.theme || "default";
 
     if (!code) {
         code = wrapAngularTemplate(template);
@@ -747,8 +748,8 @@ window.openInPlunker = function(listing) {
             appComponentContent: code,
             npmUrl: $("<a />").attr("href", window.npmUrl)[0].href + "/",
             htmlContent: html,
-            theme: "default",
-            themeAccent: themeColors.default
+            theme: theme,
+            themeAccent: themeColors[theme]
         },
         angular: {
             appImports: imports.join('\n'),
@@ -848,7 +849,8 @@ window.openInPlunker = function(listing) {
 
 var themeColors = {
     default: "#ff6358",
-    bootstrap: "#0275d8"
+    bootstrap: "#0275d8",
+    material: "#3f51b5"
 };
 
 /* Transform code listings (pre tags) into runnable examples */
@@ -942,6 +944,7 @@ $(function() {
         }
 
         block.updateHtml();
+        block.theme = block.elements.closest("[data-theme]").attr("data-theme") || 'default';
 
         if (block.multiple) {
             //list of files contained in the snippet

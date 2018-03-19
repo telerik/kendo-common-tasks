@@ -145,7 +145,7 @@ const webpackThemeConfig = (_settings, _webpackConfig) => {
             noParse: (webpackConfig.module || {}).noParse
         },
         postcss: () => ([
-            calc,
+            calc({ precision: 10 }),
             autoprefixer
         ]),
         sassLoader: {
