@@ -121,7 +121,7 @@ var plunkerTemplate = kendo.template(
         # for (var i = 0; i < data.files.length; i++) { #\
         runner.register("#= data.files[i].name #", "#= data.files[i].content #");\
         # } #\
-        runner.start(System);\
+        runner.start(System, #= data.importRoot || \'app\' #);\
     </script>\
 </head>\
 <body>\
@@ -992,7 +992,9 @@ $(function() {
                     language: listing.runtimeLanguage,
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track
+                    track: options.track,
+                    root: '/',
+                    importRoot: 'builder'
                 });
             }
         },
@@ -1008,7 +1010,8 @@ $(function() {
                     language: listing.runtimeLanguage,
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track
+                    track: options.track,
+                    root: 'app/'
                 });
             }
         },
@@ -1040,7 +1043,8 @@ $(function() {
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track
+                    track: options.track,
+                    root: 'app/'
                 });
             }
         }

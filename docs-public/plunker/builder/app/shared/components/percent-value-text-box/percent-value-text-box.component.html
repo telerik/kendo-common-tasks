@@ -1,0 +1,23 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<span [formGroup]="formGroup">
+    <kendo-numerictextbox
+        #percentValueInput
+        title="{{config.title}}"
+        [decimals]="config.decimals"
+        [format]="config.format"
+        [min]="config.min"
+        [max]="config.max"
+        [step]="config.step"
+        [spinners] = "config.spinners"
+        [placeholder]="config.placeholder"
+        [formControlName]="id"
+        (valueChange)="valueChange($event)">
+        <kendo-numerictextbox-messages [increment]="config.upArrowText" [decrement]="config.downArrowText"></kendo-numerictextbox-messages>
+    </kendo-numerictextbox>
+</span>
+<div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+    {{ this._errorMessage }}
+</div>

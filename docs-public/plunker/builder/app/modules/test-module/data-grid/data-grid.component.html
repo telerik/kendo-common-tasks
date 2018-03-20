@@ -1,0 +1,45 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<kb-top-section></kb-top-section>
+<kb-middle-section></kb-middle-section>
+
+<h3 highlight>Data Grid</h3>
+<kb-grid #grid [config]="$config.grid" [dataService]="$dataService">
+    <kendo-grid [pageable]="$config.grid.pageable" [sortable]="$config.grid.sortable" [filterable]="$config.grid.filterable" [groupable]="$config.grid.groupable" [navigable]="true" [data]="grid.view | async" [pageSize]="grid.state.take" [skip]="grid.state.skip"
+        [sort]="grid.state.sort" [filter]="grid.state.filter" [group]="grid.state.group" (dataStateChange)="grid.dataStateChange($event)" (remove)="grid.removeHandler($event)" (add)="grid.addHandler($event)">
+        <ng-template kendoGridToolbarTemplate>
+            <button kendoGridAddCommand><span class="k-icon k-i-add"></span>New</button>
+        </ng-template>
+        <kendo-grid-column editor="text" [field]="'UserName'" [filterable]="true" [sortable]="true" [title]="'UserName'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'FirstName'" [filterable]="true" [sortable]="true" [title]="'FirstName'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'LastName'" [filterable]="true" [sortable]="true" [title]="'LastName'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'MiddleName'" [filterable]="true" [sortable]="true" [title]="'MiddleName'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'Gender'" [filterable]="true" [sortable]="true" [title]="'Gender'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'Age'" [filterable]="true" [sortable]="true" [title]="'Age'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'Emails'" [filterable]="true" [sortable]="true" [title]="'Emails'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'AddressInfo'" [filterable]="true" [sortable]="true" [title]="'AddressInfo'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'HomeAddress'" [filterable]="true" [sortable]="true" [title]="'HomeAddress'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'FavoriteFeature'" [filterable]="true" [sortable]="true" [title]="'FavoriteFeature'">
+        </kendo-grid-column>
+        <kendo-grid-column editor="text" [field]="'Features'" [filterable]="true" [sortable]="true" [title]="'Features'">
+        </kendo-grid-column>
+        <kendo-grid-command-column [width]="$config.grid.commandColumnWidth">
+            <ng-template kendoGridCellTemplate>
+                <button kendoGridRemoveCommand><span class="k-icon k-i-close"></span>Delete</button>
+            </ng-template>
+        </kendo-grid-command-column>
+        </kendo-grid>
+</kb-grid>
+
+<kb-bottom-section></kb-bottom-section>

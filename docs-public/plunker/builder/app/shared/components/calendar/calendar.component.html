@@ -1,0 +1,16 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<span [formGroup]="formGroup">
+    <kendo-calendar
+        #calendar
+        [min]="config.min"
+        [max]="config.max"
+        (valueChange)="valueChange($event)"
+        [formControlName]="id">
+    </kendo-calendar>
+</span>
+<div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+    {{ this._errorMessage }}
+</div>

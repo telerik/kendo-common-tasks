@@ -1,0 +1,17 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<span [formGroup]="formGroup">
+    <kendo-timepicker
+        #picker
+        title="{{config.title}}"
+        [steps]="config.steps"
+        [format]="config.format"
+        [formControlName]="id"
+        (valueChange)="valueChange($event)">
+    </kendo-timepicker>
+</span>
+<div *ngIf="this.shouldValidateComponent() && formGroup.controls[this.id].touched && this._errorMessage" class="alert alert-danger">
+    {{ this._errorMessage }}
+</div>
