@@ -10,7 +10,7 @@ const argv = require('yargs').argv;
 
 module.exports = (libraryName, onServerStart, done) => {
     const app = express();
-    const platformMatch = new RegExp(/kendo.*(react|angular|vue)/g).exec(libraryName);
+    const platformMatch = new RegExp(/kendo.*(react|angular|vue|builder)/g).exec(libraryName);
     const platform = argv.platform || (platformMatch && platformMatch[1]) || 'angular';
     const staticContentOptions = {
         setHeaders: (response) => {
