@@ -92,7 +92,7 @@ var plunkerTemplate = kendo.template(
     '<!doctype html>\
 <html>\
 <head>\
-    #= if (data.platform === \'builder\') { # <base href="/internals/plunker/builder/" /> #}# \
+    # if (data.platform === \'builder\') { # <base href="/internals/plunker/builder/" /> #}# \
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
     <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
     <style>\
@@ -111,7 +111,7 @@ var plunkerTemplate = kendo.template(
         \\#vueapp[v-cloak] :not(.k-i-loading) { display: none; } \
     </style>\
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
-    #= if (data.platform === \'builder \') { # <script src="https://unpkg.com/zone.js"> </script> #}# \
+    # if (data.platform === \'builder\') { # <script src="https://unpkg.com/zone.js"></script> #}#\
     #= data.cdnResources #\
     <script src="https://unpkg.com/systemjs@0.19.27/dist/system.js"></script>\
     <script src="#: data.exampleRunner #"></script>\
