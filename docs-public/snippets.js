@@ -92,7 +92,7 @@ var plunkerTemplate = kendo.template(
     '<!doctype html>\
 <html>\
 <head>\
-    # if (data.platform === \'builder\') { # <base href="/internals/plunker/builder/" /> #}# \
+    # if (data.platform === \'builder\') { # <base href="#= window.plunkerBluePrintPath + window.platform + "/" #" /> #}# \
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
     <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
     <style>\
@@ -364,7 +364,8 @@ var directivesByModule = {
         { module: '@angular/platform-browser/animations', match: '.', import: "BrowserAnimationsModule" }
     ].concat(moduleDirectives),
     react: [].concat(moduleDirectives),
-    vue: [].concat(moduleDirectives)
+    vue: [].concat(moduleDirectives),
+    builder: [].concat(moduleDirectives)
 };
 
 /* The following method replaces code characters to allow embedding in a js double-quote string ("") */
@@ -752,7 +753,7 @@ var plunker = {
     },
     builder: {
         plunkerFiles: [
-            'app/main.ts',
+            'main.ts',
             'app/app.component.ts',
             'app/app.module.ts'
         ].concat(basicPlunkerFiles)
@@ -1273,7 +1274,6 @@ $(function() {
     }
 
     function loadMultiFileRunnerContent(element) {
-
         var filesContent = "";
         var files = $.map(element.find("pre"), function(item) {
             var pre = $(item);
