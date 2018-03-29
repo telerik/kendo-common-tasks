@@ -142,6 +142,25 @@ var plunkerTemplate = kendo.template(
 </html>\
 ', { useWithBlock: false });
 
+var commonDependencies = {
+    'angular': {
+        'core-js': '2.5.3',
+        'rxjs': '5.5.6',
+        'zone.js': '0.8.12',
+        '@angular/animations': '5.2.2',
+        '@angular/core': '5.2.2',
+        '@angular/common': '5.2.2',
+        '@angular/compiler': '5.2.2',
+        '@angular/platform-browser': '5.2.2',
+        '@angular/platform-browser-dynamic': '5.2.2',
+        '@angular/http': '5.2.2',
+        '@angular/router': '5.2.2',
+        '@angular/forms': '5.2.2',
+        'hammerjs': '*',
+        '@progress/kendo-angular-l10n': '*'
+    },
+    'react': { }
+};
 
 function SnippetRunner(container) {
     this.container = container;
@@ -723,6 +742,33 @@ function prefixStyleUrls(content, prefix) {
     );
 }
 
+function capitalize(str) {
+    return str[0].toUpperCase() + str.substring(1);
+}
+
+function buildExampleEditorForm(platform, dependencies) {
+    var form = new EditorForm('https://stackblitz.com/run/');
+    var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
+
+    form.addField('project[template]', 'angular-cli');
+    form.addField('project[tags][0]', capitalize(platform));
+    form.addField('project[tags][1]', 'Kendo UI');
+    form.addField('project[description]', 'Example usage of Kendo UI for ' + capitalize(platform) + link);
+    form.addField('project[dependencies]', JSON.stringify(dependencies));
+
+    return form;
+}
+
+function getExampleDependencies(directives) {
+    return directives.filter(function(dir) {
+        return dir.module.indexOf('@progress') === 0 ||
+               dir.module.indexOf('@telerik') === 0;
+    }).reduce(function(result, dir) {
+        result[dir.module] = '*';
+        return result;
+    }, {});
+}
+
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
 // otherwise the popup blocker blocks the new tab
@@ -762,66 +808,12 @@ window.openInPlunker = function(listing) {
         }
     };
 
-    var form = new EditorForm('https://stackblitz.com/run/');
+    var dependencies = Object.assign({ },
+            commonDependencies[window.platform],
+            getExampleDependencies(directives)
+    );
 
-    var dependencies = {
-        'angular': {
-            'core-js': '2.5.3',
-            'rxjs': '5.5.6',
-            'zone.js': '0.8.12',
-            '@angular/animations': '5.2.2',
-            '@angular/core': '5.2.2',
-            '@angular/common': '5.2.2',
-            '@angular/compiler': '5.2.2',
-            '@angular/platform-browser': '5.2.2',
-            '@angular/platform-browser-dynamic': '5.2.2',
-            '@angular/http': '5.2.2',
-            '@angular/router': '5.2.2',
-            '@angular/forms': '5.2.2',
-
-            // TODO: generate dependencies from example
-            'hammerjs': '*',
-            //'@telerik/kendo-intl': '*',
-            //'@progress/kendo-drawing': '*',
-            //'@progress/kendo-data-query': '*',
-            //'@progress/kendo-charts': '*',
-            //'@progress/kendo-angular-buttons': '*',
-            //'@progress/kendo-angular-charts': '*',
-            //'@progress/kendo-angular-dateinputs': '*',
-            //'@progress/kendo-angular-dialog': '*',
-            //'@progress/kendo-angular-dropdowns': '*',
-            //'@progress/kendo-angular-excel-export': '*',
-            //'@progress/kendo-angular-gauges': '*',
-            //'@progress/kendo-angular-grid': '*',
-            //'@progress/kendo-angular-inputs': '*',
-            //'@progress/kendo-angular-intl': '*',
-            '@progress/kendo-angular-l10n': '*',
-            //'@progress/kendo-angular-label': '*',
-            '@progress/kendo-angular-layout': '*'
-            //'@progress/kendo-angular-menu': '*',
-            //'@progress/kendo-angular-pdf-export': '*',
-            //'@progress/kendo-angular-popup': '*',
-            //'@progress/kendo-angular-resize-sensor': '*',
-            //'@progress/kendo-angular-ripple': '*',
-            //'@progress/kendo-angular-scrollview': '*',
-            //'@progress/kendo-angular-sortable': '*',
-            //'@progress/kendo-angular-tasks': '*',
-            //'@progress/kendo-angular-treeview': '*',
-            //'@progress/kendo-angular-upload': '*'
-        }
-    };
-
-    var capitalize = function(s) { return s[0].toUpperCase() + s.substring(1); };
-    var platform = capitalize(window.platform);
-
-    form.addField('project[template]', 'angular-cli');
-    form.addField('project[tags][0]', platform);
-    form.addField('project[tags][1]', 'Kendo UI');
-
-    var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
-    form.addField('project[description]', 'Example usage of Kendo UI for ' + platform + link);
-
-    form.addField('project[dependencies]', JSON.stringify(dependencies[window.platform]));
+    var form = buildExampleEditorForm(window.platform, dependencies);
 
     var filterFunction = function(file) {
         var ext = file.split('.').pop();
@@ -849,7 +841,7 @@ window.openInPlunker = function(listing) {
                 var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
                 var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
                 var add = function(file, template) {
-                    if (file === "styles.css" || file === "main.ts") {
+                    if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
                         form.addField('project[files][' + file + ']', kendo.template(template)(context));
                     }
                 };
