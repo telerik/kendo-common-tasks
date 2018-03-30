@@ -1,6 +1,5 @@
 const path = require('path');
 const _ = require('lodash');
-const webpackStream = require('webpack-stream');
 const WebpackSystemRegister = require('webpack-system-register');
 const wrap = require('gulp-wrap');
 const gulpUglify = require('gulp-uglify');
@@ -14,10 +13,10 @@ const packageDependencies = deps.map(matchStartsWith);
 const packageName = packageInfo.name;
 const SRC_EXT_GLOB = ".{jsx,ts,tsx,js}";
 
-module.exports = (gulp, { webpackConfig, distName, modules = [] }) => {
+module.exports = (gulp, { webpackConfig, distName, modules = [], webpackStream, webpack }) => {
 
     gulp.task('build-systemjs-bundle', () => {
-        const config = _.assign({}, webpackConfig.systemjs);
+        const config = _.assign({}, webpackConfig);
 
         config.plugins = config.plugins || [];
         config.plugins.push(new WebpackSystemRegister({
@@ -26,7 +25,7 @@ module.exports = (gulp, { webpackConfig, distName, modules = [] }) => {
         }));
 
         gulp.src('src/main' + SRC_EXT_GLOB)
-            .pipe(webpackStream(config))
+            .pipe(webpackStream(config, webpack))
             .pipe(wrap({ src: path.join(__dirname, 'systemjs-bundle.template.js' ) }, { packageName: packageName, modules: modules }, { variable: "data" }))
             .pipe($.rename((path) => {
                 path.basename = distName;
