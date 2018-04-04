@@ -8,13 +8,15 @@ import { Component, ViewEncapsulation, OnInit, AfterViewInit, OnDestroy } from '
     selector: 'app-root',
     encapsulation: ViewEncapsulation.None,
     template: require('./app.component.html'),
-    // styleUrls: [
-    //     '../assets/themes/metro.css',
-    //     '../../node_modules/bootstrap/dist/css/bootstrap-grid.css',
-    //     '../../node_modules/font-awesome/css/font-awesome.css',
-    //     './app.css',
-    //     './app.custom.css'
-    // ]
+    styles: [
+        '@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css"'
+    ],
+     styleUrls: [
+         'assets/themes/metro.css', 
+         'app/app.css',
+         'app/app.custom.css'
+     ]
+
 })
 export class AppComponent {
 
