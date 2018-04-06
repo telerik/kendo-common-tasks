@@ -160,6 +160,7 @@ var stackBlitzDependencies = {
         '@telerik/kendo-intl': '*',
         '@progress/kendo-drawing': '*',
         '@progress/kendo-data-query': '*',
+        '@progress/kendo-file-saver': '*',
         '@progress/kendo-charts': '*',
         '@progress/kendo-angular-buttons': '*',
         '@progress/kendo-angular-charts': '*',
