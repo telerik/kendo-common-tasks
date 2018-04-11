@@ -846,7 +846,7 @@ window.openInPlunker = function(listing) {
         $.each(listing['multifile-listing'], function(i, file) {
             var contentRoot = 'app/';
             var content = file.content;
-            content = prefixStyleUrls(content, contentRoot);
+
             if (file.name !== 'main.ts') {
                 // StackBlitz requires main.ts to be on the root level, get from template
                 form.addField('project[files][' + contentRoot + file.name + ']', content);
