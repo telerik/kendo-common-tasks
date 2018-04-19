@@ -7,11 +7,9 @@ import { HttpClient } from '@angular/common/http';
 
 import { State } from '@progress/kendo-data-query';
 
-import { DataProviderService } from './data-provider.service';
+import { DataProviderService, DataServiceFactory, ODataServiceConfig} from './data-services.exports';
 import { DataService } from './data.service';
 import { ODataService } from './odata.service';
-import { ODataServiceConfig } from './odata-service-config';
-import { DataServiceFactory } from './data-service-factory';
 
 @Injectable()
 export class ODataServiceFactory extends DataServiceFactory {

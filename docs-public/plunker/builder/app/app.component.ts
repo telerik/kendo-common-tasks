@@ -1,23 +1,15 @@
-///////////////////
-// Auto-generated
-// Do not edit!!!
-///////////////////
-import { Component, ViewEncapsulation, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
-    selector: 'app-root',
-    encapsulation: ViewEncapsulation.None,
-    template: require('./app.component.html'),
-    styles: [
-        '@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css"'
-    ],
-     styleUrls: [
-         'assets/themes/metro.css', 
-         'app/app.css',
-         'app/app.custom.css'
-     ]
-
+  selector: 'app-root',
+  encapsulation: ViewEncapsulation.None,
+  templateUrl: './app.component.html',
+  styleUrls: [
+    '../assets/themes/metro.css',
+    './app.css',
+    '../../node_modules/bootstrap/dist/css/bootstrap-grid.css',
+    '../../node_modules/font-awesome/css/font-awesome.css'
+  ]
 })
 export class AppComponent {
-
 }

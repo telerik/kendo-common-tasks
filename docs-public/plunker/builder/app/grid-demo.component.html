@@ -1,0 +1,37 @@
+<!--
+Auto-generated
+Do not edit!!!
+-->
+<div class="data-grid">
+    <div class="row">
+        <div class="col-12">
+            <kb-top-section></kb-top-section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <h2>{{ $config.title }}</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <kb-grid #grid [config]="$config.grid" [dataService]="$dataServices['Customers']" [state]="$dataServicesState['Customers']"
+                [view]="$dataServicesResult['Customers']">
+                <kendo-grid [pageable]="grid.config.pageable" [sortable]="grid.config.sortable" [filterable]="grid.config.filterable" [groupable]="grid.config.groupable"
+                    [data]="grid.view | async" [pageSize]="grid.state.take" [skip]="grid.state.skip" [sort]="grid.state.sort"
+                    [filter]="grid.state.filter" [group]="grid.state.group" (dataStateChange)="grid.dataStateChange($event)"
+                    kendoGridSelectBy [selectedKeys]="grid.selectedKeys" [selectable]="{ mode: 'single' }" (selectionChange)="grid.selectionChange($event)"
+                    [resizable]="grid.config.resizable" [reorderable]="grid.config.reorderable">
+                    <kendo-grid-column [field]="'CompanyName'" [filterable]="true" [sortable]="true" [title]="'CompanyName'">
+                    </kendo-grid-column>
+                    <kendo-grid-column [field]="'ContactName'" [filterable]="true" [sortable]="true" [title]="'ContactName'">
+                    </kendo-grid-column>
+                    <kendo-grid-column [field]="'ContactTitle'" [filterable]="true" [sortable]="true" [title]="'ContactTitle'">
+                    </kendo-grid-column>
+                    <kendo-grid-column [field]="'Address'" [filterable]="true" [sortable]="true" [title]="'Address'">
+                    </kendo-grid-column>
+                </kendo-grid>
+            </kb-grid>
+        </div>
+    </div>
+</div>

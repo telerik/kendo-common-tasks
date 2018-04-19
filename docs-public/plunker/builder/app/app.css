@@ -3,7 +3,6 @@
 * Do not edit!!!
 */
 
-
 /* Normalize */
 
 html,
@@ -28,6 +27,45 @@ ul {
     padding: 0;
 }
 
+/* User Drop Down */
+
+.user-drop-down-wrapper {
+    width: 100px;
+}
+
+.user-drop-down {
+    cursor: pointer;
+}
+
+.user-drop-down .k-i-user {
+    font-size: 32px;
+    text-align: center;
+    width: 1.25em;
+    line-height: 1.25;
+    border-radius: 100%;
+}
+
+.user-drop-down .k-i-arrow-chevron-down {
+    margin-left: auto;
+    font-size: 16px;
+}
+
+.logout-tooltip {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 150px;
+    padding: 10px;
+    box-shadow: 0px 5px 14px 1px rgba(0, 0, 0, .1);
+}
+
+.logout .k-icon:hover {
+    color: inherit;
+}
+
+.logout .k-i-logout {
+    margin-right: 15px;
+}
 
 /* General layout */
 
@@ -88,6 +126,50 @@ ul {
     width: 100%;
 }
 
+/* Common */
+
+.kb-overlay {
+    position: absolute;
+    left: 15px;
+    right: 13px;
+    width: auto !important;
+    height: 100% !important;
+    opacity: .3;
+}
+
+/* Login */
+
+.kb-login {
+    max-width: 400px;
+    margin-top: 150px;
+    padding-bottom: 15px;
+    box-shadow: 0 0 7px rgba(0, 0, 0, .2);
+}
+
+.kb-login-header {
+    display: flex;
+    align-items: center;
+}
+
+.kb-provider-name {
+    color: #00b1d0;
+}
+
+.kb-login img {
+    margin-right: 15px;
+}
+
+.kb-login .k-form {
+    padding: 0 0 16px;
+}
+
+.kb-login .k-primary {
+    width: 100%;
+}
+
+.kb-login .k-notification-wrap {
+    white-space: normal;
+}
 
 /* Navigation Panelbar */
 
@@ -118,7 +200,6 @@ ul {
 .kb-side-navigation .k-panelbar .fa {
     margin: 0 17px 0 5px;
 }
-
 
 /* Expander */
 
@@ -166,7 +247,6 @@ ul {
     content: '\e015';
 }
 
-
 /* Sections */
 
 kb-top-section,
@@ -177,7 +257,6 @@ kb-bottom-section,
 kb-bottom-child-section {
     display: block;
 }
-
 
 /* Landing page */
 
@@ -237,7 +316,6 @@ kb-bottom-child-section {
     margin-right: 5px;
 }
 
-
 /* Kendo Overrides */
 
 .k-tabstrip>.k-content {
@@ -246,9 +324,7 @@ kb-bottom-child-section {
     border: none;
 }
 
-
 /* Pages */
-
 
 /* Unauthorized page */
 
@@ -279,6 +355,64 @@ kb-bottom-child-section {
     margin-top: 30px;
 }
 
+/* DataForm */
+
+.kb-data-form-wrapper,
+.kb-data-form-fieldset {
+    padding: 20px;
+}
+
+.kb-data-form-wrapper.k-widget,
+.kb-data-form-wrapper.k-widget [class^="col-"] {
+    box-sizing: border-box;
+}
+
+.kb-data-form [class^="col-"]>.k-widget,
+.kb-data-form [class^="col-"]>.k-textbox,
+.kb-data-form [class^="col-"]>.k-input {
+    width: 100%;
+}
+
+.kb-data-form .kb-data-form-pager {
+    margin-top: 10px;
+}
+
+.kb-data-form .kb-data-form-pager .k-input {
+    width: 33px;
+}
+
+.kb-data-form .kb-components-container .row {
+    min-height: 45px;
+}
+
+.kb-data-form .row {
+    margin-bottom: 5px
+}
+
+.kb-data-form hr,
+.kb-data-grid-form hr {
+    margin-bottom: 20px;
+}
+
+.kb-data-form-commands .k-button .k-icon {
+    margin: 0;
+}
+
+.kb-data-form kb-tab-strip {
+    width: 100%;
+}
+
+/* Grid + DataForm */
+
+.kb-data-grid-form-header {
+    display: flex;
+}
+
+.kb-data-grid-form-header div+div {
+    align-self: flex-end;
+    padding-bottom: 10px;
+    min-width: 300px;
+}
 
 /* Bootstrap Overrides */
 
@@ -304,4 +438,12 @@ kb-bottom-child-section {
     .hidden-lg {
         display: none !important;
     }
+}
+
+.data-grid {
+    margin-left: 25px;
+}
+
+.k-multiselect {
+    width: 350px;
 }

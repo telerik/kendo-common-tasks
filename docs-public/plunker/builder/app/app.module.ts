@@ -1,34 +1,53 @@
-///////////////////
-// Auto-generated
-// Do not edit!!!
-///////////////////
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
+import { AppComponent } from './app.component';
+import { GridDemoBaseComponent } from './grid-demo.base.component';
+import { GridDemoComponent } from './grid-demo.component';
+import { CommonModule } from '@angular/common';
 import { LayoutModule } from '@progress/kendo-angular-layout';
 
-import { CoreModule } from './core/core.module';
+import { GridModule } from '@progress/kendo-angular-grid';
+import { DropDownsModule } from '@progress/kendo-angular-dropdowns';
+import { KbGridComponent } from './shared/components/grid/grid.component';
 
-import { SharedModule } from './shared/shared.module';
-import { AppComponent } from './app.component';
-import { ApplicationModule } from './modules/application/application.module';
-import { AppRoutingModule } from './app-routing.module';
+import { TopSectionComponent } from './topSection';
+
+import { CoreModule } from './core/core.module';
+import { Routes, RouterModule } from '@angular/router';
+
+const routes: Routes = [
+  {
+      path: '',
+      component: GridDemoComponent
+  }
+];
 
 @NgModule({
-    declarations: [
-        AppComponent
-    ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        LayoutModule,
-        CoreModule,
-        SharedModule,
-        ApplicationModule,
-        AppRoutingModule
-    ],
-    providers: [],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    KbGridComponent,
+    GridDemoBaseComponent,
+    GridDemoComponent,
+    TopSectionComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    CoreModule,
+    CommonModule,
+    GridModule,
+    LayoutModule,
+    DropDownsModule,
+    RouterModule.forRoot(routes)
+  ],
+  exports: [
+    GridModule,
+    KbGridComponent,
+    RouterModule
+],
+  providers: [],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

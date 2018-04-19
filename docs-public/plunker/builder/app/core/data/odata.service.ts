@@ -8,11 +8,8 @@ import { Observable } from 'rxjs/Observable';
 
 import { State, toODataString } from '@progress/kendo-data-query';
 
-import { ModelDataResult } from './model-data-result';
 import { DataService } from './data.service';
-import { ODataServiceConfig } from './odata-service-config';
-import { PrimaryKeyField } from './primary-key-field';
-import { DataProviderService } from './data-provider.service';
+import { PrimaryKeyField, ModelDataResult, DataProviderService, ODataServiceConfig } from './data-services.exports';
 
 export class ODataService<T> extends DataService<T> {
     constructor(protected config: ODataServiceConfig, http: HttpClient, dataProviderService: DataProviderService, state: State) {
@@ -29,7 +26,7 @@ export class ODataService<T> extends DataService<T> {
             queryString: this.getQueryString(state || {})
         });
 
-        return this.http.get(url, { observe: 'response' });
+        return this.request('GET', url, { observe: 'response' });
     }
 
     protected createRequest(data: any): Observable<any> {
@@ -37,7 +34,10 @@ export class ODataService<T> extends DataService<T> {
             url: this.config.tableName
         });
 
-        return this.http.post(url, data, { observe: 'response' });
+        return this.request('POST', url, {
+            body: data,
+            observe: 'response'
+        });
     }
 
     protected updateRequest(data: any): Observable<any> {
@@ -45,7 +45,10 @@ export class ODataService<T> extends DataService<T> {
             url: this.getResourcePath(data)
         });
 
-        return this.http.put(url, data, { observe: 'response' });
+        return this.request('PUT', url, {
+            body: data,
+            observe: 'response'
+        });
     }
 
     protected removeRequest(data: any): Observable<any> {
@@ -53,12 +56,12 @@ export class ODataService<T> extends DataService<T> {
             url: this.getResourcePath(data)
         });
 
-        return this.http.delete(url, { observe: 'response' });
+        return this.request('DELETE', url, { observe: 'response' });
     }
 
     protected parseResponse(response: HttpResponse<Object>): ModelDataResult<T> {
         return {
-            data: response.body['value'],
+            data: this.mapData(response.body['value']),
             total: parseInt(response.body['@odata.count'], 10)
         };
     }
@@ -83,3 +86,5 @@ export class ODataService<T> extends DataService<T> {
         return key.type === 'string' ? `'${data[key.name]}'` : `${data[key.name]}`;
     }
 }
+
+

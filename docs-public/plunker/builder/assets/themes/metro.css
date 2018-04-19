@@ -6659,7 +6659,6 @@ div.k-grid-footer {
     border-bottom-width: 1px;
 }
 
-
 /* Locked columns */
 
 .k-grid-lockedcolumns {
@@ -9009,7 +9008,6 @@ th.k-sorted {
 .k-fieldselector .k-list li.k-item.k-state-focused {
     box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.06);
 }
-
 
 /* Loading indicator */
 
@@ -14624,7 +14622,6 @@ fieldset legend {
     vertical-align: middle;
 }
 
-
 /* Selection */
 
 .k-selector {
@@ -14715,7 +14712,6 @@ fieldset legend {
     height: 100%;
 }
 
-
 /* Navigator hint */
 
 .k-navigator-hint div {
@@ -14733,7 +14729,6 @@ fieldset legend {
     opacity: 1;
     text-align: center;
 }
-
 
 /* Sparklines */
 
@@ -14793,7 +14788,6 @@ fieldset legend {
     width: 100%;
     height: 100%;
 }
-
 
 /* IE8- */
 
