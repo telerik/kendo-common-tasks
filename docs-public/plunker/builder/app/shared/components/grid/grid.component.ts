@@ -19,7 +19,7 @@ const EDIT_MODE_POPUP = 'Popup';
 
 @Component({
     selector: 'kb-grid',
-    templateUrl: './grid.component.html'
+    templateUrl: './app/shared/components/grid/grid.component.html'
 })
 export class KbGridComponent implements OnInit {
     @ContentChild(GridComponent) public kendoGrid: GridComponent;

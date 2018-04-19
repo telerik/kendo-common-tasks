@@ -19,7 +19,7 @@ import { OdataProviderCustomer } from './data/odata-provider/customer.model';
 import { CustomerConfig } from './data/odata-provider/customer.config';
 
 @Component({
-    templateUrl: './grid-demo.component.html'
+    templateUrl: './app/grid-demo.component.html'
 })
 export class GridDemoBaseComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('grid') public grid: KbGridComponent;
@@ -97,6 +97,7 @@ export class GridDemoBaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public getDataChanges(dataSourceName): Observable<any[]> {
         const dataService = this.$dataServices[dataSourceName];
+        debugger;
         return dataService.dataChanges()
             .map(response => response ? response.data : []);
     }

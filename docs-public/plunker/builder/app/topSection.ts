@@ -7,7 +7,7 @@ import { GridDemoComponent } from './grid-demo.component';
 
 @Component({
     selector: 'kb-top-section',
-    templateUrl: './topSection.html'
+    templateUrl: './app/topSection.html'
 })
 export class TopSectionComponent {
     public columns: Array<string> = ['CompanyName', 'ContactName', 'ContactTitle', 'Address'];
