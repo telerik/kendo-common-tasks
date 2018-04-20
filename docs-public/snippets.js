@@ -773,12 +773,20 @@ function capitalize(str) {
     return str[0].toUpperCase() + str.substring(1);
 }
 
-function buildExampleEditorForm() {
+function getStackBlitzTemplate(listing) {
+    if (listing['js']) {
+        return 'typescript';
+    }
+
+    return 'angular-cli';
+}
+
+function buildExampleEditorForm(exampleTemplate) {
     var form = new EditorForm('https://stackblitz.com/run/');
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
     var platform = window.platform;
 
-    form.addField('project[template]', 'angular-cli');
+    form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
     form.addField('project[tags][1]', 'Kendo UI');
     form.addField('project[description]', 'Example usage of Kendo UI for ' + capitalize(platform) + link);
@@ -836,7 +844,8 @@ window.openInPlunker = function(listing) {
         }
     };
 
-    var form = buildExampleEditorForm();
+    var exampleTemplate = getStackBlitzTemplate(listing);
+    var form = buildExampleEditorForm(exampleTemplate);
 
     var filterFunction = function(file) {
         var ext = file.split('.').pop();
@@ -873,7 +882,7 @@ window.openInPlunker = function(listing) {
         });
     }
 
-    if (window.platform === "angular") {
+    if (exampleTemplate === "angular-cli") {
         form.addField('project[files][.angular-cli.json]', JSON.stringify({
             apps: [ {
                 styles: [ "styles.css" ]
@@ -914,12 +923,22 @@ window.openInPlunker = function(listing) {
                     .filter(function(tmp, idx, arr) { return (idx === 1 || idx === arr.length - 1); });
             }
         }
+
+        if (exampleTemplate === 'typescript') {
+            //Only styles.css, index.html are needed
+            plunkerTemplates = plunkerTemplates.splice(4, 2);
+
+            form.addField('project[files][index.ts]', plunkerContext.common.appComponentContent);
+        }
+
         $.each(plunkerTemplates, function(index, templateContent) {
             var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
             var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+
             var add = function(file, template) {
                 form.addField('project[files][' + file + ']', kendo.template(template)(context));
             };
+
             if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
                 add(plunkerFiles[index], templateContent);
             }
