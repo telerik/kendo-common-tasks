@@ -18,6 +18,8 @@ import { ODataServiceFactory } from './core/data/odata-service-factory';
 import { OdataProviderCustomer } from './data/odata-provider/customer.model';
 import { CustomerConfig } from './data/odata-provider/customer.config';
 
+import { map } from 'rxjs/operators/map';
+
 @Component({
     templateUrl: './app/grid-demo.component.html'
 })
@@ -97,9 +99,9 @@ export class GridDemoBaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public getDataChanges(dataSourceName): Observable<any[]> {
         const dataService = this.$dataServices[dataSourceName];
-        debugger;
-        return dataService.dataChanges()
-            .map(response => response ? response.data : []);
+        return dataService.dataChanges().pipe(
+            map(response => response ? response.data : [])
+        );
     }
 
     public getDataResult(dataSourceName): BehaviorSubject<ModelDataResult<any>> {
