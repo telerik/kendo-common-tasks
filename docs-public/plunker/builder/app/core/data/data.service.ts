@@ -2,10 +2,12 @@
 // Auto-generated
 // Do not edit!!!
 ///////////////////
-import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { EventEmitter } from '@angular/core';
+import { HttpClient, HttpResponse, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { zip } from 'rxjs/observable/zip';
 import { tap } from 'rxjs/operators/tap';
 import { map } from 'rxjs/operators/map';
 import { publish } from 'rxjs/operators/publish';
@@ -13,19 +15,17 @@ import { last } from 'rxjs/operators/last';
 
 import { process, State } from '@progress/kendo-data-query';
 
-import { DataServiceInterface } from './data-service.interface';
-import { DataServiceConfig } from './data-service-config';
-import { DataServiceRequest } from './data-service-request';
-import { ModelDataResult } from './model-data-result';
-import { DataProviderService } from './data-provider.service';
+import { DataServiceInterface, DataServiceConfig, DataServiceRequest, ModelDataResult, DataProviderService, DataServiceEvent} from './data-services.exports';
 
 export abstract class DataService<T> implements DataServiceInterface<T> {
-    public dataResult: ModelDataResult<T>;
     // In case someone wants to refresh the data with the current state
     public state: State;
+    public readonly errors = new BehaviorSubject<Error>(null);
+    public readonly events = new EventEmitter<DataServiceEvent>();
+
+    protected dataResult: ModelDataResult<T>;
 
     private shouldFetch = true;
-    private errorStream: BehaviorSubject<Error> = new BehaviorSubject<Error>(null);
     private dataStream: BehaviorSubject<ModelDataResult<T>> = new BehaviorSubject<ModelDataResult<T>>(null);
 
     constructor(
@@ -37,10 +37,6 @@ export abstract class DataService<T> implements DataServiceInterface<T> {
 
     public dataChanges(): BehaviorSubject<ModelDataResult<T>> {
         return this.dataStream;
-    }
-
-    public errors(): BehaviorSubject<Error> {
-        return this.errorStream;
     }
 
     public read(state?: State): void {
@@ -80,39 +76,61 @@ export abstract class DataService<T> implements DataServiceInterface<T> {
         }
     }
 
-    public create(item: any): Observable<void> {
-        return this.handleRequest(this.createRequest(item));
+    public create(item: any): void {
+        this.handleRequest(this.createRequest(item), { action: 'create' });
     }
 
-    public update(item: any): Observable<void> {
-        return this.handleRequest(this.updateRequest(item));
+    public update(item: any): void {
+        this.handleRequest(this.updateRequest(item), { action: 'update' });
     }
 
-    public remove(item: any): Observable<void> {
-        return this.handleRequest(this.removeRequest(item));
+    public remove(item: any): void {
+        this.handleRequest(this.removeRequest(item), { action: 'remove' });
     }
 
-    protected handleRequest(request: Observable<any>): Observable<void> {
+    public batch(deletedItems: any[], createdItems: any[], updatedItems: any[]): void {
+        deletedItems.forEach(item => {
+            this.remove(item);
+        });
+        updatedItems.forEach(item => {
+            this.update(item);
+        });
+        createdItems.forEach(item => {
+            this.create(item);
+        });
+    }
+
+    public fetchedData(): ModelDataResult<T> {
+        return this.dataResult;
+    }
+
+    protected request(method: string, url: string, options: {
+        body?: any;
+        headers?: HttpHeaders | {
+            [header: string]: string | string[];
+        };
+        reportProgress?: boolean;
+        observe: 'response';
+        params?: HttpParams | {
+            [param: string]: string | string[];
+        };
+        responseType?: 'json';
+        withCredentials?: boolean;
+    }): Observable<HttpResponse<Object>> {
+        options.headers = options.headers || new HttpHeaders();
+
+        return this.http.request(method, url, options);
+    }
+
+    protected handleRequest(request: Observable<any>, event: DataServiceEvent): void {
         this.reset();
 
-        const requestObservable = Observable.create(observer => {
-            request.subscribe(() => {
-                this.read(this.state);
-                observer.next();
-            }, (err: HttpErrorResponse) => {
-                observer.error(err);
-                this.handleError(err);
-                this.read(this.state);
-            });
-        }).pipe(
-            publish()
-        );
-
-        requestObservable.connect();
-
-        return requestObservable.pipe(
-            last()
-        );
+        request.subscribe(() => {
+            this.read(this.state);
+            this.events.emit(event);
+        }, (err: HttpErrorResponse) => {
+            this.handleError(err);
+        });
     }
 
     protected abstract readRequest(state: State): Observable<HttpResponse<Object>>;
@@ -141,11 +159,19 @@ export abstract class DataService<T> implements DataServiceInterface<T> {
         return '';
     }
 
+    protected mapData(data: any[]): T[] {
+        if (this.config.mapData) {
+            return data.map(item => this.config.mapData(item));
+        }
+
+        return data;
+    }
+
     protected handleError(err: HttpErrorResponse) {
         if (err.error instanceof Error) {
-            this.errorStream.next(err.error);
+            this.errors.next(err.error);
         } else {
-            this.errorStream.next(new Error(`${err.status} - ${err.statusText}`));
+            this.errors.next(new Error(`${err.status} - ${err.statusText}`));
         }
     }
 
