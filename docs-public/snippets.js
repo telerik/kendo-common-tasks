@@ -189,6 +189,39 @@ var stackBlitzDependencies = {
         '@progress/kendo-angular-treeview': '*',
         '@progress/kendo-angular-upload': '*'
     },
+    'builder': {
+        "@angular/animations": "^5.2.10",
+        "@angular/common": "^5.2.10",
+        "@angular/compiler": "^5.2.10",
+        "@angular/core": "^5.2.10",
+        "@angular/forms": "^5.2.10",
+        "@angular/http": "^5.2.10",
+        "@angular/platform-browser": "^5.2.10",
+        "@angular/platform-browser-dynamic": "^5.2.10",
+        "@angular/router": "^5.2.10",
+        "@progress/kendo-angular-buttons": "^2.0.0",
+        "@progress/kendo-angular-charts": "^1.4.0",
+        "@progress/kendo-angular-dateinputs": "^1.4.3",
+        "@progress/kendo-angular-dialog": "^3.1.2",
+        "@progress/kendo-angular-dropdowns": "^2.1.0",
+        "@progress/kendo-angular-excel-export": "^1.0.5",
+        "@progress/kendo-angular-grid": "^1.7.1",
+        "@progress/kendo-angular-inputs": "^1.4.2",
+        "@progress/kendo-angular-intl": "^1.3.0",
+        "@progress/kendo-angular-l10n": "^1.0.5",
+        "@progress/kendo-angular-label": "1.0.5",
+        "@progress/kendo-angular-layout": "^2.2.0",
+        "@progress/kendo-angular-popup": "^1.3.2",
+        "@progress/kendo-data-query": "^1.1.2",
+        "@progress/kendo-drawing": "^1.4.1",
+        "@progress/kendo-theme-bootstrap": "^2.11.11",
+        "@progress/kendo-theme-default": "^2.50.0",
+        "@progress/kendo-theme-material": "^0.3.0",
+        "bootstrap": "4.0.0-beta.2",
+        "font-awesome": "^4.7.0",
+        "rxjs": "^5.5.6",
+        "zone.js": "^0.8.26"
+    },
     'react': { }
 };
 
@@ -752,15 +785,38 @@ var plunker = {
     },
     builder: {
         plunkerFiles: [
-            'main.ts',
+            'app/app.component.html',
             'app/app.component.ts',
-            'app/app.module.ts'
+            'app/app.css',
+            'app/app.module.ts',
+            'app/core/core.module.ts',
+            'app/core/data/data-services.exports.ts',
+            'app/core/data/data.service.ts',
+            'app/core/data/odata-service-factory.ts',
+            'app/core/data/odata.service.ts',
+            'app/core/module.config.ts',
+            'app/data/odata-provider/customer.config.ts',
+            'app/data/odata-provider/customer.model.ts',
+            'app/grid-demo.base.component.ts',
+            'app/grid-demo.component.html',
+            'app/grid-demo.component.ts',
+            'app/shared/components/grid/grid.component.html',
+            'app/shared/components/grid/grid.component.ts',
+            'app/shared/services/grid-incell-editing.service.ts',
+            'app/topSection.html',
+            'app/topSection.ts',
+            'assets/themes/metro.css',
+            'index.html',
+            'main.ts',
+            'polyfills.ts',
+            'styles.css'
         ].concat(basicPlunkerFiles)
     }
 };
 
-function getPlunkerFile(file) {
-    var path = [ window.plunkerBluePrintPath, window.platform, '/', file ];
+function getDemoFiles(file) {
+    var bluePrintPath = window.runner === 'stackblitz' ? window.stackblitzBluePrintPath : window.plunkerBluePrintPath;
+    var path = [ bluePrintPath, window.platform, '/', file ];
     return $.ajax(path.join(''), { dataType: 'text' });
 }
 
@@ -825,7 +881,7 @@ function buildExampleEditorForm(exampleTemplate) {
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
 // otherwise the popup blocker blocks the new tab
-var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getPlunkerFile);
+var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getDemoFiles);
 
 window.openInPlunker = function(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
@@ -857,6 +913,8 @@ window.openInPlunker = function(listing) {
             appImports: imports.join('\n')
         },
         vue: {
+        },
+        builder: {
             appImports: imports.join('\n')
         }
     };
@@ -873,14 +931,12 @@ window.openInPlunker = function(listing) {
         $.each(listing['multifile-listing'], function(i, file) {
             var contentRoot = 'app/';
             var content = file.content;
-
             if (file.name !== 'main.ts') {
                 // StackBlitz requires main.ts to be on the root level, get from template
                 form.addField('project[files][' + contentRoot + file.name + ']', content);
                 contentRoot = '';
                 content = content.replace(/\.\/app\.module/g, "./app/app.module");
             }
-
         });
 
         // TODO: this block adds only styles.css, very dirty.
@@ -901,8 +957,19 @@ window.openInPlunker = function(listing) {
 
     if (exampleTemplate === "angular-cli") {
         form.addField('project[files][.angular-cli.json]', JSON.stringify({
-            apps: [ {
-                styles: [ "styles.css" ]
+            "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+            "apps": [ {
+                "assets": [
+                    "assets",
+                    "favicon.ico"
+                ],
+                "index": "index.html",
+                "main": "main.ts",
+                "polyfills": "polyfills.ts",
+                "prefix": "app",
+                "styles": [
+                    "styles.css"
+                ]
             } ]
         }, null, 2));
     }
@@ -944,7 +1011,6 @@ window.openInPlunker = function(listing) {
         if (exampleTemplate === 'typescript') {
             //Only styles.css, index.html are needed
             plunkerTemplates = plunkerTemplates.splice(4, 2);
-
             form.addField('project[files][index.ts]', plunkerContext.common.appComponentContent);
         }
 
@@ -953,7 +1019,14 @@ window.openInPlunker = function(listing) {
             var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
 
             var add = function(file, template) {
-                form.addField('project[files][' + file + ']', kendo.template(template)(context));
+                var content;
+                /* don't apply kendo template to files with angular template inside */
+                if (!template.match(/\$\{.+\}/)) {
+                    content = kendo.template(template.replace(/#/g, "\\#"))(context);
+                } else {
+                    content = template;
+                }
+                form.addField('project[files][' + file + ']', content);
             };
 
             if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {

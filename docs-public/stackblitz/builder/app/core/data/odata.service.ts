@@ -14,7 +14,6 @@ import { PrimaryKeyField, ModelDataResult, DataProviderService, ODataServiceConf
 export class ODataService<T> extends DataService<T> {
     constructor(protected config: ODataServiceConfig, http: HttpClient, dataProviderService: DataProviderService, state: State) {
         super(config, http, dataProviderService, state);
-		debugger;
     }
 
     protected getQueryString(state: State): string {
@@ -87,5 +86,3 @@ export class ODataService<T> extends DataService<T> {
         return key.type === 'string' ? `'${data[key.name]}'` : `${data[key.name]}`;
     }
 }
-
-

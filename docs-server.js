@@ -113,7 +113,8 @@ module.exports = (libraryName, onServerStart, done) => {
                 scriptSrc: `js/${libraryName}.js`,
                 styleSrc: `css/${libraryName}.css`,
                 content: content,
-                platform: platform
+                platform: platform,
+                runner: 'stackblitz'
             };
         }
     }));
