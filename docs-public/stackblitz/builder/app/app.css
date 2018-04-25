@@ -1,0 +1,449 @@
+/*
+* Auto-generated
+* Do not edit!!!
+*/
+
+/* Normalize */
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font: normal 14px/1 "RobotoRegular", Helvetica, Arial, sans-serif;
+    color: #4f5d6c;
+    background-color: #f4f6f7;
+}
+
+h3 {
+    margin: 0
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+/* User Drop Down */
+
+.user-drop-down-wrapper {
+    width: 100px;
+}
+
+.user-drop-down {
+    cursor: pointer;
+}
+
+.user-drop-down .k-i-user {
+    font-size: 32px;
+    text-align: center;
+    width: 1.25em;
+    line-height: 1.25;
+    border-radius: 100%;
+}
+
+.user-drop-down .k-i-arrow-chevron-down {
+    margin-left: auto;
+    font-size: 16px;
+}
+
+.logout-tooltip {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 150px;
+    padding: 10px;
+    box-shadow: 0px 5px 14px 1px rgba(0, 0, 0, .1);
+}
+
+.logout .k-icon:hover {
+    color: inherit;
+}
+
+.logout .k-i-logout {
+    margin-right: 15px;
+}
+
+/* General layout */
+
+.kb-main-wrapper {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+
+.kb-header-content-wrapper {
+    flex: 1;
+}
+
+.kb-content,
+.kb-side-navigation {
+    flex-basis: auto;
+    max-width: 100%;
+}
+
+.kb-content {
+    width: calc(100% - 200px);
+    display: flex;
+    padding-top: 15px;
+    overflow: auto;
+    flex-flow: column;
+}
+
+.kb-header {
+    display: flex;
+    height: 50px;
+    z-index: 1000;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .7);
+}
+
+.kb-header>[class^="col-"] {
+    display: flex;
+    align-items: center;
+}
+
+.kb-header .kb-logo {
+    flex-shrink: 0;
+}
+
+.kb-header .kb-logo,
+.kb-header .kb-languages {
+    width: 200px;
+}
+
+.kb-header .kb-col-placeholder {
+    flex: 1;
+}
+
+.kb-header .kb-login {
+    width: 100px;
+}
+
+.kb-languages kb-languages-drop-down {
+    width: 100%;
+}
+
+/* Common */
+
+.kb-overlay {
+    position: absolute;
+    left: 15px;
+    right: 13px;
+    width: auto !important;
+    height: 100% !important;
+    opacity: .3;
+}
+
+/* Login */
+
+.kb-login {
+    max-width: 400px;
+    margin-top: 150px;
+    padding-bottom: 15px;
+    box-shadow: 0 0 7px rgba(0, 0, 0, .2);
+}
+
+.kb-login-header {
+    display: flex;
+    align-items: center;
+}
+
+.kb-provider-name {
+    color: #00b1d0;
+}
+
+.kb-login img {
+    margin-right: 15px;
+}
+
+.kb-login .k-form {
+    padding: 0 0 16px;
+}
+
+.kb-login .k-primary {
+    width: 100%;
+}
+
+.kb-login .k-notification-wrap {
+    white-space: normal;
+}
+
+/* Navigation Panelbar */
+
+.kb-side-navigation {
+    display: flex;
+    width: 200px;
+    padding: 0;
+    transition: width 400ms cubic-bezier(1, 0, 0, 1);
+}
+
+.kb-side-navigation .k-panelbar {
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    overflow: auto;
+    border-left-width: 0;
+    border-bottom: 0;
+    transition: width 400ms cubic-bezier(1, 0, 0, 1);
+}
+
+.kb-side-navigation .k-panelbar .k-group>.k-item>.k-link {
+    display: block;
+    padding-left: 45px;
+}
+
+.kb-side-navigation .k-panelbar .fa {
+    margin: 0 17px 0 5px;
+}
+
+/* Expander */
+
+.kb-expander__header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.kb-expander__header .k-icon {
+    font-size: inherit;
+    color: inherit;
+}
+
+.kb-expander__header .k-icon:hover {
+    color: inherit;
+    /* fixes bug with kendo hover: icon disappears */
+}
+
+.kb-expander__container {
+    max-height: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    visibility: hidden;
+    overflow: hidden;
+    transition: all 500ms cubic-bezier(0.5, 0, 0, 1) -0.4s;
+}
+
+.kb-expander__checkbox:checked~.kb-expander__container {
+    visibility: visible;
+    max-height: 9999px;
+    height: auto;
+    transition: all 500ms cubic-bezier(0.5, 0, 0, 1);
+}
+
+.kb-expander__checkbox {
+    display: none;
+}
+
+.kb-expander__checkbox~.kb-expander__header .k-icon:before {
+    content: '\e014';
+}
+
+.kb-expander__checkbox:checked~.kb-expander__header .k-icon:before {
+    content: '\e015';
+}
+
+/* Sections */
+
+kb-top-section,
+kb-top-parent-section,
+kb-top-child-section,
+kb-middle-section,
+kb-bottom-section,
+kb-bottom-child-section {
+    display: block;
+}
+
+/* Landing page */
+
+.modules-list-wrapper {
+    display: flex;
+    max-width: 754px;
+    margin: 20px auto;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.module-thumbnail {
+    display: inline-block;
+    margin: 20px 30px;
+    text-align: center;
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none !important;
+}
+
+.module-thumbnail:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.module-thumbnail span {
+    font-size: 20px;
+    max-width: 128px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 128px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.module-thumbnail:hover .fa {
+    font-size: 70px;
+}
+
+.module-thumbnail:hover i:before {
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, .4);
+}
+
+.module-thumbnail .fa {
+    width: 128px;
+    height: 128px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    border-radius: 2px;
+}
+
+.k-button .fa,
+.k-button .k-icon {
+    margin-right: 5px;
+}
+
+/* Kendo Overrides */
+
+.k-tabstrip>.k-content {
+    padding-left: 15px;
+    padding-right: 15px;
+    border: none;
+}
+
+/* Pages */
+
+/* Unauthorized page */
+
+.kb-unauthorized-page {
+    padding-top: 40px;
+    text-align: center;
+}
+
+.kb-unauthorized-page h3,
+.kb-unauthorized-page h1 {
+    font-weight: bold;
+    opacity: .5;
+}
+
+.kb-unauthorized-page h3 {
+    font-size: 36px;
+}
+
+.kb-unauthorized-page h1 {
+    margin: 20px 0 40px;
+    font-size: 205px;
+    font-family: Consolas;
+}
+
+.kb-unauthorized-page p {
+    font-size: 13px;
+    line-height: 1.3;
+    margin-top: 30px;
+}
+
+/* DataForm */
+
+.kb-data-form-wrapper,
+.kb-data-form-fieldset {
+    padding: 20px;
+}
+
+.kb-data-form-wrapper.k-widget,
+.kb-data-form-wrapper.k-widget [class^="col-"] {
+    box-sizing: border-box;
+}
+
+.kb-data-form [class^="col-"]>.k-widget,
+.kb-data-form [class^="col-"]>.k-textbox,
+.kb-data-form [class^="col-"]>.k-input {
+    width: 100%;
+}
+
+.kb-data-form .kb-data-form-pager {
+    margin-top: 10px;
+}
+
+.kb-data-form .kb-data-form-pager .k-input {
+    width: 33px;
+}
+
+.kb-data-form .kb-components-container .row {
+    min-height: 45px;
+}
+
+.kb-data-form .row {
+    margin-bottom: 5px
+}
+
+.kb-data-form hr,
+.kb-data-grid-form hr {
+    margin-bottom: 20px;
+}
+
+.kb-data-form-commands .k-button .k-icon {
+    margin: 0;
+}
+
+.kb-data-form kb-tab-strip {
+    width: 100%;
+}
+
+/* Grid + DataForm */
+
+.kb-data-grid-form-header {
+    display: flex;
+}
+
+.kb-data-grid-form-header div+div {
+    align-self: flex-end;
+    padding-bottom: 10px;
+    min-width: 300px;
+}
+
+/* Bootstrap Overrides */
+
+@media (max-width: 767px) {
+    .hidden-xs {
+        display: none !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .hidden-sm {
+        display: none !important;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .hidden-md {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1200px) {
+    .hidden-lg {
+        display: none !important;
+    }
+}
+
+.data-grid {
+    margin-left: 25px;
+}
+
+.k-multiselect {
+    width: 350px;
+}
