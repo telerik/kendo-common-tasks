@@ -114,7 +114,7 @@ module.exports = (libraryName, onServerStart, done) => {
                 styleSrc: `css/${libraryName}.css`,
                 content: content,
                 platform: platform,
-                runner: 'stackblitz'
+                blueprint: 'stackblitz'
             };
         }
     }));
