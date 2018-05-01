@@ -3,6 +3,7 @@
 /* eslint consistent-this: 0 */
 /* eslint-env browser, jquery */
 /* global kendo */
+
 function debounce(func, wait, immediate) {
     var timeout;
     return function() {
@@ -222,7 +223,22 @@ var stackBlitzDependencies = {
         "rxjs": "^5.5.6",
         "zone.js": "^0.8.26"
     },
-    'react': { }
+    'react': {
+        "@progress/kendo-data-query": "^1.0.0",
+        "@progress/kendo-react-dateinputs": "0.1.2",
+        "@progress/kendo-react-dropdowns": "0.1.2",
+        "@progress/kendo-react-inputs": "0.1.2",
+        "@progress/kendo-react-intl": "0.1.2",
+        "@progress/kendo-react-grid": "0.5.1",
+        "@progress/kendo-drawing": "1.5.3",
+        "@progress/kendo-react-pdf": "0.5.1",
+        "react": "^16.0.0",
+        "react-dom": "^16.0.0",
+        "object-assign": "^4.0.1",
+        "prop-types": "^15.6.0",
+        "rxjs": "^5.5.10",
+        "cldr-data": "^32.0.1"
+    }
 };
 
 function SnippetRunner(container) {
@@ -670,6 +686,8 @@ function CodeListing(elements) {
         var multiple = false;
         var language = /lang(uage)?-([^\s]+)/.exec(element.className);
         var hideTabs = element.className.match(/hide-tabs/);
+        var fileName = $(element).parent().attr("data-file");
+
         language = language ? language[2] : "generic";
 
         if (/-preview/.test(language)) {
@@ -689,14 +707,16 @@ function CodeListing(elements) {
             var elems = that["multifile-listing"] || [];
 
             elems.push({
-                name: $(element).parent().attr("data-file"),
+                name: fileName,
                 content: $(element).text()
             });
 
             that["multifile-listing"] = elems;
         }
 
-        that[language] = $(element).text();
+        if (typeof(that[language]) === 'undefined') {
+            that[language] = $(element).text();
+        }
 
         return $.extend({
             language: language,
@@ -773,7 +793,6 @@ var plunker = {
     },
     react: {
         plunkerFiles: [
-            'app/main.js',
             'app/main.jsx',
             'app/main.ts'
         ].concat(basicPlunkerFiles)
@@ -814,7 +833,7 @@ var plunker = {
     }
 };
 
-function getDemoFiles(file) {
+function getBlueprintFiles(file) {
     var bluePrintPath = window.blueprint === 'stackblitz' ? window.stackblitzBluePrintPath : window.plunkerBluePrintPath;
     var path = [ bluePrintPath, window.platform, '/', file ];
     return $.ajax(path.join(''), { dataType: 'text' });
@@ -847,6 +866,10 @@ function capitalize(str) {
 }
 
 function getStackBlitzTemplate(listing) {
+    if (listing['jsx']) {
+        return 'javascript';
+    }
+
     if (listing['js']) {
         return 'typescript';
     }
@@ -881,7 +904,7 @@ function buildExampleEditorForm(exampleTemplate) {
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
 // otherwise the popup blocker blocks the new tab
-var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getDemoFiles);
+var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getBlueprintFiles);
 
 window.openInPlunker = function(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
@@ -929,13 +952,24 @@ window.openInPlunker = function(listing) {
 
     if (listing.multiple && listing['multifile-listing']) {
         $.each(listing['multifile-listing'], function(i, file) {
-            var contentRoot = 'app/';
             var content = file.content;
-            if (file.name !== 'main.ts') {
-                // StackBlitz requires main.ts to be on the root level, get from template
+            // skip main file
+            // StackBlitz requires main.ts to be on the root level, get from template
+            if (/main\./.test(file.name)) {
+                return;
+            }
+
+            if (exampleTemplate === 'typescript') {
+                var contentRoot = 'app/';
                 form.addField('project[files][' + contentRoot + file.name + ']', content);
                 contentRoot = '';
                 content = content.replace(/\.\/app\.module/g, "./app/app.module");
+            } else if (exampleTemplate === 'javascript') {
+                // stackblitz expects all files and imports to be js
+                file.name = file.name.replace(/\.jsx/, '.js');
+                content = content.replace(/\.jsx/g, '.js');
+
+                form.addField('project[files][' + file.name + ']', content);
             }
         });
 
@@ -992,15 +1026,15 @@ window.openInPlunker = function(listing) {
         /**
          * The react platfrom supports multiple languages: ts, js and jsx.
          * Due to that reason we need to filterout the "main" files which are not for the current language.
-         * The order is [js, jsx, ts, html].
+         * The order is [js, tsx, html].
          */
         if (window.platform === 'react') {
             switch (language) {
-            case 'js':
-                plunkerTemplates.splice(1, 2);
+            case 'jsx':
+                plunkerTemplates.splice(1, 1);
                 break;
             case 'ts':
-                plunkerTemplates.splice(0, 2);
+                plunkerTemplates.splice(0, 1);
                 break;
             default:
                 plunkerTemplates = plunkerTemplates
@@ -1014,10 +1048,14 @@ window.openInPlunker = function(listing) {
             form.addField('project[files][index.ts]', plunkerContext.common.appComponentContent);
         }
 
+        if (exampleTemplate === 'javascript') {
+            var content = plunkerContext.common.appComponentContent.replace(/\.jsx/g, '.js');
+            form.addField('project[files][index.js]', content);
+        }
+
         $.each(plunkerTemplates, function(index, templateContent) {
             var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
             var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-
             var add = function(file, template) {
                 var content;
                 /* don't apply kendo template to files with angular template inside */
@@ -1037,6 +1075,7 @@ window.openInPlunker = function(listing) {
         form.submit();
     });
 };
+
 
 var themeColors = {
     default: "#ff6358",
@@ -1137,7 +1176,6 @@ $(function() {
             }
             i += siblingTags.length;
         }
-
         return blocks;
     }
 
@@ -1146,6 +1184,7 @@ $(function() {
     }
 
     toCodeListings($("pre")).forEach(function(block, idx) {
+
         var fileListElement;
         var demoEmbed = $(block.elements).closest(".demo-embed");
         if (demoEmbed.length) {
@@ -1187,7 +1226,6 @@ $(function() {
             previewElement.find('.edit-online').click(
                 framework.editOnline.bind(null, block)
             );
-
             var content;
             if (block.multiple) {
                 content = loadMultiFileRunnerContent(codeTab);
@@ -1411,3 +1449,4 @@ $(function() {
         });
     });
 });
+
