@@ -97,8 +97,8 @@ var plunkerTemplate = kendo.template(
     <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
     <style>\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
-        app-root, \\#vueapp { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
-        app-root > .k-icon.k-i-loading, \\#vueapp > .k-icon.k-i-loading { font-size: 64px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
+        my-app, \\#vueapp { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
+        my-app > .k-icon.k-i-loading, \\#vueapp > .k-icon.k-i-loading { font-size: 64px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
         .example-wrapper { min-height: 280px; align-content: flex-start; }\
         .example-wrapper p, .example-col p { margin: 20px 0 10px; }\
         .example-wrapper p:first-child, .example-col p:first-child { margin-top: 0; }\
@@ -127,9 +127,9 @@ var plunkerTemplate = kendo.template(
 <body>\
     #= data.html #\
     # if (data.platform !== "vue") { #\
-    <app-root>\
+    <my-app>\
         <span class="k-icon k-i-loading" style="color: #: data.themeAccent || "\\#ff6358" #"></span>\
-    </app-root>\
+    </my-app>\
     # } else {#\
     <script>\
         var loadingIcon = document.createElement("span");\
@@ -815,7 +815,7 @@ var plunker = {
 };
 
 function getDemoFiles(file) {
-    var bluePrintPath = window.runner === 'stackblitz' ? window.stackblitzBluePrintPath : window.plunkerBluePrintPath;
+    var bluePrintPath = window.blueprint === 'stackblitz' ? window.stackblitzBluePrintPath : window.plunkerBluePrintPath;
     var path = [ bluePrintPath, window.platform, '/', file ];
     return $.ajax(path.join(''), { dataType: 'text' });
 }
