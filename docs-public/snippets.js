@@ -4,6 +4,7 @@
 /* eslint-env browser, jquery */
 /* global kendo */
 
+
 function debounce(func, wait, immediate) {
     var timeout;
     return function() {
@@ -582,19 +583,16 @@ function plunkerPage(opts) {
         return htmlTemplate(options);
     }
 
-    if (window.platform !== 'builder') {
-        var codeContent = codeToString(bootstrap.call(this, {
-            example: options,
-            resize: true,
-            track: options.track
-        }));
+    var codeContent = codeToString(bootstrap.call(this, {
+        example: options,
+        resize: true,
+        track: options.track
+    }));
 
-        options.files = [
-            { name: "main." + opts.language, content: codeContent }
-        ];
-    }
+    var demoFileName = window.platform === 'builder' ? 'app/grid-demo.component.ts' : 'main.' + opts.language;
 
-    options.files = [];
+    options.files = [ { name: demoFileName, content: codeContent } ];
+
     return plunkerTemplate(options);
 }
 
@@ -1058,9 +1056,11 @@ window.openInPlunker = function(listing) {
             var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
             var add = function(file, template) {
                 var content;
-                /* don't apply kendo template to files with angular template inside */
-                if (!template.match(/\$\{.+\}/)) {
-                    content = kendo.template(template.replace(/#/g, "\\#"))(context);
+                /* don't apply kendo template to files with angular template inside or in a css file*/
+                if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
+                    // don't sanitize if kendo template is present inside
+                    var sanitizedContent = template.match(/#=.*#/g) ? template : template.replace(/#/g, "\\#");
+                    content = kendo.template(sanitizedContent)(context);
                 } else {
                     content = template;
                 }
@@ -1075,7 +1075,6 @@ window.openInPlunker = function(listing) {
         form.submit();
     });
 };
-
 
 var themeColors = {
     default: "#ff6358",
@@ -1449,4 +1448,3 @@ $(function() {
         });
     });
 });
-

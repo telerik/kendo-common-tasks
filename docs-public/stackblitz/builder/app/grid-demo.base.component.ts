@@ -97,7 +97,6 @@ export class GridDemoBaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public getDataChanges(dataSourceName): Observable<any[]> {
         const dataService = this.$dataServices[dataSourceName];
-		console.log(dataService.dataChanges().map);
         return dataService.dataChanges()
             .map(response => response ? response.data : []);
     }

@@ -547,6 +547,7 @@ window.ExampleRunner = (function() {
                 'compiler',
                 'forms',
                 'core',
+                'router',
                 'platform-browser',
                 'platform-browser-dynamic',
                 'upgrade'
