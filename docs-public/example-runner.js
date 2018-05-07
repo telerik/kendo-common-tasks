@@ -300,6 +300,7 @@ window.ExampleRunner = (function() {
                 'core',
                 'platform-browser',
                 'platform-browser-dynamic',
+                'router',
                 'upgrade'
             ];
 
