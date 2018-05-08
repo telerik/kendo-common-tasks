@@ -114,6 +114,8 @@ window.ExampleRunner = (function() {
                     "pako": "https://unpkg.com/pako@1.0.5",
                     'cldr-data': npmUrl + '/cldr-data',
                     'api-ai-javascript': 'https://unpkg.com/api-ai-javascript@2.0.0-beta.21/index.js',
+                    'adaptivecards': 'https://unpkg.com/adaptivecards@1.0.0/lib/adaptivecards.js',
+                    'botframework-directlinejs': 'https://unpkg.com/botframework-directlinejs@0.9.15/built/directLine.js',
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress'
