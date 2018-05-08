@@ -116,6 +116,7 @@ window.ExampleRunner = (function() {
                     'api-ai-javascript': 'https://unpkg.com/api-ai-javascript@2.0.0-beta.21/index.js',
                     'adaptivecards': 'https://unpkg.com/adaptivecards@1.0.0/lib/adaptivecards.js',
                     'botframework-directlinejs': 'https://unpkg.com/botframework-directlinejs@0.9.15/built/directLine.js',
+                    'marked': 'https://unpkg.com/marked@0.3.19/lib/marked.js',
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress'
