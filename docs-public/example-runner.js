@@ -262,6 +262,8 @@ window.ExampleRunner = (function() {
                 'ts': 'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
                 'tslib': 'https://unpkg.com/tslib@1.7.1',
                 'typescript': 'https://unpkg.com/typescript@2.4.2/lib/typescript.js',
+                'adaptivecards': 'https://unpkg.com/adaptivecards@1.0.0/lib/adaptivecards.js',
+                'botframework-directlinejs': 'https://unpkg.com/botframework-directlinejs@0.9.15/built/directLine.js',
 
                 // explicitly add subpackages
                 '@angular/common/http': 'https://unpkg.com/@angular/common' + ngVer + '/bundles/common-http.umd.js',
