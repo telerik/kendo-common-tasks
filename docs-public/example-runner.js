@@ -179,11 +179,15 @@ window.ExampleRunner = (function() {
                     "react-router-dom": "https://unpkg.com/react-router-dom@4.2.2/umd/react-router-dom.min.js",
                     "react-transition-group": "https://unpkg.com/react-transition-group@2.2.1/dist/react-transition-group.min.js",
                     "prop-types": "https://unpkg.com/prop-types@15.6.0/prop-types.js",
-                    "pako": "https://unpkg.com/pako@1.0.5",
                     // Misc packages used by the kendo-react-* packages
-                    "classnames": "https://unpkg.com/classnames",
-                    'cldr-data': npmUrl + '/cldr-data',
                     'tslib': 'https://unpkg.com/tslib@1.7.1',
+                    'hammerjs': 'https://unpkg.com/hammerjs@2.0.8',
+                    "pako": "https://unpkg.com/pako@1.0.5",
+                    'cldr-data': npmUrl + '/cldr-data',
+                    'api-ai-javascript': 'https://unpkg.com/api-ai-javascript@2.0.0-beta.21/index.js',
+                    'adaptivecards': 'https://unpkg.com/adaptivecards@1.0.0/lib/adaptivecards.js',
+                    'botframework-directlinejs': 'https://unpkg.com/botframework-directlinejs@0.9.15/built/directLine.js',
+                    'marked': 'https://unpkg.com/marked@0.3.19/lib/marked.js',
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress'
@@ -325,11 +329,15 @@ window.ExampleRunner = (function() {
                 'cldr-data': npmUrl + '/cldr-data',
                 '@angular': 'https://unpkg.com/@angular', // sufficient if we didn't pin the version
                 'angular2-in-memory-web-api': 'https://unpkg.com/angular2-in-memory-web-api', // get latest
+                'api-ai-javascript': 'https://unpkg.com/api-ai-javascript@2.0.0-beta.21/index.js',
+                'marked': 'https://unpkg.com/marked@0.3.19/lib/marked.js',
                 'hammerjs': 'https://unpkg.com/hammerjs@2.0.8',
                 'pako': 'https://unpkg.com/pako@1.0.5',
                 'ts': 'https://unpkg.com/plugin-typescript@5.3.3/lib/plugin.js',
                 'tslib': 'https://unpkg.com/tslib@1.7.1',
                 'typescript': 'https://unpkg.com/typescript@2.4.2/lib/typescript.js',
+                'adaptivecards': 'https://unpkg.com/adaptivecards@1.0.0/lib/adaptivecards.js',
+                'botframework-directlinejs': 'https://unpkg.com/botframework-directlinejs@0.9.15/built/directLine.js',
 
                 // explicitly add subpackages
                 '@angular/common/http': 'https://unpkg.com/@angular/common' + ngVer + '/bundles/common-http.umd.js',
@@ -368,6 +376,7 @@ window.ExampleRunner = (function() {
                 'core',
                 'platform-browser',
                 'platform-browser-dynamic',
+                'router',
                 'upgrade'
             ];
 

@@ -15,11 +15,7 @@ const listenAddress = process.env['LISTEN_ADDRESS'] || '0.0.0.0';
 const glob = require('glob');
 const $ = require('gulp-load-plugins')();
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const contains = require('gulp-contains');
-const gutil = require('gulp-util');
 const packageName = require('./package.json').name;
-
-const KarmaServer = require('karma').Server;
 
 const cssLoaderPath = require.resolve('css-loader');
 const urlLoaderPath = require.resolve('url-loader');
@@ -33,6 +29,8 @@ const verifyModules = require('./verify-modules');
 const jsonLoaderPath = require.resolve('json-loader');
 const systemjsBundle = require('./systemjs-bundle/task');
 const docsServer = require('./docs-server');
+const startKarma = require('./start-karma');
+const lintSlugsTask = require('./lint-slugs');
 
 const SRC = "src";
 const SRC_EXT_GLOB = ".{jsx,ts,tsx,js}";
@@ -194,19 +192,7 @@ exports.webpackDevConfig = (config) => webpackThemeConfig({
     }
 });
 
-exports.startKarma = (done, confPath, singleRun, configOverride) => (
-    new KarmaServer(Object.assign({
-        singleRun: singleRun,
-        configFile: confPath
-    }, configOverride || {}), function(exitStatus) {
-        if (exitStatus !== 0) {
-            done("specs failed");
-        } else {
-            done();
-        }
-    }).start()
-);
-
+exports.startKarma = startKarma;
 
 function ucfirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -215,7 +201,10 @@ function ucfirst(str) {
 exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options = {}) => { //eslint-disable-line max-params
     const libraryClassName = _.flow(_.camelCase, ucfirst)(libraryName);
 
-    systemjsBundle(gulp, { distName: libraryName, modules: options.modules, webpackConfig });
+    systemjsBundle(
+        gulp,
+        { distName: libraryName, modules: options.modules, webpackConfig: webpackConfig.systemjs, webpackStream, webpack }
+    );
 
     gulp.task('build-npm', () => {
         const config = _.assign({}, webpackConfig.npmPackage);
@@ -305,26 +294,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
             .pipe($.eslint.failAfterError());
     });
 
-    const reportError = message => (string, file, cb) => {
-        const filename = /[\/\\](docs.*)$/.exec(file.path)[1];
-        const error = `
-    ${message.replace(/FILE/, filename)}
-    I can't tell you exactly where due to technical limitations, sorry.
-    Validation provided by ${packageName}.`;
-        cb(new gutil.PluginError('gulp-contains', error));
-    };
-
-    gulp.task('lint-slugs', () =>
-      gulp.src('docs/**/*.{md,hbs}')
-        .pipe(contains({
-            search: /{%\s*(?!(asset_path|embed_file|endmeta|meta|slug|platform_content|endplatform_content)\b)\w+/,
-            onFound: reportError("Unknown Liquid tags found in 'FILE'.")
-        }))
-        .pipe(contains({
-            search: /{%\s*slug\s+(?!([a-zA-Z0-9_\-])+\s*%})/,
-            onFound: reportError("Slugs with invalid characters found in 'FILE'.")
-        }))
-    );
+    lintSlugsTask(gulp, packageName);
 
     gulp.task('docs', [ 'lint-slugs', 'build-cdn', 'build-npm-package', 'build-systemjs-bundle' ], (done) => docsServer(libraryName, (browserSync) => {
         gulp.watch("docs/**/*.{md,hbs}", [ 'lint-slugs' ]).on('change', browserSync.reload);
