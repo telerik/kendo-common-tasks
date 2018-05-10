@@ -69,6 +69,76 @@ window.ExampleRunner = (function() {
     }
 
     var systemjsConfig = {
+        vue: function(options) {
+            var npmUrl = options.npmUrl;
+            var modules = options.modules;
+            var trackjs = options.trackjs;
+            var config = {
+                transpiler: "plugin-babel",
+
+                meta: {
+                    '*.json': {
+                        loader: 'systemjs-json-plugin'
+                    }
+                },
+
+                packages: {
+                    'app': {
+                        main: './main.js',
+                        defaultExtension: 'js'
+                    }
+                },
+
+                map: {
+                    "app": "app",
+                    'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
+                    //Babel transpiler
+                    "plugin-babel": "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js",
+                    'systemjs-babel-build': 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
+                    //Vue packages
+                    "vue": "https://unpkg.com/vue/dist/vue.min.js",
+                    // Misc packages used by the kendo-vue-* packages
+
+                    //Inhouse pacakges
+                    '@telerik': npmUrl + '/@telerik',
+                    '@progress': npmUrl + '/@progress'
+                }
+            };
+
+            /* Add Kendo Packages */
+            modules.forEach(function(kendoPackage) {
+                /* Only include legacy Kendo UI configuration when it is included into the auto imports */
+                if (kendoPackage.module === '@progress/kendo-ui') {
+                    /* Map kendo-ui && add package configuration */
+                    config.map[kendoConfiguration.module] = kendoConfiguration.path;
+
+                    config.packages[kendoConfiguration.module] = {
+                        main: kendoPackage.main || 'js/kendo.all.js',
+                        defaultExtension: 'js'
+                    };
+                } else if (kendoPackage.module === 'jquery') {
+                    /* Map jQuery */
+                    config.map[jqueryConfiguration.module] = jqueryConfiguration.path;
+                } else {
+                    config.packages[kendoPackage.module] = {
+                        main: kendoPackage.main || 'dist/cdn/'.concat(kendoPackage.module.replace(/(@progress\/|@telerik\/)/, ''), '.min.js'),
+                        defaultExtension: kendoPackage.defaultExtension || 'js'
+                    };
+                }
+            });
+
+            if (trackjs) {
+                config.packages['raven-js'] = {
+                    main: 'dist/raven.js'
+                };
+
+                config.paths = {
+                    'raven-js': npmUrl + "/raven-js"
+                };
+            }
+
+            return config;
+        },
         react: function(options) {
             var npmUrl = options.npmUrl;
             var modules = options.modules;
@@ -79,6 +149,7 @@ window.ExampleRunner = (function() {
                 file: "kendo-drawing.js",
                 modules: true
             } ];
+
             var config = {
                 meta: {
                     '*.json': {
@@ -236,7 +307,6 @@ window.ExampleRunner = (function() {
                         "rxjs/symbol/*",
                         "rxjs/add/operator/*",
                         "rxjs/add/observable/*",
-                        "rxjs/add/observable/dom/*",
                         "rxjs/util/*"
                     ]
                 },

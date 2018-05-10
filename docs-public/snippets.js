@@ -96,8 +96,8 @@ var plunkerTemplate = kendo.template(
     <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
     <style>\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
-        my-app { display: block; width: 100%; min-height: 80px; box-sizing: border-box; padding: 30px; }\
-        my-app > .k-icon.k-i-loading { font-size: 64px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
+        my-app, \\#vueapp { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
+        my-app > .k-icon.k-i-loading, \\#vueapp > .k-icon.k-i-loading { font-size: 64px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }\
         .example-wrapper { min-height: 280px; align-content: flex-start; }\
         .example-wrapper p, .example-col p { margin: 20px 0 10px; }\
         .example-wrapper p:first-child, .example-col p:first-child { margin-top: 0; }\
@@ -106,6 +106,8 @@ var plunkerTemplate = kendo.template(
         .event-log { margin: 0; padding: 0; max-height: 100px; overflow-y: auto; list-style-type: none; border: 1px solid rgba(0,0,0,.08); background-color: \\#fff; }\
         .event-log li {margin: 0; padding: .3em; line-height: 1.2em; border-bottom: 1px solid rgba(0,0,0,.08); }\
         .event-log li:last-child { margin-bottom: -1px;}\
+        \\#vueapp:not([v-cloak]) > .k-icon.k-i-loading {display: none }\
+        \\#vueapp[v-cloak] :not(.k-i-loading) { display: none; } \
     </style>\
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>\
     #= data.cdnResources #\
@@ -122,9 +124,20 @@ var plunkerTemplate = kendo.template(
 </head>\
 <body>\
     #= data.html #\
+    # if (data.platform !== "vue") { #\
     <my-app>\
         <span class="k-icon k-i-loading" style="color: #: data.themeAccent || "\\#ff6358" #"></span>\
     </my-app>\
+    # } else {#\
+    <script>\
+        var loadingIcon = document.createElement("span");\
+        loadingIcon.className = "k-icon k-i-loading";\
+        loadingIcon.style.color = "#: data.themeAccent || "\\#ff6358" #";\
+        var vueapp = document.getElementById("vueapp");\
+        vueapp.appendChild(loadingIcon);\
+        vueapp.setAttribute("v-cloak", null);\
+    </script>\
+    # }#\
 </body>\
 </html>\
 ', { useWithBlock: false });
@@ -211,12 +224,15 @@ SnippetRunner.prototype = {
 };
 
 var CDNResources = {
-    react: [
-    ],
     angular: [
         "https://unpkg.com/zone.js@0.8.12/dist/zone.js",
         "https://unpkg.com/reflect-metadata@0.1.3/Reflect.js"
+    ],
+    react: [
+    ],
+    vue: [
     ]
+
 };
 
 function resourceLinks(resources) {
@@ -298,7 +314,8 @@ var directivesByModule = {
         { module: '@angular/platform-browser', match: '.', import: "BrowserModule" },
         { module: '@angular/platform-browser/animations', match: '.', import: "BrowserAnimationsModule" }
     ].concat(moduleDirectives),
-    react: [].concat(moduleDirectives)
+    react: [].concat(moduleDirectives),
+    vue: [].concat(moduleDirectives)
 };
 
 /* The following method replaces code characters to allow embedding in a js double-quote string ("") */
@@ -307,14 +324,21 @@ function codeToString(code) {
         .replace(/\n/g, '\\n'); // escape line endings
 }
 
-function getFullContent(listing) {
-    if (listing['multifile-listing']) {
+function getFullContent(options) {
+    var listing = options.listing;
+    var platform = options.platform;
+
+    if (listing['ts-multiple']) {
         var fullContent = "";
         listing['multifile-listing'].forEach(function(file) {
             fullContent = fullContent.concat(file.content);
         });
 
         return fullContent;
+    }
+
+    if (listing['html'] && platform === 'vue') {
+        return listing['html'];
     }
 
     return listing['ts'] || listing['jsx'] || listing['js'];
@@ -392,8 +416,24 @@ function bootstrapReact(options) {
     .join('\n');
 }
 
+function bootstrapVue(options) {
+    // in vue we extract the imports from html
+    var code = options.example.code;
+    var html = options.example.html;
+    var directives = usedModules(html);
+    var imports = moduleImports(html, directives.filter(function(item) { return !/react|angular/gi.test(item.module); }));
+    return [].concat([
+        "import Vue from 'vue';"
+    ])
+    .concat(imports)
+    .concat(code)
+    .filter(Boolean)
+    .join('\n');
+}
+
 function bootstrapAngular(options) {
-    var code = wrapAngularTemplate(options.code);
+    var source = options.example.ts;
+    var code = wrapAngularTemplate(source);
     var jsTracking = jsTrackingCode();
 
     var directives = usedModules(code);
@@ -439,7 +479,7 @@ function plunkerPage(opts) {
     }
 
     var codeContent = codeToString(bootstrap.call(this, {
-        code: options.code,
+        example: options,
         resize: true,
         track: options.track
     }));
@@ -632,6 +672,13 @@ var basicPlunkerFiles = [
 ];
 
 var plunker = {
+    angular: {
+        plunkerFiles: [
+            'app/main.ts',
+            'app/app.component.ts',
+            'app/app.module.ts'
+        ].concat(basicPlunkerFiles)
+    },
     react: {
         plunkerFiles: [
             'app/main.js',
@@ -639,11 +686,9 @@ var plunker = {
             'app/main.ts'
         ].concat(basicPlunkerFiles)
     },
-    angular: {
+    vue: {
         plunkerFiles: [
-            'app/main.ts',
-            'app/app.component.ts',
-            'app/app.module.ts'
+            'app/main.es'
         ].concat(basicPlunkerFiles)
     }
 };
@@ -692,7 +737,7 @@ window.openInPlunker = function(listing) {
         code = wrapAngularTemplate(template);
     }
 
-    var directives = usedModules(getFullContent(listing));
+    var directives = usedModules(getFullContent({ listing: listing, platform: window.platform }));
     var imports = moduleImports(code, directives);
 
     var plunkerContext = {
@@ -708,6 +753,9 @@ window.openInPlunker = function(listing) {
             appModuleImports: angularAppModuleImports(directives)
         },
         react: {
+            appImports: imports.join('\n')
+        },
+        vue: {
             appImports: imports.join('\n')
         }
     };
@@ -744,10 +792,22 @@ window.openInPlunker = function(listing) {
         language: language
     });
 
+    // Make sure that es file is uploaded due to PLunker
+    if (window.platform === 'vue') {
+        config['packages']['app'] = {
+            'main': './main.es',
+            'defaultExtension': 'es'
+        };
+    }
+
     form.addField('files[systemjs.config.js]', 'System.config(' + JSON.stringify(config, null, 2) + ');');
 
     var filterFunction = function(file) {
-        return (file.indexOf('html') >= 0 || file.split('.').pop() === language);
+        var shouldUseEsFile = window.platform === 'vue' &&
+                                language === 'js' &&
+                                file.split('.').pop() === 'es';
+
+        return (file.indexOf('html') >= 0 || file.split('.').pop() === language || shouldUseEsFile);
     };
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
@@ -824,6 +884,22 @@ $(function() {
                 return plunkerPage({
                     bootstrap: bootstrapReact,
                     code: listing['jsx'] || listing['js'] || listing['ts'],
+                    language: listing.runtimeLanguage,
+                    html: listing['html'],
+                    theme: theme,
+                    themeAccent: themeColors[options.theme],
+                    track: options.track
+                });
+            }
+        },
+        vue: {
+            runnerContent: function(options) {
+                var listing = options.listing;
+                var theme = options.theme || 'default';
+
+                return plunkerPage({
+                    bootstrap: bootstrapVue,
+                    code: listing['js'],
                     language: listing.runtimeLanguage,
                     html: listing['html'],
                     theme: theme,
