@@ -236,6 +236,7 @@ window.ExampleRunner = (function() {
                         "rxjs/symbol/*",
                         "rxjs/add/operator/*",
                         "rxjs/add/observable/*",
+                        "rxjs/add/observable/dom/*",
                         "rxjs/util/*"
                     ]
                 },
