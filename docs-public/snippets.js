@@ -957,7 +957,7 @@ window.openInPlunker = function(listing) {
                 return;
             }
 
-            if (exampleTemplate === 'typescript') {
+            if (exampleTemplate === 'angular-cli') {
                 var contentRoot = 'app/';
                 form.addField('project[files][' + contentRoot + file.name + ']', content);
                 contentRoot = '';
