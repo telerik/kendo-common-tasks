@@ -403,7 +403,7 @@ function jsTrackingCode() {
 }
 
 function bootstrapReact(options) {
-    var code = options.code;
+    var code = options.example.code;
     var directives = usedModules(code);
     var imports = moduleImports(code, directives);
     return [].concat([
@@ -432,7 +432,7 @@ function bootstrapVue(options) {
 }
 
 function bootstrapAngular(options) {
-    var source = options.example.ts;
+    var source = options.example.code;
     var code = wrapAngularTemplate(source);
     var jsTracking = jsTrackingCode();
 
