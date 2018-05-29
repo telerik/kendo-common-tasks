@@ -352,12 +352,12 @@ exports.karmaConfig = function(config, webpackConfig, bundleFile) {
             },
             "Chrome_headless": {
                 base: 'Chrome',
-                    flags: [
+                flags: [
                     '--headless',
                     '--disable-gpu',
                     '--remote-debugging-port=9222'
                 ]
-        }
+            }
         }
     });
 };
