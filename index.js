@@ -349,7 +349,15 @@ exports.karmaConfig = function(config, webpackConfig, bundleFile) {
             TravisCI: {
                 base: "Chrome",
                 flags: [ '--no-sandbox' ]
-            }
+            },
+            Chrome_headless: {
+                base: 'Chrome',
+                    flags: [
+                    '--headless',
+                    '--disable-gpu',
+                    '--remote-debugging-port=9222'
+                ]
+        }
         }
     });
 };
