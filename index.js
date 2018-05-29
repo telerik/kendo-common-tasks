@@ -350,7 +350,7 @@ exports.karmaConfig = function(config, webpackConfig, bundleFile) {
                 base: "Chrome",
                 flags: [ '--no-sandbox' ]
             },
-            Chrome_headless: {
+            "Chrome_headless": {
                 base: 'Chrome',
                     flags: [
                     '--headless',
