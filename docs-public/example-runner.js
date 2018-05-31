@@ -97,8 +97,9 @@ window.ExampleRunner = (function() {
                     'systemjs-babel-build': 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
                     //Vue packages
                     "vue": "https://unpkg.com/vue/dist/vue.min.js",
+                    // api-ai-javascript package for chat
+                    "api-ai-javascript": "https://unpkg.com/api-ai-javascript",
                     // Misc packages used by the kendo-vue-* packages
-
                     //Inhouse pacakges
                     '@telerik': npmUrl + '/@telerik',
                     '@progress': npmUrl + '/@progress'
