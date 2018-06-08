@@ -532,7 +532,7 @@ function bootstrapVue(options) {
 }
 
 function bootstrapBuilder(options) {
-    var code = options.code + '\n';
+    var code = options.example.code + '\n';
     return code;
 }
 
@@ -945,7 +945,8 @@ window.openInPlunker = function(listing) {
 
     var filterFunction = function(file) {
         var ext = file.split('.').pop();
-        return (file.indexOf('html') >= 0 || ext === 'css' || ext === language);
+        var shouldUseEsFile = window.platform === 'vue' && language === 'js' && ext === 'es';
+        return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile);
     };
 
     if (listing.multiple && listing['multifile-listing']) {
@@ -1005,19 +1006,6 @@ window.openInPlunker = function(listing) {
             } ]
         }, null, 2));
     }
-
-    //if (window.platform === 'vue') {
-        //config['packages']['app'] = {
-            //'main': './main.es',
-            //'defaultExtension': 'es'
-        //};
-    //}
-
-    var filterFunction = function(file) {
-        var ext = file.split('.').pop();
-        var shouldUseEsFile = window.platform === 'vue' && language === 'js' && ext === 'es';
-        return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile);
-    };
 
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
