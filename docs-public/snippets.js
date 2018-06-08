@@ -864,6 +864,12 @@ function capitalize(str) {
 }
 
 function getStackBlitzTemplate(listing) {
+    var files = listing['multifile-listing'];
+    if (listing.multiple && files.length === 1 && files[0].name === "main.ts") {
+        // single main.ts file (as found in DataQuery)
+        return 'javascript';
+    }
+
     if (listing['jsx']) {
         return 'javascript';
     }
@@ -972,20 +978,22 @@ window.openInPlunker = function(listing) {
             }
         });
 
-        // TODO: this block adds only styles.css, very dirty.
-        $.when.apply($, plunkerRequests).then(function() {
-            var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
-            $.each(plunkerTemplates, function(index, templateContent) {
-                var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
-                var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-                var add = function(file, template) {
-                    if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
-                        form.addField('project[files][' + file + ']', kendo.template(template)(context));
-                    }
-                };
-                add(plunkerFiles[index], templateContent);
+        if (exampleTemplate === 'angular-cli') {
+            // TODO: refactor, very dirty. adds styles.css, main.ts, polyfills.ts
+            $.when.apply($, plunkerRequests).then(function() {
+                var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
+                $.each(plunkerTemplates, function(index, templateContent) {
+                    var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
+                    var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+                    var add = function(file, template) {
+                        if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
+                            form.addField('project[files][' + file + ']', kendo.template(template)(context));
+                        }
+                    };
+                    add(plunkerFiles[index], templateContent);
+                });
             });
-        });
+        }
     }
 
     if (exampleTemplate === "angular-cli") {
