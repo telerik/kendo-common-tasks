@@ -240,7 +240,7 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
 
     gulp.task('build-npm-package', [ 'verify-npm' ]);
 
-    gulp.task('build-cdn', () => {
+    gulp.task('build-cdn', [ 'build-umd-package' ], () => {
         if (!webpackConfig.CDN) {
             return gulp.src([]);
         }
@@ -255,6 +255,23 @@ exports.addTasks = (gulp, libraryName, srcGlob, webpackConfig, dtsGlob, options 
                 var dirname = path.extname.replace('.', '');
                 path.basename = libraryName;
                 path.dirname = dirname;
+            }))
+            .pipe(gulp.dest('dist/cdn'));
+    });
+
+    gulp.task('build-umd-package', () => {
+        if (!webpackConfig.umdPackage) {
+            return gulp.src([]);
+        }
+
+        const config = _.assign({}, webpackConfig.umdPackage);
+
+        config.output.library = libraryClassName;
+
+        return gulp.src('src/main' + SRC_EXT_GLOB)
+            .pipe(webpackStream(config))
+            .pipe($.rename((path) => {
+                path.basename = 'main';
             }))
             .pipe(gulp.dest('dist/cdn'));
     });
