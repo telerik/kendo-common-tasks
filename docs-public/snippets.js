@@ -909,7 +909,10 @@ function buildExampleEditorForm(exampleTemplate) {
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
 // otherwise the popup blocker blocks the new tab
-var plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getBlueprintFiles);
+var plunkerRequests = [];
+if (plunker[window.platform]) {
+    plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getBlueprintFiles);
+}
 
 window.openInPlunker = function(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
