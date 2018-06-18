@@ -872,6 +872,8 @@ function getStackBlitzTemplate(listing) {
     }
 
     if (listing['jsx']) {
+        // XXX: perhaps React should use the 'create-react-app' template?
+        // https://github.com/stackblitz/core/tree/master/docs#required-files-for-templates
         return 'javascript';
     }
 
@@ -1057,8 +1059,13 @@ window.openInPlunker = function(listing) {
         }
 
         if (exampleTemplate === 'javascript') {
-            var content = plunkerContext.common.appComponentContent.replace(/\.jsx/g, '.js');
-            form.addField('project[files][index.js]', content);
+            if (listing['jsx']) {
+                // React templates require a root-level index.js file
+                form.addField('project[files][index.js]', "import './app/main';");
+            } else {
+                var content = plunkerContext.common.appComponentContent.replace(/\.jsx/g, '.js');
+                form.addField('project[files][index.js]', content);
+            }
         }
 
         $.each(plunkerTemplates, function(index, templateContent) {
