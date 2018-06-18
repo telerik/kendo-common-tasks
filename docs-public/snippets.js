@@ -576,7 +576,8 @@ function plunkerPage(opts) {
         language: opts.language,
         themeAccent: themeColors.default,
         html: '',
-        track: false
+        track: false,
+        root: 'app/'
     }, opts);
 
     if (!options.code) {
@@ -1134,7 +1135,8 @@ $(function() {
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track
+                    track: options.track,
+                    root: 'app/'
                 });
             }
         },
