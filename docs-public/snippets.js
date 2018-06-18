@@ -914,6 +914,38 @@ if (plunker[window.platform]) {
     plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getBlueprintFiles);
 }
 
+// prepares code listing for editing
+// async, since it needs to wait for the current platform edit templates
+function prepareSnippet(site, listing) {
+    var files = {};
+
+    var exampleTemplate = getStackBlitzTemplate(listing || {});
+    if (exampleTemplate === "angular-cli") {
+        files['.angular-cli.json'] = JSON.stringify({
+            "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+            "apps": [ {
+                "assets": [
+                    "assets",
+                    "favicon.ico"
+                ],
+                "index": "index.html",
+                "main": "main.ts",
+                "polyfills": "polyfills.ts",
+                "prefix": "app",
+                "styles": [
+                    "styles.css"
+                ]
+            } ]
+        }, null, 2);
+    }
+
+
+    var deferred = $.Deferred();
+    deferred.resolve(files);
+    return deferred.promise();
+}
+
+// preprocesses code listing, creates form and posts to online editor
 window.openInPlunker = function(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
@@ -981,46 +1013,24 @@ window.openInPlunker = function(listing) {
                 form.addField('project[files][' + file.name + ']', content);
             }
         });
-
-        if (exampleTemplate === 'angular-cli') {
-            // TODO: refactor, very dirty. adds styles.css, main.ts, polyfills.ts
-            $.when.apply($, plunkerRequests).then(function() {
-                var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
-                $.each(plunkerTemplates, function(index, templateContent) {
-                    var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
-                    var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-                    var add = function(file, template) {
-                        if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
-                            form.addField('project[files][' + file + ']', kendo.template(template)(context));
-                        }
-                    };
-                    add(plunkerFiles[index], templateContent);
-                });
-            });
-        }
-    }
-
-    if (exampleTemplate === "angular-cli") {
-        form.addField('project[files][.angular-cli.json]', JSON.stringify({
-            "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-            "apps": [ {
-                "assets": [
-                    "assets",
-                    "favicon.ico"
-                ],
-                "index": "index.html",
-                "main": "main.ts",
-                "polyfills": "polyfills.ts",
-                "prefix": "app",
-                "styles": [
-                    "styles.css"
-                ]
-            } ]
-        }, null, 2));
     }
 
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
+
+        if (exampleTemplate === 'angular-cli') {
+            $.each(plunkerTemplates, function(index, templateContent) {
+                var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
+                var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+                var add = function(file, template) {
+                    if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
+                        form.addField('project[files][' + file + ']', kendo.template(template)(context));
+                    }
+                };
+                add(plunkerFiles[index], templateContent);
+            });
+        }
+
         /**
          * The react platfrom supports multiple languages: ts, js and jsx.
          * Due to that reason we need to filterout the "main" files which are not for the current language.
@@ -1072,6 +1082,18 @@ window.openInPlunker = function(listing) {
             }
         });
 
+    })
+    .then(function() {
+        return prepareSnippet({ platform: window.platform }, listing)
+            .then(function(files) {
+                for (var filename in files) {
+                    if (files.hasOwnProperty(filename)) {
+                        form.addField('project[files][' + filename + ']', files[filename]);
+                    }
+                }
+            });
+    })
+    .then(function() {
         form.submit();
     });
 };
@@ -1449,3 +1471,10 @@ $(function() {
         });
     });
 });
+
+if (typeof module !== 'undefined') {
+    module.exports = {
+        prepareSnippet: prepareSnippet
+    };
+}
+
