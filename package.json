@@ -79,9 +79,9 @@
     "yargs": "^3.30.0"
   },
   "jest": {
-      "setupFiles": [
-        "./test/jest-setup.js"
-      ]
+    "setupFiles": [
+      "./test/jest-setup.js"
+    ]
   },
   "engines": {
     "node": ">=4.2.0",

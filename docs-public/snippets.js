@@ -187,7 +187,7 @@ var stackBlitzDependencies = {
         '@progress/kendo-angular-ripple': '*',
         '@progress/kendo-angular-scrollview': '*',
         '@progress/kendo-angular-sortable': '*',
-        //TODO: Add '@progress/kendo-angular-tooltip': '*',
+        '@progress/kendo-angular-tooltip': '*',
         '@progress/kendo-angular-treeview': '*',
         '@progress/kendo-angular-upload': '*'
     },
@@ -225,14 +225,14 @@ var stackBlitzDependencies = {
         "zone.js": "^0.8.26"
     },
     'react': {
-        "@progress/kendo-data-query": "^1.0.0",
-        "@progress/kendo-react-dateinputs": "0.1.2",
-        "@progress/kendo-react-dropdowns": "0.1.2",
-        "@progress/kendo-react-inputs": "0.1.2",
-        "@progress/kendo-react-intl": "0.1.2",
-        "@progress/kendo-react-grid": "0.5.1",
-        "@progress/kendo-drawing": "1.5.3",
-        "@progress/kendo-react-pdf": "0.5.1",
+        "@progress/kendo-data-query": "*",
+        "@progress/kendo-react-dateinputs": "*",
+        "@progress/kendo-react-dropdowns": "*",
+        "@progress/kendo-react-inputs": "*",
+        "@progress/kendo-react-intl": "*",
+        "@progress/kendo-react-grid": "*",
+        "@progress/kendo-drawing": "*",
+        "@progress/kendo-react-pdf": "*",
         "react": "^16.0.0",
         "react-dom": "^16.0.0",
         "object-assign": "^4.0.1",
@@ -865,20 +865,22 @@ function capitalize(str) {
 }
 
 function getStackBlitzTemplate(listing) {
-    var files = listing['multifile-listing'];
-    if (listing.multiple && files.length === 1 && files[0].name === "main.ts") {
-        // single main.ts file (as found in DataQuery)
-        return 'javascript';
-    }
-
     if (listing['jsx']) {
-        // XXX: perhaps React should use the 'create-react-app' template?
-        // https://github.com/stackblitz/core/tree/master/docs#required-files-for-templates
-        return 'javascript';
+        return 'create-react-app';
     }
 
     if (listing['js']) {
-        return 'typescript';
+        return 'javascript';
+    }
+
+    if (listing['html']) {
+        return 'javascript';
+    }
+
+    var files = listing['multifile-listing'];
+    var hasMainJs = function(file) { return file.name === "main.js"; };
+    if (files && files.filter(hasMainJs).length) {
+        return 'javascript';
     }
 
     return 'angular-cli';
@@ -939,6 +941,25 @@ function prepareSnippet(site, listing) {
                 ]
             } ]
         }, null, 2);
+    } else if (exampleTemplate === "create-react-app") {
+        files['index.js'] = 'import "./app/main";';
+
+        var listingFiles = listing['multifile-listing'];
+        if (listingFiles) {
+            for (var i = 0; i < listingFiles.length; i++) {
+                var filename = listingFiles[i].name;
+                // replace jsx with js is required as long as stackblitz has no jsx file support
+                // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
+                filename = 'app/' + filename.replace(/\.jsx$/, ".js");
+                files[filename] = listingFiles[i].content.replace(/\.jsx\b/, "");
+            }
+        }
+    } else if (exampleTemplate === 'javascript') {
+        if (listing.html && !listing.code) {
+            // HTML-only snippet
+            files['index.html'] = htmlTemplate($.extend({}, site, listing));
+            files['index.js'] = '';
+        }
     }
 
 
@@ -1007,12 +1028,6 @@ window.openInPlunker = function(listing) {
                 form.addField('project[files][' + contentRoot + file.name + ']', content);
                 contentRoot = '';
                 content = content.replace(/\.\/app\.module/g, "./app/app.module");
-            } else if (exampleTemplate === 'javascript') {
-                // stackblitz expects all files and imports to be js
-                file.name = file.name.replace(/\.jsx/, '.js');
-                content = content.replace(/\.jsx/g, '.js');
-
-                form.addField('project[files][' + file.name + ']', content);
             }
         });
     }
@@ -1058,40 +1073,37 @@ window.openInPlunker = function(listing) {
             form.addField('project[files][index.ts]', plunkerContext.common.appComponentContent);
         }
 
-        if (exampleTemplate === 'javascript') {
-            if (listing['jsx']) {
-                // React templates require a root-level index.js file
-                form.addField('project[files][index.js]', "import './app/main';");
-            } else {
-                var content = plunkerContext.common.appComponentContent.replace(/\.jsx/g, '.js');
-                form.addField('project[files][index.js]', content);
-            }
-        }
+        var htmlOnly = exampleTemplate === 'javascript' && !listing.multiple && listing.html;
 
-        $.each(plunkerTemplates, function(index, templateContent) {
-            var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
-            var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-            var add = function(file, template) {
-                var content;
-                /* don't apply kendo template to files with angular template inside or in a css file*/
-                if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
-                    // don't sanitize if kendo template is present inside
-                    var sanitizedContent = template.match(/#=.*#/g) ? template : template.replace(/#/g, "\\#");
-                    content = kendo.template(sanitizedContent)(context);
-                } else {
-                    content = template;
+        if (!htmlOnly) {
+            $.each(plunkerTemplates, function(index, templateContent) {
+                var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
+                var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+                var add = function(file, template) {
+                    var content;
+                    /* don't apply kendo template to files with angular template inside or in a css file*/
+                    if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
+                        // don't sanitize if kendo template is present inside
+                        var sanitizedContent = template.match(/#=.*#/g) ? template : template.replace(/#/g, "\\#");
+                        content = kendo.template(sanitizedContent)(context);
+                    } else {
+                        content = template;
+                    }
+                    form.addField('project[files][' + file + ']', content);
+                };
+
+                if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
+                    add(plunkerFiles[index], templateContent);
                 }
-                form.addField('project[files][' + file + ']', content);
-            };
-
-            if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
-                add(plunkerFiles[index], templateContent);
-            }
-        });
+            });
+        }
 
     })
     .then(function() {
-        return prepareSnippet({ platform: window.platform }, listing)
+        return prepareSnippet({
+            npmUrl: 'https://unpkg.com',
+            platform: window.platform
+        }, listing)
             .then(function(files) {
                 for (var filename in files) {
                     if (files.hasOwnProperty(filename)) {
@@ -1480,7 +1492,9 @@ $(function() {
 });
 
 if (typeof module !== 'undefined') {
+    // export functions for test suite
     module.exports = {
+        getStackBlitzTemplate: getStackBlitzTemplate,
         prepareSnippet: prepareSnippet
     };
 }
