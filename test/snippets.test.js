@@ -97,6 +97,14 @@ describe('preparing snippets for editing', () => {
         expect(files['foo.js']).toBe('foo');
     });
 
+    test('removes angular module from angular-cli template', async () => {
+        const files = await snippets.prepareSnippet(
+            { platform: 'angular' }, {}, { 'app/main.ts': 'foo' }
+        );
+
+        expect(files['app/main.ts']).toBeFalsy();
+    });
+
     // required as long as stackblitz has no jsx file support
     // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
     describe('renames jsx to js', () => {

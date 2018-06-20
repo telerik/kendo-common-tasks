@@ -936,6 +936,8 @@ function prepareSnippet(site, listing, templateFiles) {
 
     var exampleTemplate = getStackBlitzTemplate(listing || {});
     if (exampleTemplate === "angular-cli") {
+        delete files['app/main.ts'];
+
         files['.angular-cli.json'] = JSON.stringify({
             "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
             "apps": [ {
