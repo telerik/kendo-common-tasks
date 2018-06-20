@@ -224,6 +224,9 @@ var stackBlitzDependencies = {
         "rxjs": "^5.5.6",
         "zone.js": "^0.8.26"
     },
+    'vue': {
+        "vue": "*"
+    },
     'react': {
         "@progress/kendo-data-query": "*",
         "@progress/kendo-react-dateinputs": "*",
@@ -955,11 +958,15 @@ function prepareSnippet(site, listing, templateFiles) {
             } ]
         }, null, 2);
     } else if (exampleTemplate === 'javascript') {
-        files['index.html'] = htmlTemplate($.extend({ html: '' }, site, listing));
+        files['index.html'] = files['index.html'] || htmlTemplate($.extend({ html: '' }, site, listing));
 
-        if (listing.html && !listing.code) {
+        if (listing.html && !listing.js) {
             // HTML-only snippet
             files['index.js'] = '';
+        } else if (files['app/main.es']) {
+            files['index.js'] = 'import "./app/main";';
+            files['app/main.js'] = files['app/main.es'];
+            delete files['app/main.es'];
         } else {
             files['index.js'] = files['app/main.js'];
             delete files['app/main.js'];
@@ -972,7 +979,6 @@ function prepareSnippet(site, listing, templateFiles) {
             delete files['app/main.jsx'];
         }
     }
-
 
     var deferred = $.Deferred();
     deferred.resolve(files);
@@ -1010,6 +1016,7 @@ window.openInPlunker = function(listing) {
             appImports: imports.join('\n')
         },
         vue: {
+            appImports: ''
         },
         builder: {
             appImports: imports.join('\n')
@@ -1078,15 +1085,10 @@ window.openInPlunker = function(listing) {
             }
         }
 
-        if (exampleTemplate === 'typescript') {
-            //Only styles.css, index.html are needed
-            plunkerTemplates = plunkerTemplates.splice(4, 2);
-            files['index.ts'] = plunkerContext.common.appComponentContent;
-        }
-
         var htmlOnly = exampleTemplate === 'javascript' && !listing.multiple && listing.html;
+        var vue = window.platform === 'vue' && /Vue.use/.test(listing.js);
 
-        if (!htmlOnly) {
+        if (!htmlOnly || vue) {
             $.each(plunkerTemplates, function(index, templateContent) {
                 var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
                 var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);

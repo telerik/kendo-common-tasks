@@ -105,6 +105,24 @@ describe('preparing snippets for editing', () => {
         expect(files['app/main.ts']).toBeFalsy();
     });
 
+    test('runs vue snippets in javascript templates', async () => {
+        const files = await snippets.prepareSnippet(
+            {},
+            {
+                js: "foo",
+                html: "bar"
+            },
+            {
+                'app/main.es': 'foo',
+                'index.html': 'baz'
+            }
+        );
+
+        expect(files['index.html']).toBe('baz');
+        expect(files['index.js']).toBe('import "./app/main";');
+        expect(files['app/main.js']).toBe('foo');
+    });
+
     // required as long as stackblitz has no jsx file support
     // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
     describe('renames jsx to js', () => {
