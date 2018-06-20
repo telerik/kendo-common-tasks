@@ -40,11 +40,11 @@ describe('inferring stackblitz templates', () => {
 
 describe('preparing snippets for editing', () => {
     test('returns a promise', () => {
-        expect(typeof snippets.prepareSnippet().then).toBe('function');
+        expect(typeof snippets.prepareSnippet({}, {}).then).toBe('function');
     });
 
     test('resolves to an object', () => {
-        expect(snippets.prepareSnippet()).resolves.toBe({});
+        expect(snippets.prepareSnippet({}, {})).resolves.toBe({});
     });
 
     test('adds .angular-cli.json for angular snippets', async () => {
@@ -73,6 +73,28 @@ describe('preparing snippets for editing', () => {
         expect(files['index.html']).toContain('unpkg.com/@progress/kendo-theme-default');
 
         expect(files['index.js']).toBe(''); // because stackblitz
+    });
+
+    test('adds index.js for vanilla js snippets', async () => {
+        const files = await snippets.prepareSnippet(
+            {},
+            {
+                'multifile-listing': [
+                    { name: 'main.js', content: 'foo' }
+                ],
+                js: 'foo'
+            }
+        );
+
+        expect(files['index.js']).toBe('foo');
+    });
+
+    test('passes argument files in result', async () => {
+        const files = await snippets.prepareSnippet(
+            {}, {}, { 'foo.js': 'foo' }
+        );
+
+        expect(files['foo.js']).toBe('foo');
     });
 
     // required as long as stackblitz has no jsx file support
@@ -125,6 +147,17 @@ describe('preparing snippets for editing', () => {
             );
 
             expect(files['app/main.js']).toBe('import { foo } from "./other";');
+        });
+
+        test('replaces jsx file in single-file snippet', async () => {
+            const files = await snippets.prepareSnippet(
+                { platform: 'react' },
+                { jsx: 'foo' },
+                { 'app/main.jsx': 'foo' }
+            );
+
+            expect(files['app/main.jsx']).toBeFalsy();
+            expect(files['app/main.js']).toBe('foo');
         });
     });
 });

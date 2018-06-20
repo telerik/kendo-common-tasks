@@ -920,8 +920,19 @@ if (plunker[window.platform]) {
 
 // prepares code listing for editing
 // async, since it needs to wait for the current platform edit templates
-function prepareSnippet(site, listing) {
-    var files = {};
+function prepareSnippet(site, listing, templateFiles) {
+    var files = templateFiles || {};
+
+    var listingFiles = listing['multifile-listing'];
+    if (listingFiles) {
+        for (var i = 0; i < listingFiles.length; i++) {
+            var filename = listingFiles[i].name;
+            // replace jsx with js is required as long as stackblitz has no jsx file support
+            // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
+            filename = 'app/' + filename.replace(/\.jsx$/, ".js");
+            files[filename] = listingFiles[i].content.replace(/\.jsx\b/, "");
+        }
+    }
 
     var exampleTemplate = getStackBlitzTemplate(listing || {});
     if (exampleTemplate === "angular-cli") {
@@ -941,24 +952,22 @@ function prepareSnippet(site, listing) {
                 ]
             } ]
         }, null, 2);
+    } else if (exampleTemplate === 'javascript') {
+        files['index.html'] = htmlTemplate($.extend({ html: '' }, site, listing));
+
+        if (listing.html && !listing.code) {
+            // HTML-only snippet
+            files['index.js'] = '';
+        } else {
+            files['index.js'] = files['app/main.js'];
+            delete files['app/main.js'];
+        }
     } else if (exampleTemplate === "create-react-app") {
         files['index.js'] = 'import "./app/main";';
 
-        var listingFiles = listing['multifile-listing'];
-        if (listingFiles) {
-            for (var i = 0; i < listingFiles.length; i++) {
-                var filename = listingFiles[i].name;
-                // replace jsx with js is required as long as stackblitz has no jsx file support
-                // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
-                filename = 'app/' + filename.replace(/\.jsx$/, ".js");
-                files[filename] = listingFiles[i].content.replace(/\.jsx\b/, "");
-            }
-        }
-    } else if (exampleTemplate === 'javascript') {
-        if (listing.html && !listing.code) {
-            // HTML-only snippet
-            files['index.html'] = htmlTemplate($.extend({}, site, listing));
-            files['index.js'] = '';
+        if (!listingFiles) {
+            files['app/main.js'] = files['app/main.jsx'];
+            delete files['app/main.jsx'];
         }
     }
 
@@ -1006,7 +1015,7 @@ window.openInPlunker = function(listing) {
     };
 
     var exampleTemplate = getStackBlitzTemplate(listing);
-    var form = buildExampleEditorForm(exampleTemplate);
+    var files = {};
 
     var filterFunction = function(file) {
         var ext = file.split('.').pop();
@@ -1025,7 +1034,7 @@ window.openInPlunker = function(listing) {
 
             if (exampleTemplate === 'angular-cli') {
                 var contentRoot = 'app/';
-                form.addField('project[files][' + contentRoot + file.name + ']', content);
+                files[contentRoot + file.name] = content;
                 contentRoot = '';
                 content = content.replace(/\.\/app\.module/g, "./app/app.module");
             }
@@ -1041,7 +1050,7 @@ window.openInPlunker = function(listing) {
                 var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
                 var add = function(file, template) {
                     if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
-                        form.addField('project[files][' + file + ']', kendo.template(template)(context));
+                        files[file] = kendo.template(template)(context);
                     }
                 };
                 add(plunkerFiles[index], templateContent);
@@ -1070,7 +1079,7 @@ window.openInPlunker = function(listing) {
         if (exampleTemplate === 'typescript') {
             //Only styles.css, index.html are needed
             plunkerTemplates = plunkerTemplates.splice(4, 2);
-            form.addField('project[files][index.ts]', plunkerContext.common.appComponentContent);
+            files['index.ts'] = plunkerContext.common.appComponentContent;
         }
 
         var htmlOnly = exampleTemplate === 'javascript' && !listing.multiple && listing.html;
@@ -1089,7 +1098,7 @@ window.openInPlunker = function(listing) {
                     } else {
                         content = template;
                     }
-                    form.addField('project[files][' + file + ']', content);
+                    files[file] = content;
                 };
 
                 if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
@@ -1098,21 +1107,23 @@ window.openInPlunker = function(listing) {
             });
         }
 
+        return files;
     })
-    .then(function() {
+    .then(function(files) {
         return prepareSnippet({
             npmUrl: 'https://unpkg.com',
             platform: window.platform
-        }, listing)
-            .then(function(files) {
-                for (var filename in files) {
-                    if (files.hasOwnProperty(filename)) {
-                        form.addField('project[files][' + filename + ']', files[filename]);
-                    }
-                }
-            });
+        }, listing, files);
     })
-    .then(function() {
+    .then(function(files) {
+        var form = buildExampleEditorForm(exampleTemplate);
+
+        for (var filename in files) {
+            if (files.hasOwnProperty(filename)) {
+                form.addField('project[files][' + filename + ']', files[filename]);
+            }
+        }
+
         form.submit();
     });
 };
