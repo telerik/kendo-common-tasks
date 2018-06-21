@@ -999,26 +999,17 @@ window.openInPlunker = function(listing) {
     var directives = usedModules(getFullContent({ listing: listing, platform: window.platform }));
     var imports = moduleImports(code, directives);
 
-    var plunkerContext = {
+    var editorContext = {
         common: {
             appComponentContent: code,
+            appImports: imports.join('\n'),
             npmUrl: 'https://unpkg.com',
             htmlContent: html,
             theme: theme,
             themeAccent: themeColors[theme]
         },
         angular: {
-            appImports: imports.join('\n'),
             appModuleImports: angularAppModuleImports(directives)
-        },
-        react: {
-            appImports: imports.join('\n')
-        },
-        vue: {
-            appImports: ''
-        },
-        builder: {
-            appImports: imports.join('\n')
         }
     };
 
@@ -1042,7 +1033,7 @@ window.openInPlunker = function(listing) {
 
         $.each(plunkerTemplates, function(index, templateContent) {
             var plunkerFiles = plunker[window.platform].plunkerFiles;
-            var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+            var context = $.extend({}, editorContext.common, editorContext[window.platform]);
             var file = plunkerFiles[index];
             var template = templateContent;
 
