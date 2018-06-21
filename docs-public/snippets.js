@@ -1002,7 +1002,7 @@ window.openInPlunker = function(listing) {
 
     var editorContext = {
         common: {
-            appComponentContent: code,
+            appComponentContent: code || '',
             appImports: imports.join('\n'),
             npmUrl: 'https://unpkg.com',
             htmlContent: html,
