@@ -796,13 +796,12 @@ var plunker = {
     },
     react: {
         plunkerFiles: [
-            'app/main.jsx',
-            'app/main.ts'
+            'app/main.jsx'
         ].concat(basicPlunkerFiles)
     },
     vue: {
         plunkerFiles: [
-            'app/main.es'
+            'app/main.js'
         ].concat(basicPlunkerFiles)
     },
     builder: {
@@ -991,7 +990,6 @@ window.openInPlunker = function(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
-    var language = listing.runtimeLanguage;
     var theme = listing.theme || "default";
 
     if (!code) {
@@ -1027,12 +1025,6 @@ window.openInPlunker = function(listing) {
     var exampleTemplate = getStackBlitzTemplate(listing);
     var files = {};
 
-    var filterFunction = function(file) {
-        var ext = file.split('.').pop();
-        var shouldUseEsFile = window.platform === 'vue' && language === 'js' && ext === 'es';
-        return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile);
-    };
-
     if (exampleTemplate === 'angular-cli') {
         if (listing.multiple && listing['multifile-listing']) {
             // prepend 'app/' to filenames
@@ -1048,24 +1040,18 @@ window.openInPlunker = function(listing) {
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
 
-        if (exampleTemplate === 'angular-cli') {
-            $.each(plunkerTemplates, function(index, templateContent) {
-                var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
-                var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-                var add = function(file, template) {
-                    if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
-                        files[file] = kendo.template(template)(context);
-                    }
-                };
-                add(plunkerFiles[index], templateContent);
-            });
-        }
+        $.each(plunkerTemplates, function(index, templateContent) {
+            var plunkerFiles = plunker[window.platform].plunkerFiles;
+            var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+            var file = plunkerFiles[index];
+            var template = templateContent;
 
-        if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
-            $.each(plunkerTemplates, function(index, templateContent) {
-                var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
-                var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-                var add = function(file, template) {
+            if (exampleTemplate === 'angular-cli') {
+                if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
+                    files[file] = kendo.template(template)(context);
+                }
+            } else if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
+                if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
                     var content;
                     /* don't apply kendo template to files with angular template inside or in a css file*/
                     if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
@@ -1076,13 +1062,9 @@ window.openInPlunker = function(listing) {
                         content = template;
                     }
                     files[file] = content;
-                };
-
-                if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
-                    add(plunkerFiles[index], templateContent);
                 }
-            });
-        }
+            }
+        });
 
         return files;
     })
