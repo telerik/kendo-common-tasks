@@ -1,6 +1,7 @@
 /* eslint no-var: 0 */
 /* eslint no-invalid-this: 0 */
 /* eslint consistent-this: 0 */
+/* eslint no-console: 0 */
 /* eslint-env browser, jquery */
 /* global kendo */
 
@@ -1129,6 +1130,9 @@ window.openInPlunker = function(listing) {
         }
 
         form.submit();
+    })
+    .fail(function() {
+        console.log("Snippet posting failed, probably due to template fetching network errors.");
     });
 };
 
