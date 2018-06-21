@@ -226,6 +226,7 @@ var stackBlitzDependencies = {
         "zone.js": "^0.8.26"
     },
     'vue': {
+        "@progress/kendo-ui": "*",
         "vue": "*"
     },
     'react': {
