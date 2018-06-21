@@ -1050,7 +1050,9 @@ window.openInPlunker = function(listing) {
                 if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
                     files[file] = kendo.template(template)(context);
                 }
-            } else if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
+            }
+
+            if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
                 if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
                     var content;
                     /* don't apply kendo template to files with angular template inside or in a css file*/
