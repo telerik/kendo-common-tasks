@@ -1033,22 +1033,16 @@ window.openInPlunker = function(listing) {
         return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile);
     };
 
-    if (listing.multiple && listing['multifile-listing']) {
-        $.each(listing['multifile-listing'], function(i, file) {
-            var content = file.content;
-            // skip main file
-            // StackBlitz requires main.ts to be on the root level, get from template
-            if (/main\./.test(file.name)) {
-                return;
-            }
-
-            if (exampleTemplate === 'angular-cli') {
-                var contentRoot = 'app/';
-                files[contentRoot + file.name] = content;
-                contentRoot = '';
-                content = content.replace(/\.\/app\.module/g, "./app/app.module");
-            }
-        });
+    if (exampleTemplate === 'angular-cli') {
+        if (listing.multiple && listing['multifile-listing']) {
+            // prepend 'app/' to filenames
+            $.each(listing['multifile-listing'], function(_, file) {
+                // main.ts to be on the root level, get from template
+                if (!/main\./.test(file.name)) {
+                    files['app/' + file.name] = file.content;
+                }
+            });
+        }
     }
 
     $.when.apply($, plunkerRequests).then(function() {
@@ -1067,29 +1061,7 @@ window.openInPlunker = function(listing) {
             });
         }
 
-        /**
-         * The react platfrom supports multiple languages: ts, js and jsx.
-         * Due to that reason we need to filterout the "main" files which are not for the current language.
-         * The order is [js, tsx, html].
-         */
-        if (window.platform === 'react') {
-            switch (language) {
-            case 'jsx':
-                plunkerTemplates.splice(1, 1);
-                break;
-            case 'ts':
-                plunkerTemplates.splice(0, 1);
-                break;
-            default:
-                plunkerTemplates = plunkerTemplates
-                    .filter(function(tmp, idx, arr) { return (idx === 1 || idx === arr.length - 1); });
-            }
-        }
-
-        var htmlOnly = exampleTemplate === 'javascript' && !listing.multiple && listing.html;
-        var vue = window.platform === 'vue' && /Vue.use/.test(listing.js);
-
-        if (!htmlOnly || vue) {
+        if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
             $.each(plunkerTemplates, function(index, templateContent) {
                 var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
                 var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
