@@ -226,8 +226,43 @@ var stackBlitzDependencies = {
         "zone.js": "^0.8.26"
     },
     'vue': {
+        "@progress/kendo-barcodes-vue-wrapper": "*",
+        "@progress/kendo-buttons-vue-wrapper": "*",
+        "@progress/kendo-charts-vue-wrapper": "*",
+        "@progress/kendo-chat-vue-wrapper": "*",
+        "@progress/kendo-datasource-vue-wrapper": "*",
+        "@progress/kendo-dateinputs-vue-wrapper": "*",
+        "@progress/kendo-diagram-vue-wrapper": "*",
+        "@progress/kendo-dialog-vue-wrapper": "*",
+        "@progress/kendo-dropdowns-vue-wrapper": "*",
+        "@progress/kendo-dropdowntree-vue-wrapper": "*",
+        "@progress/kendo-gantt-vue-wrapper": "*",
+        "@progress/kendo-gauges-vue-wrapper": "*",
+        "@progress/kendo-grid-vue-wrapper": "*",
+        "@progress/kendo-editor-vue-wrapper": "*",
+        "@progress/kendo-inputs-vue-wrapper": "*",
+        "@progress/kendo-layout-vue-wrapper": "*",
+        "@progress/kendo-listbox-vue-wrapper": "*",
+        "@progress/kendo-listview-vue-wrapper": "*",
+        "@progress/kendo-map-vue-wrapper": "*",
+        "@progress/kendo-mediaplayer-vue-wrapper": "*",
+        "@progress/kendo-pivotgrid-vue-wrapper": "*",
+        "@progress/kendo-popups-vue-wrapper": "*",
+        "@progress/kendo-scheduler-vue-wrapper": "*",
+        "@progress/kendo-spreadsheet-vue-wrapper": "*",
+        "@progress/kendo-treelist-vue-wrapper": "*",
+        "@progress/kendo-treemap-vue-wrapper": "*",
+        "@progress/kendo-treeview-vue-wrapper": "*",
+        "@progress/kendo-upload-vue-wrapper": "*",
+        "@progress/kendo-validator-vue-wrapper": "*",
+        "@progress/kendo-window-vue-wrapper": "*",
         "@progress/kendo-ui": "*",
-        "vue": "*"
+        "jquery": "*",
+        "vue": "*",
+        "@progress/kendo-base-components-vue-wrapper": "*",
+        "@progress/kendo-theme-bootstrap": "^2.11.11",
+        "@progress/kendo-theme-default": "^2.50.0",
+        "@progress/kendo-theme-material": "^0.3.0"
     },
     'react': {
         "@progress/kendo-data-query": "*",
@@ -459,6 +494,11 @@ function usedModules(code) {
 
 function toModuleImport(directive) {
     var exportStatement = " from '" + directive.module + "';";
+
+    /* needed for Vue examples */
+    if (directive.module === "@progress/kendo-ui") {
+        return "import '" + directive.module + "';";
+    }
 
     if (directive.defaultExport) {
         exportStatement = "import " + directive.import + exportStatement;
@@ -1462,7 +1502,8 @@ if (typeof module !== 'undefined') {
     // export functions for test suite
     module.exports = {
         getStackBlitzTemplate: getStackBlitzTemplate,
-        prepareSnippet: prepareSnippet
+        prepareSnippet: prepareSnippet,
+        toModuleImport: toModuleImport
     };
 }
 

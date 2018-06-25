@@ -123,6 +123,16 @@ describe('preparing snippets for editing', () => {
         expect(files['app/main.js']).toBe('foo');
     });
 
+    test('imports @progress/kendo-ui package correctly', async () => {
+        const exportStatement = snippets.toModuleImport({
+            import: "kendo",
+            main: "js/kendo.all.js",
+            module: "@progress/kendo-ui"
+        });
+
+        expect(exportStatement).toBe("import '@progress/kendo-ui';");
+    });
+
     // required as long as stackblitz has no jsx file support
     // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
     describe('renames jsx to js', () => {
