@@ -1110,7 +1110,7 @@ window.openInPlunker = function(listing) {
                     /* don't apply kendo template to files with angular template inside or in a css file*/
                     if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
                         // don't sanitize if kendo template is present inside
-                        var sanitizedContent = template.match(/#=.*#/g) ? template : template.replace(/#/g, "\\#");
+                        var sanitizedContent = template.match(/#(=|:).*#/g) ? template : template.replace(/#/g, "\\#");
                         content = kendo.template(sanitizedContent)(context);
                     } else {
                         content = template;
