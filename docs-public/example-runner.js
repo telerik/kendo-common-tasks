@@ -91,7 +91,7 @@ window.ExampleRunner = (function() {
 
                 map: {
                     "app": "app",
-                    'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
+                    'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0/json.js',
                     //Babel transpiler
                     "plugin-babel": "https://unpkg.com/systemjs-plugin-babel@0.0.25/plugin-babel.js",
                     'systemjs-babel-build': 'https://unpkg.com/systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
@@ -169,7 +169,7 @@ window.ExampleRunner = (function() {
 
                 map: {
                     "app": "app",
-                    'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
+                    'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0/json.js',
                     //React packages
                     "react": "https://unpkg.com/react@16.0.0/umd/react.production.min.js",
                     "react-dom": "https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js",
@@ -325,7 +325,7 @@ window.ExampleRunner = (function() {
             // map tells the System loader where to look for things
             var map = {
                 'app': 'app',
-                'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
+                'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0/json.js',
                 '@telerik': npmUrl + '/@telerik',
                 '@progress': npmUrl + '/@progress',
                 'cldr-data': npmUrl + '/cldr-data',
