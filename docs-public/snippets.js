@@ -858,7 +858,8 @@ var plunker = {
     },
     react: {
         plunkerFiles: [
-            'app/main.jsx'
+            'index.js',
+            'index.ts'
         ].concat(basicPlunkerFiles)
     },
     vue: {
@@ -1078,46 +1079,123 @@ window.openInPlunker = function(listing) {
     var exampleTemplate = getStackBlitzTemplate(listing);
     var files = {};
 
-    if (exampleTemplate === 'angular-cli') {
-        if (listing.multiple && listing['multifile-listing']) {
-            // prepend 'app/' to filenames
-            $.each(listing['multifile-listing'], function(_, file) {
-                // main.ts to be on the root level, get from template
-                if (!/main\./.test(file.name)) {
-                    files['app/' + file.name] = file.content;
-                }
+    var filterFunction = function(file) {
+        var ext = file.split('.').pop();
+        var shouldUseEsFile = window.platform === 'vue' && language === 'js' && ext === 'es';
+        var shouldUseJsFile = window.platform === 'react' && language === 'jsx' && ext === 'js';
+        return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile || shouldUseJsFile);
+    };
+
+    if (listing.multiple && listing['multifile-listing']) {
+        $.each(listing['multifile-listing'], function(i, file) {
+            var content = file.content;
+            // skip main file
+            // StackBlitz requires main.ts to be on the root level, get from template
+            if (/main\./.test(file.name)) {
+                return;
+            }
+
+            if (exampleTemplate === 'angular-cli') {
+                var contentRoot = 'app/';
+                form.addField('project[files][' + contentRoot + file.name + ']', content);
+                contentRoot = '';
+                content = content.replace(/\.\/app\.module/g, "./app/app.module");
+            } else if (exampleTemplate === 'javascript') {
+                // stackblitz expects all files and imports to be js
+                file.name = file.name.replace(/\.jsx/, '.js');
+                content = content.replace(/\.jsx/g, '.js');
+
+                form.addField('project[files][' + file.name + ']', content);
+            }
+        });
+
+        if (exampleTemplate === 'angular-cli') {
+            // TODO: refactor, very dirty. adds styles.css, main.ts, polyfills.ts
+            $.when.apply($, plunkerRequests).then(function() {
+                var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
+                $.each(plunkerTemplates, function(index, templateContent) {
+                    var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
+                    var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+                    var add = function(file, template) {
+                        if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
+                            form.addField('project[files][' + file + ']', kendo.template(template)(context));
+                        }
+                    };
+                    add(plunkerFiles[index], templateContent);
+                });
             });
         }
     }
 
+    if (exampleTemplate === "angular-cli") {
+        form.addField('project[files][.angular-cli.json]', JSON.stringify({
+            "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+            "apps": [ {
+                "assets": [
+                    "assets",
+                    "favicon.ico"
+                ],
+                "index": "index.html",
+                "main": "main.ts",
+                "polyfills": "polyfills.ts",
+                "prefix": "app",
+                "styles": [
+                    "styles.css"
+                ]
+            } ]
+        }, null, 2));
+    }
+
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
+        /**
+         * The react platfrom supports multiple languages: ts, js and jsx.
+         * Due to that reason we need to filterout the "main" files which are not for the current language.
+         * The order is [js, tsx, html].
+         */
+        if (window.platform === 'react') {
+            switch (language) {
+            case 'jsx':
+                plunkerTemplates.splice(1, 1);
+                break;
+            case 'ts':
+                plunkerTemplates.splice(0, 1);
+                break;
+            default:
+                plunkerTemplates = plunkerTemplates
+                    .filter(function(tmp, idx, arr) { return (idx === 1 || idx === arr.length - 1); });
+            }
+        }
+
+        if (exampleTemplate === 'typescript') {
+            //Only styles.css, index.html are needed
+            plunkerTemplates = plunkerTemplates.splice(4, 2);
+            form.addField('project[files][index.ts]', plunkerContext.common.appComponentContent);
+        }
+
+        if (exampleTemplate === 'javascript') {
+            var content = plunkerContext.common.appComponentContent.replace(/\.jsx/g, '.js');
+            form.addField('project[files][index.js]', content);
+        }
 
         $.each(plunkerTemplates, function(index, templateContent) {
-            var plunkerFiles = plunker[window.platform].plunkerFiles;
-            var context = $.extend({}, editorContext.common, editorContext[window.platform]);
-            var file = plunkerFiles[index];
-            var template = templateContent;
-
-            if (exampleTemplate === 'angular-cli') {
-                if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
-                    files[file] = kendo.template(template)(context);
+            var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
+            var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
+            var add = function(file, template) {
+                var content;
+                /* don't apply kendo template to files with angular template inside or in a css file*/
+                if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
+                    // don't sanitize if kendo template is present inside
+                    var sanitizedContent = template.match(/#=.*#/g) ? template : template.replace(/#/g, "\\#");
+                    content = kendo.template(sanitizedContent)(context);
+                } else {
+                    content = template;
                 }
-            }
+                form.addField('project[files][' + file + ']', content);
+            };
 
-            if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
-                if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
-                    var content;
-                    /* don't apply kendo template to files with angular template inside or in a css file*/
-                    if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
-                        // don't sanitize if kendo template is present inside
-                        var sanitizedContent = template.match(/#(=|:).*#/g) ? template : template.replace(/#/g, "\\#");
-                        content = kendo.template(sanitizedContent)(context);
-                    } else {
-                        content = template;
-                    }
-                    files[file] = content;
-                }
+            if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
+                add(plunkerFiles[index], templateContent);
             }
         });
 
