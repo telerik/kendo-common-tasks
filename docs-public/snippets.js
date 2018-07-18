@@ -76,18 +76,18 @@ var editorTemplate = kendo.template(
 );
 
 var htmlTemplate = kendo.template(
-    '<!doctype html>\n\
-<html>\n\
-<head>\n\
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\n\
-    <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\n\
-    <style>\n\
-        body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\n\
-    </style>\n\
-</head>\n\
-<body>\n\
-    #= data.html #\n\
-</body>\n\
+    '<!doctype html>\
+<html>\
+<head>\
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
+    <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
+    <style>\
+        body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
+    </style>\
+</head>\
+<body>\
+    #= data.html #\
+</body>\
 </html>\
 ', { useWithBlock: false });
 
@@ -147,7 +147,7 @@ var plunkerTemplate = kendo.template(
 </html>\
 ', { useWithBlock: false });
 
-var stackBlitzDependencies = {
+var stackBlitzDefaultDependencies = {
     'angular': {
         'core-js': '2.5.3',
         'rxjs': '5.5.6',
@@ -266,30 +266,6 @@ var stackBlitzDependencies = {
         "@progress/kendo-theme-material": "^0.3.0"
     },
     'react': {
-        "@progress/kendo-data-query": "*",
-        "@progress/kendo-date-math": "*",
-        "@progress/kendo-drawing": "*",
-        "@progress/kendo-file-saver": "*",
-        "@progress/kendo-react-animation": "*",
-        "@progress/kendo-react-buttons": "*",
-        "@progress/kendo-react-charts": "*",
-        "@progress/kendo-react-conversational-ui": "*",
-        "@progress/kendo-react-dateinputs": "*",
-        "@progress/kendo-react-dialogs": "*",
-        "@progress/kendo-react-dropdowns": "*",
-        "@progress/kendo-react-excel-export": "*",
-        "@progress/kendo-react-grid": "*",
-        "@progress/kendo-react-inputs": "*",
-        "@progress/kendo-react-intl": "*",
-        "@progress/kendo-react-layout": "*",
-        "@progress/kendo-react-pdf": "*",
-        "@progress/kendo-react-popup": "*",
-        "@progress/kendo-react-ripple": "*",
-        "@progress/kendo-theme-bootstrap": "^2.11.11",
-        "@progress/kendo-theme-default": "^2.50.0",
-        "@progress/kendo-theme-material": "^0.3.0",
-        "cldr-data": "^32.0.1",
-        "hammerjs": "~2.0.8",
         "object-assign": "^4.0.1",
         "prop-types": "^15.6.0",
         "react": "^16.0.0",
@@ -952,29 +928,32 @@ function getStackBlitzTemplate(listing) {
     return 'angular-cli';
 }
 
-function buildExampleEditorForm(exampleTemplate) {
+function buildExampleEditorForm(exampleTemplate, imports) {
     var form = new EditorForm('https://stackblitz.com/run/');
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
     var platform = window.platform;
+    var production = window.env === 'production';
+    var exampleDependencies = getExampleDependencies(imports, production);
+    var dependencies = Object.assign({}, exampleDependencies, stackBlitzDefaultDependencies[platform]);
 
     form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
     form.addField('project[tags][1]', 'Kendo UI');
     form.addField('project[description]', 'Example usage of Kendo UI for ' + capitalize(platform) + link);
-    form.addField('project[dependencies]', JSON.stringify(stackBlitzDependencies[platform]));
+    form.addField('project[dependencies]', JSON.stringify(dependencies));
 
     return form;
 }
 
-// function getExampleDependencies(directives) {
-//     return directives.filter(function(dir) {
-//         return dir.module.indexOf('@progress') === 0 ||
-//                dir.module.indexOf('@telerik') === 0;
-//     }).reduce(function(result, dir) {
-//         result[dir.module] = '*';
-//         return result;
-//     }, {});
-// }
+function getExampleDependencies(directives, production) {
+    return directives.filter(function(dir) {
+        return dir.module.indexOf('@progress') === 0 ||
+               dir.module.indexOf('@telerik') === 0;
+    }).reduce(function(result, dir) {
+        result[dir.module] = production ? 'latest' : 'dev';
+        return result;
+    }, {});
+}
 
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
@@ -1077,7 +1056,7 @@ window.openInPlunker = function(listing) {
     };
 
     var exampleTemplate = getStackBlitzTemplate(listing);
-    var files = {};
+    var form = buildExampleEditorForm(exampleTemplate, directives);
 
     var filterFunction = function(file) {
         var ext = file.split('.').pop();
