@@ -5,7 +5,6 @@
 /* eslint-env browser, jquery */
 /* global kendo */
 
-
 function debounce(func, wait, immediate) {
     var timeout;
     return function() {
@@ -934,7 +933,7 @@ function buildExampleEditorForm(exampleTemplate, imports) {
     var platform = window.platform;
     var production = window.env === 'production';
     var exampleDependencies = getExampleDependencies(imports, production);
-    var dependencies = Object.assign({}, exampleDependencies, stackBlitzDefaultDependencies[platform]);
+    var dependencies = $.extend({}, exampleDependencies, stackBlitzDefaultDependencies[platform]);
 
     form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
@@ -1040,6 +1039,7 @@ window.openInPlunker = function(listing) {
 
     var directives = usedModules(getFullContent({ listing: listing, platform: window.platform }));
     var imports = moduleImports(code, directives);
+    var cldrImports = [];
 
     var editorContext = {
         common: {
@@ -1065,6 +1065,34 @@ window.openInPlunker = function(listing) {
         return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile || shouldUseJsFile);
     };
 
+    var extractCldrImports = function(content) {
+        return content.replace(/['|"](cldr-data.*)['|"]/g, function(match, path) {
+            if (cldrImports.indexOf('path') === -1) {
+                cldrImports.push(path);
+            }
+            return match.replace(/cldr-data/, "./cldr-data");
+        });
+    };
+
+    var addCldrFilesToForm = function(form, callback) {
+        var counter = 0;
+        $.each(cldrImports, function(i, path) {
+            $.get({
+                url: window.npmUrl + '/' + path,
+                success: function(data) {
+                    counter++;
+                    form.addField('project[files][' + path + ']', JSON.stringify(data));
+                    if (counter === cldrImports.length) {
+                        callback();
+                    }
+                }
+            })
+            .fail(function() {
+                callback();
+            });
+        });
+    };
+
     if (listing.multiple && listing['multifile-listing']) {
         $.each(listing['multifile-listing'], function(i, file) {
             var content = file.content;
@@ -1083,6 +1111,10 @@ window.openInPlunker = function(listing) {
                 // stackblitz expects all files and imports to be js
                 file.name = file.name.replace(/\.jsx/, '.js');
                 content = content.replace(/\.jsx/g, '.js');
+
+                if (window.platform === 'react') {
+                    content = extractCldrImports(content, form);
+                }
 
                 form.addField('project[files][' + file.name + ']', content);
             }
@@ -1154,6 +1186,11 @@ window.openInPlunker = function(listing) {
 
         if (exampleTemplate === 'javascript') {
             var content = plunkerContext.common.appComponentContent.replace(/\.jsx/g, '.js');
+
+            if (window.platform === 'react') {
+                content = extractCldrImports(content, form);
+            }
+
             form.addField('project[files][index.js]', content);
         }
 
@@ -1195,7 +1232,11 @@ window.openInPlunker = function(listing) {
             }
         }
 
-        form.submit();
+        if (window.platform === 'react' && cldrImports.length > 0) {
+            addCldrFilesToForm(form, function() { form.submit(); });
+        } else {
+            form.submit();
+        }
     })
     .fail(function() {
         console.log("Snippet posting failed, probably due to template fetching network errors.");
@@ -1310,7 +1351,6 @@ $(function() {
     }
 
     toCodeListings($("pre")).forEach(function(block, idx) {
-
         var fileListElement;
         var demoEmbed = $(block.elements).closest(".demo-embed");
         if (demoEmbed.length) {
