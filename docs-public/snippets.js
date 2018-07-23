@@ -2,6 +2,7 @@
 /* eslint no-invalid-this: 0 */
 /* eslint consistent-this: 0 */
 /* eslint no-console: 0 */
+/* eslint complexity: 0 */
 /* eslint-env browser, jquery */
 /* global kendo */
 
@@ -75,18 +76,18 @@ var editorTemplate = kendo.template(
 );
 
 var htmlTemplate = kendo.template(
-    '<!doctype html>\
-<html>\
-<head>\
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
-    <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
-    <style>\
-        body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
-    </style>\
-</head>\
-<body>\
-    #= data.html #\
-</body>\
+    '<!doctype html>\n\
+<html>\n\
+<head>\n\
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\n\
+    <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\n\
+    <style>\n\
+        body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\n\
+    </style>\n\
+</head>\n\
+<body>\n\
+    #= data.html #\n\
+</body>\n\
 </html>\
 ', { useWithBlock: false });
 
@@ -146,135 +147,166 @@ var plunkerTemplate = kendo.template(
 </html>\
 ', { useWithBlock: false });
 
-var stackBlitzDefaultDependencies = {
-    'angular': {
-        'core-js': '2.5.3',
-        'rxjs': '5.5.6',
-        'zone.js': '0.8.12',
-        '@angular/animations': '5.2.2',
-        '@angular/core': '5.2.2',
-        '@angular/common': '5.2.2',
-        '@angular/compiler': '5.2.2',
-        '@angular/platform-browser': '5.2.2',
-        '@angular/platform-browser-dynamic': '5.2.2',
-        '@angular/http': '5.2.2',
-        '@angular/router': '5.2.2',
-        '@angular/forms': '5.2.2',
-        'hammerjs': '*',
-        '@telerik/kendo-intl': '*',
-        '@progress/kendo-date-math': '*',
-        '@progress/kendo-drawing': '*',
-        '@progress/kendo-data-query': '*',
-        '@progress/kendo-file-saver': '*',
-        '@progress/kendo-charts': '*',
-        '@progress/kendo-angular-buttons': '*',
-        '@progress/kendo-angular-charts': '*',
-        "@progress/kendo-angular-conversational-ui": "*",
-        '@progress/kendo-angular-dateinputs': '*',
-        '@progress/kendo-angular-dialog': '*',
-        '@progress/kendo-angular-dropdowns': '*',
-        '@progress/kendo-angular-excel-export': '*',
-        '@progress/kendo-angular-gauges': '*',
-        '@progress/kendo-angular-grid': '*',
-        '@progress/kendo-angular-inputs': '*',
-        '@progress/kendo-angular-intl': '*',
-        '@progress/kendo-angular-l10n': '*',
-        '@progress/kendo-angular-label': '*',
-        '@progress/kendo-angular-layout': '*',
-        '@progress/kendo-angular-menu': '*',
-        '@progress/kendo-angular-pdf-export': '*',
-        '@progress/kendo-angular-popup': '*',
-        '@progress/kendo-angular-resize-sensor': '*',
-        '@progress/kendo-angular-ripple': '*',
-        '@progress/kendo-angular-scrollview': '*',
-        '@progress/kendo-angular-sortable': '*',
-        '@progress/kendo-angular-tooltip': '*',
-        '@progress/kendo-angular-treeview': '*',
-        '@progress/kendo-angular-upload': '*'
+var stackBlitzDependencies = {
+    'angular': function() {
+        return {
+            'core-js': '2.5.3',
+            'rxjs': '5.5.6',
+            'zone.js': '0.8.12',
+            '@angular/animations': '5.2.2',
+            '@angular/core': '5.2.2',
+            '@angular/common': '5.2.2',
+            '@angular/compiler': '5.2.2',
+            '@angular/platform-browser': '5.2.2',
+            '@angular/platform-browser-dynamic': '5.2.2',
+            '@angular/http': '5.2.2',
+            '@angular/router': '5.2.2',
+            '@angular/forms': '5.2.2',
+            'hammerjs': '*',
+            '@telerik/kendo-intl': '*',
+            '@progress/kendo-date-math': '*',
+            '@progress/kendo-drawing': '*',
+            '@progress/kendo-data-query': '*',
+            '@progress/kendo-file-saver': '*',
+            '@progress/kendo-charts': '*',
+            '@progress/kendo-angular-buttons': '*',
+            '@progress/kendo-angular-charts': '*',
+            '@progress/kendo-angular-dateinputs': '*',
+            '@progress/kendo-angular-dialog': '*',
+            '@progress/kendo-angular-dropdowns': '*',
+            '@progress/kendo-angular-excel-export': '*',
+            '@progress/kendo-angular-gauges': '*',
+            '@progress/kendo-angular-grid': '*',
+            '@progress/kendo-angular-inputs': '*',
+            '@progress/kendo-angular-intl': '*',
+            '@progress/kendo-angular-l10n': '*',
+            '@progress/kendo-angular-label': '*',
+            '@progress/kendo-angular-layout': '*',
+            '@progress/kendo-angular-menu': '*',
+            '@progress/kendo-angular-pdf-export': '*',
+            '@progress/kendo-angular-popup': '*',
+            '@progress/kendo-angular-resize-sensor': '*',
+            '@progress/kendo-angular-ripple': '*',
+            '@progress/kendo-angular-scrollview': '*',
+            '@progress/kendo-angular-sortable': '*',
+            '@progress/kendo-angular-tooltip': '*',
+            '@progress/kendo-angular-treeview': '*',
+            '@progress/kendo-angular-upload': '*'
+        };
     },
-    'builder': {
-        "@angular/animations": "^5.2.10",
-        "@angular/common": "^5.2.10",
-        "@angular/compiler": "^5.2.10",
-        "@angular/core": "^5.2.10",
-        "@angular/forms": "^5.2.10",
-        "@angular/http": "^5.2.10",
-        "@angular/platform-browser": "^5.2.10",
-        "@angular/platform-browser-dynamic": "^5.2.10",
-        "@angular/router": "^5.2.10",
-        "@progress/kendo-angular-buttons": "^2.0.0",
-        "@progress/kendo-angular-charts": "^1.4.0",
-        "@progress/kendo-angular-dateinputs": "^1.4.3",
-        "@progress/kendo-angular-dialog": "^3.1.2",
-        "@progress/kendo-angular-dropdowns": "^2.1.0",
-        "@progress/kendo-angular-excel-export": "^1.0.5",
-        "@progress/kendo-angular-grid": "^1.7.1",
-        "@progress/kendo-angular-inputs": "^1.4.2",
-        "@progress/kendo-angular-intl": "^1.3.0",
-        "@progress/kendo-angular-l10n": "^1.0.5",
-        "@progress/kendo-angular-label": "1.0.5",
-        "@progress/kendo-angular-layout": "^2.2.0",
-        "@progress/kendo-angular-popup": "^1.3.2",
-        "@progress/kendo-data-query": "^1.1.2",
-        "@progress/kendo-drawing": "^1.4.1",
-        "@progress/kendo-theme-bootstrap": "^2.11.11",
-        "@progress/kendo-theme-default": "^2.50.0",
-        "@progress/kendo-theme-material": "^0.3.0",
-        "bootstrap": "4.0.0-beta.2",
-        "font-awesome": "^4.7.0",
-        "rxjs": "^5.5.6",
-        "zone.js": "^0.8.26"
+    'builder': function() {
+        return {
+            "@angular/animations": "^5.2.10",
+            "@angular/common": "^5.2.10",
+            "@angular/compiler": "^5.2.10",
+            "@angular/core": "^5.2.10",
+            "@angular/forms": "^5.2.10",
+            "@angular/http": "^5.2.10",
+            "@angular/platform-browser": "^5.2.10",
+            "@angular/platform-browser-dynamic": "^5.2.10",
+            "@angular/router": "^5.2.10",
+            "@progress/kendo-angular-buttons": "^2.0.0",
+            "@progress/kendo-angular-charts": "^1.4.0",
+            "@progress/kendo-angular-dateinputs": "^1.4.3",
+            "@progress/kendo-angular-dialog": "^3.1.2",
+            "@progress/kendo-angular-dropdowns": "^2.1.0",
+            "@progress/kendo-angular-excel-export": "^1.0.5",
+            "@progress/kendo-angular-grid": "^1.7.1",
+            "@progress/kendo-angular-inputs": "^1.4.2",
+            "@progress/kendo-angular-intl": "^1.3.0",
+            "@progress/kendo-angular-l10n": "^1.0.5",
+            "@progress/kendo-angular-label": "1.0.5",
+            "@progress/kendo-angular-layout": "^2.2.0",
+            "@progress/kendo-angular-popup": "^1.3.2",
+            "@progress/kendo-data-query": "^1.1.2",
+            "@progress/kendo-drawing": "^1.4.1",
+            "@progress/kendo-theme-bootstrap": "^2.11.11",
+            "@progress/kendo-theme-default": "^2.50.0",
+            "@progress/kendo-theme-material": "^0.3.0",
+            "bootstrap": "4.0.0-beta.2",
+            "font-awesome": "^4.7.0",
+            "rxjs": "^5.5.6",
+            "zone.js": "^0.8.26"
+        };
     },
-    'vue': {
-        "@progress/kendo-barcodes-vue-wrapper": "*",
-        "@progress/kendo-buttons-vue-wrapper": "*",
-        "@progress/kendo-charts-vue-wrapper": "*",
-        "@progress/kendo-chat-vue-wrapper": "*",
-        "@progress/kendo-datasource-vue-wrapper": "*",
-        "@progress/kendo-dateinputs-vue-wrapper": "*",
-        "@progress/kendo-diagram-vue-wrapper": "*",
-        "@progress/kendo-dialog-vue-wrapper": "*",
-        "@progress/kendo-dropdowns-vue-wrapper": "*",
-        "@progress/kendo-dropdowntree-vue-wrapper": "*",
-        "@progress/kendo-gantt-vue-wrapper": "*",
-        "@progress/kendo-gauges-vue-wrapper": "*",
-        "@progress/kendo-grid-vue-wrapper": "*",
-        "@progress/kendo-editor-vue-wrapper": "*",
-        "@progress/kendo-inputs-vue-wrapper": "*",
-        "@progress/kendo-layout-vue-wrapper": "*",
-        "@progress/kendo-listbox-vue-wrapper": "*",
-        "@progress/kendo-listview-vue-wrapper": "*",
-        "@progress/kendo-map-vue-wrapper": "*",
-        "@progress/kendo-mediaplayer-vue-wrapper": "*",
-        "@progress/kendo-pivotgrid-vue-wrapper": "*",
-        "@progress/kendo-popups-vue-wrapper": "*",
-        "@progress/kendo-scheduler-vue-wrapper": "*",
-        "@progress/kendo-spreadsheet-vue-wrapper": "*",
-        "@progress/kendo-treelist-vue-wrapper": "*",
-        "@progress/kendo-treemap-vue-wrapper": "*",
-        "@progress/kendo-treeview-vue-wrapper": "*",
-        "@progress/kendo-upload-vue-wrapper": "*",
-        "@progress/kendo-validator-vue-wrapper": "*",
-        "@progress/kendo-window-vue-wrapper": "*",
-        "@progress/kendo-ui": "*",
-        "jquery": "*",
-        "vue": "*",
-        "@progress/kendo-base-components-vue-wrapper": "*",
-        "@progress/kendo-theme-bootstrap": "^2.11.11",
-        "@progress/kendo-theme-default": "^2.50.0",
-        "@progress/kendo-theme-material": "^0.3.0"
+    'vue': function() {
+        return {
+            "@progress/kendo-barcodes-vue-wrapper": "*",
+            "@progress/kendo-buttons-vue-wrapper": "*",
+            "@progress/kendo-charts-vue-wrapper": "*",
+            "@progress/kendo-chat-vue-wrapper": "*",
+            "@progress/kendo-datasource-vue-wrapper": "*",
+            "@progress/kendo-dateinputs-vue-wrapper": "*",
+            "@progress/kendo-diagram-vue-wrapper": "*",
+            "@progress/kendo-dialog-vue-wrapper": "*",
+            "@progress/kendo-dropdowns-vue-wrapper": "*",
+            "@progress/kendo-dropdowntree-vue-wrapper": "*",
+            "@progress/kendo-gantt-vue-wrapper": "*",
+            "@progress/kendo-gauges-vue-wrapper": "*",
+            "@progress/kendo-grid-vue-wrapper": "*",
+            "@progress/kendo-editor-vue-wrapper": "*",
+            "@progress/kendo-inputs-vue-wrapper": "*",
+            "@progress/kendo-layout-vue-wrapper": "*",
+            "@progress/kendo-listbox-vue-wrapper": "*",
+            "@progress/kendo-listview-vue-wrapper": "*",
+            "@progress/kendo-map-vue-wrapper": "*",
+            "@progress/kendo-mediaplayer-vue-wrapper": "*",
+            "@progress/kendo-pivotgrid-vue-wrapper": "*",
+            "@progress/kendo-popups-vue-wrapper": "*",
+            "@progress/kendo-scheduler-vue-wrapper": "*",
+            "@progress/kendo-spreadsheet-vue-wrapper": "*",
+            "@progress/kendo-treelist-vue-wrapper": "*",
+            "@progress/kendo-treemap-vue-wrapper": "*",
+            "@progress/kendo-treeview-vue-wrapper": "*",
+            "@progress/kendo-upload-vue-wrapper": "*",
+            "@progress/kendo-validator-vue-wrapper": "*",
+            "@progress/kendo-window-vue-wrapper": "*",
+            "@progress/kendo-ui": "*",
+            "jquery": "*",
+            "vue": "*",
+            "@progress/kendo-base-components-vue-wrapper": "*",
+            "@progress/kendo-theme-bootstrap": "^2.11.11",
+            "@progress/kendo-theme-default": "^2.50.0",
+            "@progress/kendo-theme-material": "^0.3.0"
+        };
     },
-    'react': {
-        "object-assign": "^4.0.1",
-        "prop-types": "^15.6.0",
-        "react": "^16.0.0",
-        "react-dom": "^16.0.0",
-        "redux": "3.7.2",
-        "react-redux": "5.0.6",
-        "react-router": "4.2.0",
-        "react-router-dom": "4.2.2",
-        "react-transition-group": "2.2.1",
-        "rxjs": "^5.5.10"
+    'react': function(production) {
+        return {
+            "@progress/kendo-data-query": production ? "latest" : "dev",
+            "@progress/kendo-date-math": production ? "latest" : "dev",
+            "@progress/kendo-drawing": production ? "latest" : "dev",
+            "@progress/kendo-file-saver": production ? "latest" : "dev",
+            "@progress/kendo-react-animation": production ? "latest" : "dev",
+            "@progress/kendo-react-buttons": production ? "latest" : "dev",
+            "@progress/kendo-react-charts": production ? "latest" : "dev",
+            "@progress/kendo-react-conversational-ui": production ? "latest" : "dev",
+            "@progress/kendo-react-dateinputs": production ? "latest" : "dev",
+            "@progress/kendo-react-dialogs": production ? "latest" : "dev",
+            "@progress/kendo-react-dropdowns": production ? "latest" : "dev",
+            "@progress/kendo-react-excel-export": production ? "latest" : "dev",
+            "@progress/kendo-react-grid": production ? "latest" : "dev",
+            "@progress/kendo-react-inputs": production ? "latest" : "dev",
+            "@progress/kendo-react-intl": production ? "latest" : "dev",
+            "@progress/kendo-react-layout": production ? "latest" : "dev",
+            "@progress/kendo-react-pdf": production ? "latest" : "dev",
+            "@progress/kendo-react-popup": production ? "latest" : "dev",
+            "@progress/kendo-react-ripple": production ? "latest" : "dev",
+            "@progress/kendo-theme-bootstrap": production ? "latest" : "dev",
+            "@progress/kendo-theme-default": production ? "latest" : "dev",
+            "@progress/kendo-theme-material": production ? "latest" : "dev",
+            "cldr-data": "^32.0.1",
+            "hammerjs": "~2.0.8",
+            "object-assign": "^4.0.1",
+            "prop-types": "^15.6.0",
+            "react": "^16.0.0",
+            "react-dom": "^16.0.0",
+            "redux": "3.7.2",
+            "react-redux": "5.0.6",
+            "react-router": "4.2.0",
+            "react-router-dom": "4.2.2",
+            "react-transition-group": "^2.2.1",
+            "rxjs": "^5.5.10"
+        };
     }
 };
 
@@ -833,8 +865,8 @@ var plunker = {
     },
     react: {
         plunkerFiles: [
-            'index.js',
-            'index.ts'
+            'app/main.js',
+            'app/main.ts'
         ].concat(basicPlunkerFiles)
     },
     vue: {
@@ -927,13 +959,12 @@ function getStackBlitzTemplate(listing) {
     return 'angular-cli';
 }
 
-function buildExampleEditorForm(exampleTemplate, imports) {
+function buildExampleEditorForm(exampleTemplate) {
     var form = new EditorForm('https://stackblitz.com/run/');
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
     var platform = window.platform;
     var production = window.env === 'production';
-    var exampleDependencies = getExampleDependencies(imports, production);
-    var dependencies = $.extend({}, exampleDependencies, stackBlitzDefaultDependencies[platform]);
+    var dependencies = stackBlitzDependencies[platform](production);
 
     form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
@@ -944,15 +975,15 @@ function buildExampleEditorForm(exampleTemplate, imports) {
     return form;
 }
 
-function getExampleDependencies(directives, production) {
-    return directives.filter(function(dir) {
-        return dir.module.indexOf('@progress') === 0 ||
-               dir.module.indexOf('@telerik') === 0;
-    }).reduce(function(result, dir) {
-        result[dir.module] = production ? 'latest' : 'dev';
-        return result;
-    }, {});
-}
+// function getExampleDependencies(directives, production) {
+//     return directives.filter(function(dir) {
+//         return dir.module.indexOf('@progress') === 0 ||
+//                dir.module.indexOf('@telerik') === 0;
+//     }).reduce(function(result, dir) {
+//         result[dir.module] = production ? 'latest' : 'dev';
+//         return result;
+//     }, {});
+// }
 
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
@@ -974,7 +1005,8 @@ function prepareSnippet(site, listing, templateFiles) {
             // replace jsx with js is required as long as stackblitz has no jsx file support
             // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
             filename = 'app/' + filename.replace(/\.jsx$/, ".js");
-            files[filename] = listingFiles[i].content.replace(/\.jsx\b/, "");
+            const content = listingFiles[i].content.replace(/\.jsx\b/g, ".js");
+            files[filename] = content;
         }
     }
 
@@ -1056,21 +1088,16 @@ window.openInPlunker = function(listing) {
     };
 
     var exampleTemplate = getStackBlitzTemplate(listing);
-    var form = buildExampleEditorForm(exampleTemplate, directives);
-
-    var filterFunction = function(file) {
-        var ext = file.split('.').pop();
-        var shouldUseEsFile = window.platform === 'vue' && language === 'js' && ext === 'es';
-        var shouldUseJsFile = window.platform === 'react' && language === 'jsx' && ext === 'js';
-        return (file.indexOf('html') >= 0 || ext === 'css' || ext === language || shouldUseEsFile || shouldUseJsFile);
-    };
+    var files = {};
 
     var extractCldrImports = function(content) {
         return content.replace(/['|"](cldr-data.*)['|"]/g, function(match, path) {
             if (cldrImports.indexOf('path') === -1) {
                 cldrImports.push(path);
             }
-            return match.replace(/cldr-data/, "./cldr-data");
+            // The cldr-data is in the root, and the files are inside app folder
+            // this leads to  '../' selector.
+            return match.replace(/cldr-data/, "../cldr-data");
         });
     };
 
@@ -1093,126 +1120,49 @@ window.openInPlunker = function(listing) {
         });
     };
 
-    if (listing.multiple && listing['multifile-listing']) {
-        $.each(listing['multifile-listing'], function(i, file) {
-            var content = file.content;
-            // skip main file
-            // StackBlitz requires main.ts to be on the root level, get from template
-            if (/main\./.test(file.name)) {
-                return;
-            }
-
-            if (exampleTemplate === 'angular-cli') {
-                var contentRoot = 'app/';
-                form.addField('project[files][' + contentRoot + file.name + ']', content);
-                contentRoot = '';
-                content = content.replace(/\.\/app\.module/g, "./app/app.module");
-            } else if (exampleTemplate === 'javascript') {
-                // stackblitz expects all files and imports to be js
-                file.name = file.name.replace(/\.jsx/, '.js');
-                content = content.replace(/\.jsx/g, '.js');
-
-                if (window.platform === 'react') {
-                    content = extractCldrImports(content, form);
+    if (exampleTemplate === 'angular-cli') {
+        if (listing.multiple && listing['multifile-listing']) {
+            // prepend 'app/' to filenames
+            $.each(listing['multifile-listing'], function(_, file) {
+                // main.ts to be on the root level, get from template
+                if (!/main\./.test(file.name)) {
+                    files['app/' + file.name] = file.content;
                 }
-
-                form.addField('project[files][' + file.name + ']', content);
-            }
-        });
-
-        if (exampleTemplate === 'angular-cli') {
-            // TODO: refactor, very dirty. adds styles.css, main.ts, polyfills.ts
-            $.when.apply($, plunkerRequests).then(function() {
-                var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
-                $.each(plunkerTemplates, function(index, templateContent) {
-                    var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
-                    var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-                    var add = function(file, template) {
-                        if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
-                            form.addField('project[files][' + file + ']', kendo.template(template)(context));
-                        }
-                    };
-                    add(plunkerFiles[index], templateContent);
-                });
             });
         }
     }
 
-    if (exampleTemplate === "angular-cli") {
-        form.addField('project[files][.angular-cli.json]', JSON.stringify({
-            "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-            "apps": [ {
-                "assets": [
-                    "assets",
-                    "favicon.ico"
-                ],
-                "index": "index.html",
-                "main": "main.ts",
-                "polyfills": "polyfills.ts",
-                "prefix": "app",
-                "styles": [
-                    "styles.css"
-                ]
-            } ]
-        }, null, 2));
-    }
-
     $.when.apply($, plunkerRequests).then(function() {
         var plunkerTemplates = Array.prototype.slice.call(arguments).map(function(promise) { return promise[0]; });
-        /**
-         * The react platfrom supports multiple languages: ts, js and jsx.
-         * Due to that reason we need to filterout the "main" files which are not for the current language.
-         * The order is [js, tsx, html].
-         */
-        if (window.platform === 'react') {
-            switch (language) {
-            case 'jsx':
-                plunkerTemplates.splice(1, 1);
-                break;
-            case 'ts':
-                plunkerTemplates.splice(0, 1);
-                break;
-            default:
-                plunkerTemplates = plunkerTemplates
-                    .filter(function(tmp, idx, arr) { return (idx === 1 || idx === arr.length - 1); });
-            }
-        }
-
-        if (exampleTemplate === 'typescript') {
-            //Only styles.css, index.html are needed
-            plunkerTemplates = plunkerTemplates.splice(4, 2);
-            form.addField('project[files][index.ts]', plunkerContext.common.appComponentContent);
-        }
-
-        if (exampleTemplate === 'javascript') {
-            var content = plunkerContext.common.appComponentContent.replace(/\.jsx/g, '.js');
-
-            if (window.platform === 'react') {
-                content = extractCldrImports(content, form);
-            }
-
-            form.addField('project[files][index.js]', content);
-        }
 
         $.each(plunkerTemplates, function(index, templateContent) {
-            var plunkerFiles = plunker[window.platform].plunkerFiles.filter(filterFunction);
-            var context = $.extend({}, plunkerContext.common, plunkerContext[window.platform]);
-            var add = function(file, template) {
-                var content;
-                /* don't apply kendo template to files with angular template inside or in a css file*/
-                if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
-                    // don't sanitize if kendo template is present inside
-                    var sanitizedContent = template.match(/#=.*#/g) ? template : template.replace(/#/g, "\\#");
-                    content = kendo.template(sanitizedContent)(context);
-                } else {
-                    content = template;
-                }
-                form.addField('project[files][' + file + ']', content);
-            };
+            var plunkerFiles = plunker[window.platform].plunkerFiles;
+            var context = $.extend({}, editorContext.common, editorContext[window.platform]);
+            var file = plunkerFiles[index];
+            var template = templateContent;
 
-            if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
-                add(plunkerFiles[index], templateContent);
+            if (exampleTemplate === 'angular-cli') {
+                if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
+                    files[file] = kendo.template(template)(context);
+                }
             }
+
+            if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
+                if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
+                    var content;
+                    /* don't apply kendo template to files with angular template inside or in a css file*/
+                    if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
+                        // don't sanitize if kendo template is present inside
+                        var sanitizedContent = template.match(/#(=|:).*#/g) ? template : template.replace(/#/g, "\\#");
+                        content = kendo.template(sanitizedContent)(context);
+                    } else {
+                        content = template;
+                    }
+
+                    files[file] = content;
+                }
+            }
+
         });
 
         return files;
@@ -1228,10 +1178,12 @@ window.openInPlunker = function(listing) {
 
         for (var filename in files) {
             if (files.hasOwnProperty(filename)) {
+                if (window.platform === 'react') {
+                    files[filename] = extractCldrImports(files[filename]);
+                }
                 form.addField('project[files][' + filename + ']', files[filename]);
             }
         }
-
         if (window.platform === 'react' && cldrImports.length > 0) {
             addCldrFilesToForm(form, function() { form.submit(); });
         } else {
