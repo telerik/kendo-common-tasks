@@ -1005,7 +1005,7 @@ function prepareSnippet(site, listing, templateFiles) {
             // replace jsx with js is required as long as stackblitz has no jsx file support
             // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
             filename = 'app/' + filename.replace(/\.jsx$/, ".js");
-            const content = listingFiles[i].content.replace(/\.jsx\b/g, ".js");
+            const content = listingFiles[i].content.replace(/\.jsx\b/g, "");
             files[filename] = content;
         }
     }
@@ -1058,6 +1058,43 @@ function prepareSnippet(site, listing, templateFiles) {
     return deferred.promise();
 }
 
+
+// This is required, since cldr-data has a post-scrip, which
+// unzip the large collection of locales. The unpkg does not
+// execute this post install scrip, and the locales are not available
+// we manually upload the imported locales in stackblitz.
+//https://github.com/stackblitz/core/issues/402https://github.com/stackblitz/core/issues/402https://github.com/stackblitz/core/issues/402 https://github.com/stackblitz/core/issues/402
+function extractCldrImports(currentImports, content) {
+    var imports = currentImports.slice();
+    var result = content.replace(/['|"](cldr-data.*)['|"]/g, function(match, path) {
+        if (imports.indexOf(path) === -1) {
+            imports.push(path);
+        }
+        // The cldr-data is in the root, and the files are inside the app folder
+        // this leads to  '../' selector.
+        return match.replace(/cldr-data/, "../cldr-data");
+    });
+
+    return {
+        imports: imports,
+        content: result
+    };
+}
+
+function addCldrFilesToForm(form, imports) {
+    var result = [];
+    $.each(imports, function(_i, path) {
+        result.push($.get({
+            url: window.npmUrl + '/' + path,
+            success: function(data) {
+                form.addField('project[files][' + path + ']', JSON.stringify(data));
+            }
+        }));
+    });
+
+    return $.when.apply(null, result);
+}
+
 // preprocesses code listing, creates form and posts to online editor
 window.openInPlunker = function(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
@@ -1089,36 +1126,6 @@ window.openInPlunker = function(listing) {
 
     var exampleTemplate = getStackBlitzTemplate(listing);
     var files = {};
-
-    var extractCldrImports = function(content) {
-        return content.replace(/['|"](cldr-data.*)['|"]/g, function(match, path) {
-            if (cldrImports.indexOf('path') === -1) {
-                cldrImports.push(path);
-            }
-            // The cldr-data is in the root, and the files are inside app folder
-            // this leads to  '../' selector.
-            return match.replace(/cldr-data/, "../cldr-data");
-        });
-    };
-
-    var addCldrFilesToForm = function(form, callback) {
-        var counter = 0;
-        $.each(cldrImports, function(i, path) {
-            $.get({
-                url: window.npmUrl + '/' + path,
-                success: function(data) {
-                    counter++;
-                    form.addField('project[files][' + path + ']', JSON.stringify(data));
-                    if (counter === cldrImports.length) {
-                        callback();
-                    }
-                }
-            })
-            .fail(function() {
-                callback();
-            });
-        });
-    };
 
     if (exampleTemplate === 'angular-cli') {
         if (listing.multiple && listing['multifile-listing']) {
@@ -1179,13 +1186,15 @@ window.openInPlunker = function(listing) {
         for (var filename in files) {
             if (files.hasOwnProperty(filename)) {
                 if (window.platform === 'react') {
-                    files[filename] = extractCldrImports(files[filename]);
+                    const cldr = extractCldrImports(cldrImports, files[filename]);
+                    cldrImports = cldr.imports;
+                    files[filename] = cldr.content;
                 }
                 form.addField('project[files][' + filename + ']', files[filename]);
             }
         }
         if (window.platform === 'react' && cldrImports.length > 0) {
-            addCldrFilesToForm(form, function() { form.submit(); });
+            addCldrFilesToForm(form, cldrImports).then(function() { form.submit(); });
         } else {
             form.submit();
         }
@@ -1573,7 +1582,9 @@ if (typeof module !== 'undefined') {
     module.exports = {
         getStackBlitzTemplate: getStackBlitzTemplate,
         prepareSnippet: prepareSnippet,
-        toModuleImport: toModuleImport
+        toModuleImport: toModuleImport,
+        extractCldrImports: extractCldrImports,
+        addCldrFilesToForm: addCldrFilesToForm
     };
 }
 

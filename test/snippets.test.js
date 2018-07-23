@@ -26,14 +26,14 @@ describe('inferring stackblitz templates', () => {
     // embed_file in DataQuery/Drawing examples
     test('marks js examples as javascript', () => {
         expect(templateName({
-            'multifile-listing': [ { name: 'main.js' } ]
+            'multifile-listing': [{ name: 'main.js' }]
         })).toBe('javascript');
     });
 
     // embed_file in Angular examples
     test('marks multi-file ts examples as angular-cli', () => {
         expect(templateName({
-            'multifile-listing': [ { name: 'main.ts' } ]
+            'multifile-listing': [{ name: 'main.ts' }]
         })).toBe('angular-cli');
     });
 });
@@ -48,7 +48,7 @@ describe('preparing snippets for editing', () => {
     });
 
     test('adds .angular-cli.json for angular snippets', async () => {
-        const files = await snippets.prepareSnippet({ platform: 'angular' }, { });
+        const files = await snippets.prepareSnippet({ platform: 'angular' }, {});
 
         expect(files['.angular-cli.json']).not.toBeFalsy();
     });
@@ -194,6 +194,48 @@ describe('preparing snippets for editing', () => {
 
             expect(files['app/main.jsx']).toBeFalsy();
             expect(files['app/main.js']).toBe('foo');
+        });
+    });
+
+    describe('react cldr-data', () => {
+        describe('extractCldrImports', () => {
+            test('replace path', () => {
+                const path = 'cldr-data/supplemental/likelySubtags.json';
+
+                const result = snippets.extractCldrImports([], 'import cldr from "' + path + '"');
+
+                expect(result.content).toContain('../' + path);
+            });
+            test('build imports', () => {
+                const path = 'cldr-data/supplemental/likelySubtags.json';
+
+                const result = snippets.extractCldrImports([], 'import cldr from "' + path + '"');
+
+                expect(result.imports.indexOf(path)).not.toEqual(-1);
+            });
+            test('ignore duplicates', () => {
+                const path = 'cldr-data/supplemental/likelySubtags.json';
+                const currentImports = [ path ];
+
+                const result = snippets.extractCldrImports(currentImports, 'import cldr from "' + path + '"');
+
+                expect(result.imports.length).toEqual(1);
+            });
+        });
+        describe('addCldrFilesToForm', () => {
+            test('add files to form', async () => {
+                const param = 'foo';
+                const imports = [ 'cldr-data/supplemental/likelySubtags.json' ];
+                const addFieldSpy = jasmine.createSpy('addFieldSpy');
+                const form = {
+                    addField: addFieldSpy
+                };
+
+                spyOn(global.$, 'get').and.callFake(((args)=>{ args.success(param); }));
+                await snippets.addCldrFilesToForm(form, imports);
+
+                expect(addFieldSpy).toHaveBeenCalledWith(`project[files][${imports[0]}]`, JSON.stringify(param));
+            });
         });
     });
 });
