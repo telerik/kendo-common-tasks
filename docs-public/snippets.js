@@ -990,6 +990,8 @@ function buildExampleEditorForm(exampleTemplate) {
 // this must be cached before the button is clicked,
 // otherwise the popup blocker blocks the new tab
 var plunkerRequests = [];
+var cldrFiles = [];
+
 if (plunker[window.platform]) {
     plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getBlueprintFiles);
 }
@@ -1064,42 +1066,47 @@ function prepareSnippet(site, listing, templateFiles) {
 // unzip the large collection of locales. The unpkg does not
 // execute this post install scrip, and the locales are not available
 // we manually upload the imported locales in stackblitz.
-//https://github.com/stackblitz/core/issues/402https://github.com/stackblitz/core/issues/402https://github.com/stackblitz/core/issues/402 https://github.com/stackblitz/core/issues/402
-function extractCldrImports(currentImports, content) {
-    if (!content) {
-        return {
-            imports: currentImports,
-            content: content
-        };
-    }
-    var imports = currentImports.slice();
-    var result = content.replace(/['|"](cldr-data.*)['|"]/g, function(match, path) {
-        if (imports.indexOf(path) === -1) {
-            imports.push(path);
-        }
+// https://github.com/stackblitz/core/issues/402
+function preLoadCldrFiles(currentFiles) {
+    const cldrImportMatcher = /['|"](cldr-data[^'|"]*)['|"]/g;
+    const files = currentFiles.slice();
+    var requests = [];
+    var result = [];
+
+    $.each(files, function(_i, file) {
+        file.content.replace(cldrImportMatcher, function(_match, path) {
+            const exist = result.find(function(imp) {
+                return imp.path === path;
+            });
+            if (exist) {
+                return;
+            }
+            requests.push($.get({
+                url: window.npmUrl + '/' + path,
+                success: function(data) {
+                    result.push({ path, content: data });
+                }
+            }));
+        });
+    });
+
+    return $.when.apply(null, requests).then(function() { return result; });
+}
+
+function extractCldrImports(content) {
+    if (typeof content.replace !== 'function') { return content; }
+
+    return content.replace(/['|"](cldr-data.*)['|"]/g, function(match) {
         // The cldr-data is in the root, and the files are inside the app folder
         // this leads to  '../' selector.
         return match.replace(/cldr-data/, "../cldr-data");
     });
-
-    return {
-        imports: imports,
-        content: result
-    };
 }
 
-function addCldrFilesToForm(form, imports) {
-    var result = [];
-    $.each(imports, function(_i, path) {
-        result.push($.get({
-            url: window.npmUrl + '/' + path,
-            success: function(data) {
-                form.addField('project[files][' + path + ']', JSON.stringify(data));
-            }
-        }));
+function addCldrFilesToForm(form, files) {
+    $.each(files, function(_i, file) {
+        form.addField('project[files][' + file.path + ']', JSON.stringify(file.content));
     });
-
-    return $.when.apply(null, result);
 }
 
 // preprocesses code listing, creates form and posts to online editor
@@ -1115,7 +1122,6 @@ window.openInPlunker = function(listing) {
 
     var directives = usedModules(getFullContent({ listing: listing, platform: window.platform }));
     var imports = moduleImports(code, directives);
-    var cldrImports = [];
 
     var editorContext = {
         common: {
@@ -1193,18 +1199,17 @@ window.openInPlunker = function(listing) {
         for (var filename in files) {
             if (files.hasOwnProperty(filename)) {
                 if (window.platform === 'react') {
-                    const cldr = extractCldrImports(cldrImports, files[filename]);
-                    cldrImports = cldr.imports;
-                    files[filename] = cldr.content;
+                    files[filename] = extractCldrImports(files[filename]);
                 }
                 form.addField('project[files][' + filename + ']', files[filename]);
             }
         }
-        if (window.platform === 'react' && cldrImports.length > 0) {
-            addCldrFilesToForm(form, cldrImports).then(function() { form.submit(); });
-        } else {
-            form.submit();
+
+        if (window.platform === 'react' && cldrFiles.length > 0) {
+            addCldrFilesToForm(form, cldrFiles);
         }
+
+        form.submit();
     })
     .fail(function() {
         console.log("Snippet posting failed, probably due to template fetching network errors.");
@@ -1551,6 +1556,11 @@ $(function() {
             root: root
         });
 
+        // Preload cldr-data if any, to avoid pop-up on async form submit.
+        if (window.platform === 'react') {
+            preLoadCldrFiles(files).then(function(data) { cldrFiles = data; });
+        }
+
         return content;
     }
 
@@ -1591,7 +1601,8 @@ if (typeof module !== 'undefined') {
         prepareSnippet: prepareSnippet,
         toModuleImport: toModuleImport,
         extractCldrImports: extractCldrImports,
-        addCldrFilesToForm: addCldrFilesToForm
+        addCldrFilesToForm: addCldrFilesToForm,
+        preloadCldrFiles: preLoadCldrFiles
     };
 }
 

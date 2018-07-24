@@ -212,42 +212,86 @@ describe('preparing snippets for editing', () => {
             test('replace path', () => {
                 const path = 'cldr-data/supplemental/likelySubtags.json';
 
-                const result = snippets.extractCldrImports([], 'import cldr from "' + path + '"');
+                const result = snippets.extractCldrImports('import cldr from "' + path + '"');
 
-                expect(result.content).toContain('../' + path);
+                expect(result).toContain('../' + path);
             });
-            test('build imports', () => {
-                const path = 'cldr-data/supplemental/likelySubtags.json';
-
-                const result = snippets.extractCldrImports([], 'import cldr from "' + path + '"');
-
-                expect(result.imports.indexOf(path)).not.toEqual(-1);
+            test('works with empty content', () => {
+                expect(() => { snippets.extractCldrImports(''); }).not.toThrow();
             });
-            test('ignore duplicates', () => {
-                const path = 'cldr-data/supplemental/likelySubtags.json';
-                const currentImports = [ path ];
-
-                const result = snippets.extractCldrImports(currentImports, 'import cldr from "' + path + '"');
-
-                expect(result.imports.length).toEqual(1);
-            });
-            test('work with empty content', () => {
-                expect( () => { snippets.extractCldrImports([], undefined); } ).not.toThrow();
+            test('works with empty array', () => {
+                expect(() => { snippets.extractCldrImports([]); }).not.toThrow();
             });
         });
         describe('addCldrFilesToForm', () => {
-            test('add files to form', async () => {
-                const param = 'foo';
-                const imports = [ 'cldr-data/supplemental/likelySubtags.json' ];
+            test('add files to form', () => {
+                const imports = [
+                    { path: 'cldr-data/supplemental/likelySubtags.json', content: 'foo' }
+                ];
                 const addFieldSpy = jasmine.createSpy('addFieldSpy');
                 const form = {
                     addField: addFieldSpy
                 };
 
-                spyOn(global.$, 'get').and.callFake(((args)=>{ args.success(param); }));
-                await snippets.addCldrFilesToForm(form, imports);
+                snippets.addCldrFilesToForm(form, imports);
 
-                expect(addFieldSpy).toHaveBeenCalledWith(`project[files][${imports[0]}]`, JSON.stringify(param));
+                expect(addFieldSpy).toHaveBeenCalledWith(
+                    `project[files][${imports[0].path}]`,
+                    JSON.stringify(imports[0].content)
+                );
+            });
+        });
+        describe('preLoadCldrFiles', () => {
+            test('pre-load a single file', async () => {
+                const param = 'foo';
+                const path = 'cldr-data/supplemental/likelySubtags.json';
+                const files = [
+                    { content: 'import cldr from "' + path + '"' }
+                ];
+                spyOn(global.$, 'get').and.callFake(((args) => { args.success(param); }));
+
+                const result = await snippets.preloadCldrFiles(files);
+
+                expect(result[0].content).toEqual(param);
+                expect(result[0].path).toEqual(path);
+            });
+            test('pre-load multiple files', async () => {
+                const param = 'foo';
+                const firstPath = 'cldr-data/supplemental/likelySubtags.json';
+                const secondPath = 'cldr-data/main/bg/currencies.json';
+
+                const files = [
+                    { content: 'import cldr from "' + firstPath + '"' },
+                    { content: 'import cldr from "' + secondPath + '"' }
+                ];
+
+                spyOn(global.$, 'get').and.callFake(((args) => { args.success(param); }));
+
+                const result = await snippets.preloadCldrFiles(files);
+
+                expect(result[0].content).toEqual(param);
+                expect(result[1].content).toEqual(param);
+
+                expect(result[0].path).toEqual(firstPath);
+                expect(result[1].path).toEqual(secondPath);
+            });
+            test('ignores duplicates', async () => {
+                const param = 'foo';
+                const path = 'cldr-data/supplemental/likelySubtags.json';
+
+                const files = [
+                    { content: 'import cldr from "' + path + '"' },
+                    { content: 'import cldr from "' + path + '"' }
+                ];
+
+                spyOn(global.$, 'get').and.callFake(((args) => { args.success(param); }));
+
+                const result = await snippets.preloadCldrFiles(files);
+
+                expect(result.length).toEqual(1);
+            });
+            test('works with empty array', async () => {
+                expect(() => { snippets.preloadCldrFiles([]); }).not.toThrow();
             });
         });
     });
