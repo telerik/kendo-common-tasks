@@ -865,8 +865,7 @@ var plunker = {
     },
     react: {
         plunkerFiles: [
-            'app/main.js',
-            'app/main.ts'
+            'app/main.js'
         ].concat(basicPlunkerFiles)
     },
     vue: {
@@ -1047,7 +1046,7 @@ function prepareSnippet(site, listing, templateFiles) {
     } else if (exampleTemplate === "create-react-app") {
         files['index.js'] = 'import "./app/main";';
 
-        if (!listingFiles) {
+        if (!listingFiles && files['app/main.jsx']) {
             files['app/main.js'] = files['app/main.jsx'];
             delete files['app/main.jsx'];
         }
@@ -1065,6 +1064,12 @@ function prepareSnippet(site, listing, templateFiles) {
 // we manually upload the imported locales in stackblitz.
 //https://github.com/stackblitz/core/issues/402https://github.com/stackblitz/core/issues/402https://github.com/stackblitz/core/issues/402 https://github.com/stackblitz/core/issues/402
 function extractCldrImports(currentImports, content) {
+    if (!content) {
+        return {
+            imports: currentImports,
+            content: content
+        };
+    }
     var imports = currentImports.slice();
     var result = content.replace(/['|"](cldr-data.*)['|"]/g, function(match, path) {
         if (imports.indexOf(path) === -1) {

@@ -195,6 +195,16 @@ describe('preparing snippets for editing', () => {
             expect(files['app/main.jsx']).toBeFalsy();
             expect(files['app/main.js']).toBe('foo');
         });
+
+        test('does not replace file in in-line preview snippet', async () => {
+            const files = await snippets.prepareSnippet(
+                { platform: 'react' },
+                { jsx: 'foo' },
+                { 'app/main.js': 'foo' }
+            );
+
+            expect(files['app/main.js']).toBe('foo');
+        });
     });
 
     describe('react cldr-data', () => {
@@ -220,6 +230,9 @@ describe('preparing snippets for editing', () => {
                 const result = snippets.extractCldrImports(currentImports, 'import cldr from "' + path + '"');
 
                 expect(result.imports.length).toEqual(1);
+            });
+            test('work with empty content', () => {
+                expect( () => { snippets.extractCldrImports([], undefined); } ).not.toThrow();
             });
         });
         describe('addCldrFilesToForm', () => {
