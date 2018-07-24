@@ -170,6 +170,7 @@ var stackBlitzDependencies = {
         '@progress/kendo-charts': '*',
         '@progress/kendo-angular-buttons': '*',
         '@progress/kendo-angular-charts': '*',
+        "@progress/kendo-angular-conversational-ui": "*",
         '@progress/kendo-angular-dateinputs': '*',
         '@progress/kendo-angular-dialog': '*',
         '@progress/kendo-angular-dropdowns': '*',
