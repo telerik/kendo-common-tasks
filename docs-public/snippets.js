@@ -148,7 +148,7 @@ var plunkerTemplate = kendo.template(
 
 var stackBlitzDependencies = {
     'angular': function(production) {
-        const channel = production ? "latest" : "dev";
+        var channel = production ? "latest" : "dev";
         return {
             'core-js': '2.5.3',
             'rxjs': '5.5.6',
@@ -231,7 +231,7 @@ var stackBlitzDependencies = {
         };
     },
     'vue': function(production) {
-        const channel = production ? "latest" : "dev";
+        var channel = production ? "latest" : "dev";
         return {
             "@progress/kendo-barcodes-vue-wrapper": channel,
             "@progress/kendo-buttons-vue-wrapper": channel,
@@ -273,7 +273,7 @@ var stackBlitzDependencies = {
         };
     },
     'react': function(production) {
-        const channel = production ? "latest" : "dev";
+        var channel = production ? "latest" : "dev";
         return {
             "@progress/kendo-data-query": channel,
             "@progress/kendo-date-math": channel,
@@ -867,7 +867,7 @@ var plunker = {
     },
     react: {
         plunkerFiles: [
-            'app/main.js'
+            'app/main.jsx'
         ].concat(basicPlunkerFiles)
     },
     vue: {
@@ -1007,7 +1007,7 @@ function prepareSnippet(site, listing, templateFiles) {
             // replace jsx with js is required as long as stackblitz has no jsx file support
             // see https://github.com/stackblitz/core/issues/370#issuecomment-379365823
             filename = 'app/' + filename.replace(/\.jsx$/, ".js");
-            const content = listingFiles[i].content.replace(/\.jsx\b/g, "");
+            var content = listingFiles[i].content.replace(/\.jsx\b/g, "");
             files[filename] = content;
         }
     }
@@ -1049,7 +1049,7 @@ function prepareSnippet(site, listing, templateFiles) {
     } else if (exampleTemplate === "create-react-app") {
         files['index.js'] = 'import "./app/main";';
 
-        if (!listingFiles && files['app/main.jsx']) {
+        if (!listingFiles) {
             files['app/main.js'] = files['app/main.jsx'];
             delete files['app/main.jsx'];
         }
