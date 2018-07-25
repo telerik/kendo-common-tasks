@@ -342,9 +342,9 @@ window.ExampleRunner = (function() {
                 'botframework-directlinejs': 'https://unpkg.com/botframework-directlinejs@0.9.15/built/directLine.js',
 
                 // explicitly add subpackages
-                '@angular/common/http': 'https://unpkg.com/@angular/common' + ngVer + '/bundles/common-http.umd.js',
-                '@angular/platform-browser/animations': 'https://unpkg.com/@angular/platform-browser' + ngVer + '/bundles/platform-browser-animations.umd.js',
-                '@angular/animations/browser': 'https://unpkg.com/@angular/animations' + ngVer + '/bundles/animations-browser.umd.js'
+                '@angular/common/http': 'https://unpkg.com/@angular/common' + ngVer + 'bundles/common-http.umd.js',
+                '@angular/platform-browser/animations': 'https://unpkg.com/@angular/platform-browser' + ngVer + 'bundles/platform-browser-animations.umd.js',
+                '@angular/animations/browser': 'https://unpkg.com/@angular/animations' + ngVer + 'bundles/animations-browser.umd.js'
             };
 
             var packages = {
@@ -390,7 +390,7 @@ window.ExampleRunner = (function() {
 
             // Add package entries for angular packages
             ngPackageNames.concat([ 'forms', 'animations' ]).forEach(function(pkgName) {
-                packages['@angular/' + pkgName] = { main: '/bundles/' + pkgName + '.umd.js' };
+                packages['@angular/' + pkgName] = { main: 'bundles/' + pkgName + '.umd.js' };
             });
 
             modules.forEach(function(directive) {
