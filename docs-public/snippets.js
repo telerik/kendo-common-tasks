@@ -294,10 +294,9 @@ var stackBlitzDependencies = {
             "@progress/kendo-react-pdf": channel,
             "@progress/kendo-react-popup": channel,
             "@progress/kendo-react-ripple": channel,
-            "@progress/kendo-theme-bootstrap": channel,
-            "@progress/kendo-theme-default": channel,
-            "@progress/kendo-theme-material": channel,
-            "cldr-data": "^32.0.1",
+            "cldr-core": "^33.0.0",
+            "cldr-dates-full": "^33.0.0",
+            "cldr-numbers-full": "^33.0.0",
             "hammerjs": "~2.0.8",
             "object-assign": "^4.0.1",
             "prop-types": "^15.6.0",
@@ -991,7 +990,6 @@ function buildExampleEditorForm(exampleTemplate) {
 // this must be cached before the button is clicked,
 // otherwise the popup blocker blocks the new tab
 var plunkerRequests = [];
-var cldrFiles = [];
 
 if (plunker[window.platform]) {
     plunkerRequests = $.map(plunker[window.platform].plunkerFiles, getBlueprintFiles);
@@ -1060,54 +1058,6 @@ function prepareSnippet(site, listing, templateFiles) {
     var deferred = $.Deferred();
     deferred.resolve(files);
     return deferred.promise();
-}
-
-
-// This is required, since cldr-data has a post-scrip, which
-// unzip the large collection of locales. The unpkg does not
-// execute this post install scrip, and the locales are not available
-// we manually upload the imported locales in stackblitz.
-// https://github.com/stackblitz/core/issues/402
-function preLoadCldrFiles(currentFiles) {
-    const cldrImportMatcher = /['|"](cldr-data[^'|"]*)['|"]/g;
-    const files = currentFiles.slice();
-    var requests = [];
-    var result = [];
-
-    $.each(files, function(_i, file) {
-        file.content.replace(cldrImportMatcher, function(_match, path) {
-            const exist = result.find(function(imp) {
-                return imp.path === path;
-            });
-            if (exist) {
-                return;
-            }
-            requests.push($.get({
-                url: window.npmUrl + '/' + path,
-                success: function(data) {
-                    result.push({ path, content: data });
-                }
-            }));
-        });
-    });
-
-    return $.when.apply(null, requests).then(function() { return result; });
-}
-
-function extractCldrImports(content) {
-    if (typeof content.replace !== 'function') { return content; }
-
-    return content.replace(/['|"](cldr-data.*)['|"]/g, function(match) {
-        // The cldr-data is in the root, and the files are inside the app folder
-        // this leads to  '../' selector.
-        return match.replace(/cldr-data/, "../cldr-data");
-    });
-}
-
-function addCldrFilesToForm(form, files) {
-    $.each(files, function(_i, file) {
-        form.addField('project[files][' + file.path + ']', JSON.stringify(file.content));
-    });
 }
 
 // preprocesses code listing, creates form and posts to online editor
@@ -1199,15 +1149,8 @@ window.openInPlunker = function(listing) {
 
         for (var filename in files) {
             if (files.hasOwnProperty(filename)) {
-                if (window.platform === 'react') {
-                    files[filename] = extractCldrImports(files[filename]);
-                }
                 form.addField('project[files][' + filename + ']', files[filename]);
             }
-        }
-
-        if (window.platform === 'react' && cldrFiles.length > 0) {
-            addCldrFilesToForm(form, cldrFiles);
         }
 
         form.submit();
@@ -1557,11 +1500,6 @@ $(function() {
             root: root
         });
 
-        // Preload cldr-data if any, to avoid pop-up on async form submit.
-        if (window.platform === 'react') {
-            preLoadCldrFiles(files).then(function(data) { cldrFiles = data; });
-        }
-
         return content;
     }
 
@@ -1600,10 +1538,7 @@ if (typeof module !== 'undefined') {
     module.exports = {
         getStackBlitzTemplate: getStackBlitzTemplate,
         prepareSnippet: prepareSnippet,
-        toModuleImport: toModuleImport,
-        extractCldrImports: extractCldrImports,
-        addCldrFilesToForm: addCldrFilesToForm,
-        preloadCldrFiles: preLoadCldrFiles
+        toModuleImport: toModuleImport
     };
 }
 
