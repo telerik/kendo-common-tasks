@@ -563,7 +563,7 @@ window.ExampleRunner = (function() {
 
             // Add package entries for angular packages
             ngPackageNames.concat([ 'forms', 'animations' ]).forEach(function(pkgName) {
-                packages['@angular/' + pkgName] = { main: '/bundles/' + pkgName + '.umd.js' };
+                packages['@angular/' + pkgName] = { main: 'bundles/' + pkgName + '.umd.js' };
             });
 
             modules.forEach(function(directive) {
