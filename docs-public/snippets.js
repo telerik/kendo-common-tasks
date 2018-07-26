@@ -904,8 +904,7 @@ var plunker = {
 };
 
 function getBlueprintFiles(file) {
-    var bluePrintPath = window.blueprint === 'stackblitz' ? window.stackblitzBluePrintPath : window.plunkerBluePrintPath;
-    var path = [ bluePrintPath, window.platform, '/', file ];
+    var path = [ 'editor/', window.platform, '/', file ];
     return $.ajax(path.join(''), { dataType: 'text' });
 }
 
