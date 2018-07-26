@@ -94,7 +94,7 @@ var plunkerTemplate = kendo.template(
     '<!doctype html>\
 <html>\
 <head>\
-    # if (data.platform === \'builder\') { # <base href="#= window.plunkerBluePrintPath + window.platform + "/" #" /> #}# \
+    # if (data.platform === \'builder\') { # <base href="#= window.editorTemplatesPath + window.platform + "/" #" /> #}# \
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
     <link rel="stylesheet" href="#: data.npmUrl #/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
     <style>\
