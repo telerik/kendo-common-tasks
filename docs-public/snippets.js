@@ -904,7 +904,7 @@ var plunker = {
 };
 
 function getBlueprintFiles(file) {
-    var path = [ 'editor/', window.platform, '/', file ];
+    var path = [ window.editorTemplatesPath, window.platform, '/', file ];
     return $.ajax(path.join(''), { dataType: 'text' });
 }
 
