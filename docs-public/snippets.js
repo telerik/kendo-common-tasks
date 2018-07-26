@@ -147,8 +147,7 @@ var plunkerTemplate = kendo.template(
 ', { useWithBlock: false });
 
 var stackBlitzDependencies = {
-    'angular': function(production) {
-        var channel = production ? "latest" : "dev";
+    'angular': function(channel) {
         return {
             'core-js': '2.5.3',
             'rxjs': '5.5.6',
@@ -230,8 +229,7 @@ var stackBlitzDependencies = {
             "zone.js": "^0.8.26"
         };
     },
-    'vue': function(production) {
-        var channel = production ? "latest" : "dev";
+    'vue': function(channel) {
         return {
             "@progress/kendo-barcodes-vue-wrapper": channel,
             "@progress/kendo-buttons-vue-wrapper": channel,
@@ -272,8 +270,7 @@ var stackBlitzDependencies = {
             "@progress/kendo-theme-material": "^0.3.0"
         };
     },
-    'react': function(production) {
-        var channel = production ? "latest" : "dev";
+    'react': function(channel) {
         return {
             "@progress/kendo-data-query": channel,
             "@progress/kendo-date-math": channel,
@@ -964,8 +961,8 @@ function buildExampleEditorForm(exampleTemplate) {
     var form = new EditorForm('https://stackblitz.com/run/');
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
     var platform = window.platform;
-    var production = window.env === 'production';
-    var dependencies = stackBlitzDependencies[platform](production);
+    var channel = window.env === 'production' ? "latest" : "dev";
+    var dependencies = stackBlitzDependencies[platform](channel);
 
     form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
