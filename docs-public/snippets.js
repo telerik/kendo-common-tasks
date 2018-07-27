@@ -340,8 +340,8 @@ var stackBlitzDependencies = {
             "redux": "3.7.2",
             "react-redux": "5.0.6",
             "react-router": "4.2.0",
-            "react-router-dom": "4.2.2",
-        }
+            "react-router-dom": "4.2.2"
+        };
     }
 };
 
