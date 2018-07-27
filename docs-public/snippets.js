@@ -79,7 +79,7 @@ var htmlTemplate = kendo.template(
 <html>\n\
 <head>\n\
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\n\
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\n\
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@progress/kendo-theme-#: data.theme || "default" #@#: data.npmChannel #/dist/all.css" crossorigin="anonymous" />\n\
     <style>\n\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\n\
     </style>\n\
@@ -96,7 +96,7 @@ var plunkerTemplate = kendo.template(
 <head>\
     # if (data.platform === \'builder\') { # <base href="#= window.editorTemplatesPath + window.platform + "/" #" /> #}# \
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">\
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@progress/kendo-theme-#: data.theme || "default" #/dist/all.css" crossorigin="anonymous" />\
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@progress/kendo-theme-#: data.theme || "default" #@#: data.npmChannel #/dist/all.css" crossorigin="anonymous" />\
     <style>\
         body { font-family: "RobotoRegular",Helvetica,Arial,sans-serif; font-size: 14px; margin: 0; }\
         my-app, \\#vueapp { display: block; width: 100%; overflow: hidden; min-height: 80px; box-sizing: border-box; padding: 30px; }\
@@ -677,6 +677,7 @@ function plunkerPage(opts) {
     var bootstrap = opts.bootstrap;
     var options = $.extend({
         npmUrl: window.npmUrl,
+        npmChannel: window.env === 'production' ? "latest" : "dev",
         cdnResources: resourceLinks(CDNResources[window.platform]),
         platform: window.platform,
         exampleRunner: window.runnerScript,
@@ -1065,7 +1066,12 @@ function prepareSnippet(site, listing, templateFiles) {
             } ]
         }, null, 2);
     } else if (exampleTemplate === 'javascript') {
-        files['index.html'] = files['index.html'] || htmlTemplate($.extend({ html: '' }, site, listing));
+        if (!files['index.html']) {
+            files['index.html'] = htmlTemplate($.extend({
+                html: '',
+                npmChannel: window.env === 'production' ? "latest" : "dev"
+            }, site, listing));
+        }
 
         if (listing.html && !listing.js) {
             // HTML-only snippet
@@ -1111,6 +1117,7 @@ window.openInPlunker = function(listing) {
             appComponentContent: code || '',
             appImports: imports.join('\n'),
             npmUrl: 'https://unpkg.com',
+            npmChannel: window.env === 'production' ? "latest" : "dev",
             htmlContent: html,
             theme: theme,
             themeAccent: themeColors[theme]
@@ -1520,6 +1527,7 @@ $(function() {
         var theme = element.closest("[data-theme]").attr("data-theme") || 'default';
         var content = plunkerTemplate({
             npmUrl: window.npmUrl,
+            npmChannel: window.env === 'production' ? "latest" : "dev",
             platform: window.platform,
             cdnResources: resourceLinks(CDNResources[window.platform]),
             exampleRunner: window.runnerScript,
