@@ -262,12 +262,7 @@ var stackBlitzDependencies = {
             "@progress/kendo-validator-vue-wrapper": channel,
             "@progress/kendo-window-vue-wrapper": channel,
             "@progress/kendo-ui": "*",
-            "jquery": "*",
-            "vue": "*",
-            "@progress/kendo-base-components-vue-wrapper": channel,
-            "@progress/kendo-theme-bootstrap": "^2.11.11",
-            "@progress/kendo-theme-default": "^2.50.0",
-            "@progress/kendo-theme-material": "^0.3.0"
+            "vue": "*"
         };
     },
     'react': function(channel) {
