@@ -995,9 +995,9 @@ function getStackBlitzTemplate(listing) {
 function buildExampleEditorForm(exampleTemplate) {
     var form = new EditorForm('https://stackblitz.com/run/');
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
-    var platform = window.wrappers ? 'react-wrappers' : window.platform;
+    var platform = window.platform;
     var channel = window.env === 'production' ? "latest" : "dev";
-    var dependencies = stackBlitzDependencies[platform](channel);
+    var dependencies = stackBlitzDependencies[window.wrappers ? 'react-wrappers' : platform](channel);
 
     form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
