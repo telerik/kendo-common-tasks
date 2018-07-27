@@ -305,6 +305,43 @@ var stackBlitzDependencies = {
             "react-transition-group": "^2.2.1",
             "rxjs": "^5.5.10"
         };
+    },
+    'react-wrappers': function(channel) {
+        return {
+            "@progress/kendo-ui": channel,
+            "@progress/kendo-data-query": channel,
+            "@progress/kendo-date-math": channel,
+            "@progress/kendo-drawing": channel,
+            "@progress/kendo-file-saver": channel,
+            "@progress/kendo-barcodes-react-wrapper": channel,
+            "@progress/kendo-buttons-react-wrapper": channel,
+            "@progress/kendo-dateinputs-react-wrapper": channel,
+            "@progress/kendo-dropdowns-react-wrapper": channel,
+            "@progress/kendo-editor-react-wrapper": channel,
+            "@progress/kendo-gantt-react-wrapper": channel,
+            "@progress/kendo-gauges-react-wrapper": channel,
+            "@progress/kendo-grid-react-wrapper": channel,
+            "@progress/kendo-inputs-react-wrapper": channel,
+            "@progress/kendo-layout-react-wrapper": channel,
+            "@progress/kendo-pivotgrid-react-wrapper": channel,
+            "@progress/kendo-popups-react-wrapper": channel,
+            "@progress/kendo-scheduler-react-wrapper": channel,
+            "@progress/kendo-spreadsheet-react-wrapper": channel,
+            "@progress/kendo-treelist-react-wrapper": channel,
+            "@progress/kendo-treeview-react-wrapper": channel,
+            "@progress/kendo-upload-react-wrapper": channel,
+            "@progress/kendo-validator-react-wrapper": channel,
+            "jquery": "*",
+            "hammerjs": "~2.0.8",
+            "object-assign": "^4.0.1",
+            "prop-types": "^15.6.0",
+            "react": "^16.0.0",
+            "react-dom": "^16.0.0",
+            "redux": "3.7.2",
+            "react-redux": "5.0.6",
+            "react-router": "4.2.0",
+            "react-router-dom": "4.2.2",
+        }
     }
 };
 
@@ -958,7 +995,7 @@ function getStackBlitzTemplate(listing) {
 function buildExampleEditorForm(exampleTemplate) {
     var form = new EditorForm('https://stackblitz.com/run/');
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
-    var platform = window.platform;
+    var platform = window.wrappers ? 'react-wrappers' : window.platform;
     var channel = window.env === 'production' ? "latest" : "dev";
     var dependencies = stackBlitzDependencies[platform](channel);
 
