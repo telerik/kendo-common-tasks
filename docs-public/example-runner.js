@@ -499,7 +499,7 @@ window.ExampleRunner = (function() {
 
             // map tells the System loader where to look for things
             var map = {
-                'builder': '',
+                'app': '',
                 'systemjs-json-plugin': 'https://unpkg.com/systemjs-plugin-json@0.3.0',
                 '@telerik': npmUrl + '/@telerik',
                 '@progress': npmUrl + '/@progress',
@@ -630,8 +630,8 @@ window.ExampleRunner = (function() {
             this.files[path + filename] = content;
         },
         /* eslint no-console: 0 */
-        start: function(system, importRoot) {
-            system.import(importRoot).catch(console.error.bind(console));
+        start: function(system) {
+            system.import('app').catch(console.error.bind(console));
         }
     };
 

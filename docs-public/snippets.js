@@ -121,9 +121,9 @@ var plunkerTemplate = kendo.template(
         var runner = new ExampleRunner("#= data.platform #");\
         runner.configure(System, { npmUrl: "#: data.npmUrl #", modules: ' + JSON.stringify(moduleDirectives) + ', language: "#: data.language #", trackjs: #= data.track # });\
         # for (var i = 0; i < data.files.length; i++) { #\
-        runner.register("#= data.root #", "#= data.files[i].name #", "#= data.files[i].content #");\
+        runner.register("app/", "#= data.files[i].name #", "#= data.files[i].content #");\
         # } #\
-        runner.start(System, "#= data.importRoot || \'app\' #");\
+        runner.start(System);\
     </script>\
 </head>\
 <body>\
@@ -681,8 +681,7 @@ function plunkerPage(opts) {
         language: opts.language,
         themeAccent: themeColors.default,
         html: '',
-        track: false,
-        root: 'app/'
+        track: false
     }, opts);
 
     if (!options.code) {
@@ -695,7 +694,8 @@ function plunkerPage(opts) {
         track: options.track
     }));
 
-    var demoFileName = window.platform === 'builder' ? 'app/grid-demo.component.ts' : 'main.' + opts.language;
+    // TODO: the hard-coded path can be a property of the embed_file tag
+    var demoFileName = window.platform === 'builder' ? 'grid-demo.component.ts' : 'main.' + opts.language;
 
     options.files = [ { name: demoFileName, content: codeContent } ];
 
@@ -1222,9 +1222,7 @@ $(function() {
                     language: listing.runtimeLanguage,
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track,
-                    root: '/',
-                    importRoot: 'builder'
+                    track: options.track
                 });
             }
         },
@@ -1240,8 +1238,7 @@ $(function() {
                     language: listing.runtimeLanguage,
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track,
-                    root: 'app/'
+                    track: options.track
                 });
             }
         },
@@ -1257,8 +1254,7 @@ $(function() {
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track,
-                    root: 'app/'
+                    track: options.track
                 });
             }
         },
@@ -1274,8 +1270,7 @@ $(function() {
                     html: listing['html'],
                     theme: theme,
                     themeAccent: themeColors[options.theme],
-                    track: options.track,
-                    root: 'app/'
+                    track: options.track
                 });
             }
         }
@@ -1516,7 +1511,6 @@ $(function() {
                 content: codeToString(removeJsTrackingMarks(code))
             };
         });
-        var root = window.platform === 'builder' ? '/' : 'app/';
         /* If this is multifile runnable example there must be a main file, locate it and infer the runtime language from it */
         var mainFile = files.filter(function(file) { return file.name.indexOf('main.') >= 0; }).pop();
         var runtimeLanguage = mainFile.name.split('.').pop();
@@ -1532,8 +1526,7 @@ $(function() {
             language: runtimeLanguage,
             themeAccent: themeColors[theme],
             files: files,
-            track: window.trackjs,
-            root: root
+            track: window.trackjs
         });
 
         return content;
