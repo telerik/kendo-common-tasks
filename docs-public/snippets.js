@@ -792,6 +792,8 @@ function CodeListing(elements) {
         var hideTabs = element.className.match(/hide-tabs/);
         var fileName = $(element).parent().attr("data-file");
 
+        that.extendBlueprint = that.extendBlueprint || $(element).parent().attr("data-extend-blueprint") === 'true';
+
         language = language ? language[2] : "generic";
 
         if (/-preview/.test(language)) {
@@ -1154,7 +1156,7 @@ window.openInPlunker = function(listing) {
             }
 
             if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
-                if (!listing.multiple || (listing.multiple && basicPlunkerFiles.indexOf(plunkerFiles[index]) >= 0)) {
+                if (listing.extendBlueprint || !listing.multiple || file === 'index.html') {
                     var content;
                     /* don't apply kendo template to files with angular template inside or in a css file*/
                     if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
