@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint ./*.js ./docs-public/*[!min].js",
     "semantic-release": "semantic-release pre && semantic-prerelease publish && semantic-release post",
-    "test": "npm run lint"
+    "test": "npm run lint && npx jest"
   },
   "keywords": [
     "Kendo UI"
@@ -81,7 +81,8 @@
   "jest": {
     "setupFiles": [
       "./test/jest-setup.js"
-    ]
+    ],
+    "testURL": "http://localhost/"
   },
   "engines": {
     "node": ">=4.2.0",
@@ -95,7 +96,7 @@
     "cz-conventional-changelog": "^1.1.5",
     "ghooks": "^1.0.3",
     "gulp-debug": "^2.1.2",
-    "jest": "^23.1.0",
+    "jest": "^23.4.2",
     "jquery": "^3.3.1",
     "semantic-release": "^4.3.5",
     "validate-commit-msg": "^1.1.1"
