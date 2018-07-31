@@ -991,12 +991,9 @@ function getStackBlitzTemplate(listing) {
     return 'angular-cli';
 }
 
-function buildExampleEditorForm(exampleTemplate) {
+function buildExampleEditorForm(exampleTemplate, platform, dependencies) {
     var form = new EditorForm('https://stackblitz.com/run/');
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
-    var platform = window.platform;
-    var channel = window.env === 'production' ? "latest" : "dev";
-    var dependencies = stackBlitzDependencies[window.wrappers ? 'react-wrappers' : platform](channel);
 
     form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
@@ -1007,15 +1004,40 @@ function buildExampleEditorForm(exampleTemplate) {
     return form;
 }
 
-// function getExampleDependencies(directives, production) {
-//     return directives.filter(function(dir) {
-//         return dir.module.indexOf('@progress') === 0 ||
-//                dir.module.indexOf('@telerik') === 0;
-//     }).reduce(function(result, dir) {
-//         result[dir.module] = production ? 'latest' : 'dev';
-//         return result;
-//     }, {});
-// }
+function buildExampleDependencies(platform, imports) {
+    var channel = window.env === 'production' ? "latest" : "dev";
+    var platformDependencies = stackBlitzDependencies[window.wrappers ? 'react-wrappers' : platform](channel);
+
+    return $.extend({}, imports, platformDependencies);
+}
+
+function getPackageName(importStatement) {
+    var sections = importStatement.split('/');
+
+    return sections[0].indexOf('@') === 0
+        ? sections[0] + '/' + sections[1]
+        : sections[0];
+}
+
+function getExampleImports(files) {
+    // Matches all package import statements
+    // which are not from the @progress/@telerik scope.
+    // The ones starting with . or / are ignored,
+    // since we assume they are local module imports.
+    var dependencyMatcher = /import.*from\s*['|"]([^.|^\/].*)['|"]/g;
+
+    return Object.keys(files).reduce(function(imports, fileName) {
+        var found;
+        while ((found = dependencyMatcher.exec(files[fileName]))) {
+            var importedPackage = getPackageName(found[1]);
+
+            if (!/@progress|@telerik/.test(importedPackage)) {
+                imports[importedPackage] = "*";
+            }
+        }
+        return imports;
+    }, {});
+}
 
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
@@ -1193,7 +1215,10 @@ function openInEditor(listing) {
         }, listing, files);
     })
     .then(function(files) {
-        var form = buildExampleEditorForm(exampleTemplate);
+        var platform = window.platform;
+        var imports = getExampleImports(files);
+        var dependencies = buildExampleDependencies(platform, imports);
+        var form = buildExampleEditorForm(exampleTemplate, platform, dependencies);
 
         for (var filename in files) {
             if (files.hasOwnProperty(filename)) {
@@ -1576,7 +1601,11 @@ if (typeof module !== 'undefined') {
     module.exports = {
         getStackBlitzTemplate: getStackBlitzTemplate,
         prepareSnippet: prepareSnippet,
-        toModuleImport: toModuleImport
+        toModuleImport: toModuleImport,
+        buildExampleDependencies: buildExampleDependencies,
+        getExampleImports: getExampleImports,
+        stackBlitzDependencies: stackBlitzDependencies,
+        getPackageName: getPackageName
     };
 }
 

@@ -26,14 +26,18 @@ describe('inferring stackblitz templates', () => {
     // embed_file in DataQuery/Drawing examples
     test('marks js examples as javascript', () => {
         expect(templateName({
-            'multifile-listing': [{ name: 'main.js' }]
+            'multifile-listing': [
+                { name: 'main.js' }
+            ]
         })).toBe('javascript');
     });
 
     // embed_file in Angular examples
     test('marks multi-file ts examples as angular-cli', () => {
         expect(templateName({
-            'multifile-listing': [{ name: 'main.ts' }]
+            'multifile-listing': [
+                { name: 'main.ts' }
+            ]
         })).toBe('angular-cli');
     });
 });
@@ -70,7 +74,7 @@ describe('preparing snippets for editing', () => {
 
         expect(files['index.html']).toBeTruthy();
         expect(files['index.html']).toContain('foobar');
-        expect(files['index.html']).toContain('unpkg.com/@progress/kendo-theme-default');
+        expect(files['index.html']).toContain('cdn.jsdelivr.net/npm/@progress/kendo-theme-default');
 
         expect(files['index.js']).toBe(''); // because stackblitz
     });
@@ -195,15 +199,175 @@ describe('preparing snippets for editing', () => {
             expect(files['app/main.jsx']).toBeFalsy();
             expect(files['app/main.js']).toBe('foo');
         });
+    });
+});
 
-        test('does not replace file in in-line preview snippet', async () => {
-            const files = await snippets.prepareSnippet(
-                { platform: 'react' },
-                { jsx: 'foo' },
-                { 'app/main.js': 'foo' }
-            );
+describe('stackblitz dependencies', () => {
+    describe('getExampleImports', () => {
+        const defaultChannel = 'dev';
+        const productionChannelVersion = 'latest';
+        const devChannelVersion = 'dev';
+        const anyChannelVersion = '*';
 
-            expect(files['app/main.js']).toBe('foo');
+        test('extract default import from single file', () => {
+            const packageName = 'foo';
+            const importStatement = `import foo from "${packageName}"`;
+            const files = {
+                'app/main.js': importStatement
+            };
+
+            const imports = snippets.getExampleImports(files, defaultChannel);
+
+            expect(imports[packageName]).not.toBe(undefined);
+        });
+        test('extract default imports from multiple files', () => {
+            const fooPackageName = 'foo';
+            const barPackageName = 'bar';
+
+            const importFooStatement = `import foo from "${fooPackageName}"`;
+            const importBarStatement = `import bar from "${barPackageName}"`;
+
+            const files = {
+                'foo.js': importFooStatement,
+                'bar.js': importBarStatement
+            };
+
+            const imports = snippets.getExampleImports(files, defaultChannel);
+
+            expect(imports[fooPackageName]).not.toBe(undefined);
+            expect(imports[barPackageName]).not.toBe(undefined);
+        });
+        test('should ignore progress/telerik packages', () => {
+            const channel = 'latest';
+            const progressPackageName = '@progress/foo';
+            const telerikPackageName = '@telerik/bar';
+
+            const importFooStatement = `import foo from "${progressPackageName}"`;
+            const importBarStatement = `import bar from "${telerikPackageName}"`;
+
+            const files = {
+                'foo.js': importFooStatement,
+                'bar.js': importBarStatement
+            };
+
+            const imports = snippets.getExampleImports(files, channel);
+
+            expect(imports[progressPackageName]).toEqual(undefined);
+            expect(imports[telerikPackageName]).toEqual(undefined);
+        });
+        test('should **not** apply dev channel for non-progress/telerik packages', () => {
+            const channel = 'dev';
+            const fooPackageName = 'foo';
+            const barPackageName = 'bar';
+
+            const importFooStatement = `import foo from "${fooPackageName}"`;
+            const importBarStatement = `import bar from "${barPackageName}"`;
+
+            const files = {
+                'foo.js': importFooStatement,
+                'bar.js': importBarStatement
+            };
+
+            const imports = snippets.getExampleImports(files, channel);
+
+            expect(imports[fooPackageName]).toEqual(anyChannelVersion);
+            expect(imports[barPackageName]).toEqual(anyChannelVersion);
+        });
+        test('should **not** recognize local module imports as external packages', () => {
+            const channel = 'dev';
+            const localFileImport = './foo';
+
+            const importFooStatement = `import foo from "${localFileImport}"`;
+
+            const files = {
+                'foo.js': importFooStatement
+            };
+
+            const imports = snippets.getExampleImports(files, channel);
+
+            expect(imports).toEqual({});
+        });
+    });
+    describe('buildExampleDependencies', () => {
+        [
+            'react',
+            'angular',
+            'builder',
+            'react-wrappers'
+        ].forEach(platform => {
+            [
+                'production',
+                'development'
+            ].forEach(env => {
+                test(`should apply platformDependencies for ${platform} in ${env} environment`, () => {
+                    window.env = env;
+                    const channel = env === 'production' ? 'latest' : 'dev';
+                    const stackBlitzDependencies = snippets.stackBlitzDependencies[platform](channel);
+                    const dependencies = snippets.buildExampleDependencies(platform);
+
+                    expect(dependencies).toEqual(stackBlitzDependencies);
+                });
+
+                test(`should apply example imports as dependencies on top of default ${platform} dependencies`, () => {
+                    window.env = env;
+                    const channel = env === 'production' ? 'latest' : 'dev';
+                    const imports = { 'foo': channel, 'bar': channel };
+                    const stackBlitzDependencies = snippets.stackBlitzDependencies[platform](channel);
+                    const dependencies = snippets.buildExampleDependencies(platform, imports);
+
+                    expect(dependencies).toEqual(global.$.extend({}, stackBlitzDependencies, imports));
+                });
+            });
+        });
+        test('should dependencies for react-wrappers when window.wrappers is set to true', () => {
+            window.wrappers = true;
+            const stackBlitzDependencies = snippets.stackBlitzDependencies['react-wrappers']('dev');
+            const dependencies = snippets.buildExampleDependencies('react');
+
+            expect(dependencies).toEqual(stackBlitzDependencies);
+        });
+    });
+    describe('getPackageName', () => {
+        it('should get normal package', () => {
+            const importPath = 'foo';
+            const result = snippets.getPackageName(importPath);
+
+            expect(result).toEqual('foo');
+        });
+        it('should get scoped package', () => {
+            const importPath = '@foo/bar';
+            const result = snippets.getPackageName(importPath);
+
+            expect(result).toEqual('@foo/bar');
+        });
+        it('should get nested package', () => {
+            const importPath = 'foo/bar';
+            const result = snippets.getPackageName(importPath);
+
+            expect(result).toEqual('foo');
+        });
+        it('should get scoped and nested package', () => {
+            const importPath = '@foo/bar/baz';
+            const result = snippets.getPackageName(importPath);
+
+            expect(result).toEqual('@foo/bar');
+        });
+        it('should get really long nested imports', () => {
+            const importPath = 'foo/bar/baz/gez/guz/kus';
+            const result = snippets.getPackageName(importPath);
+
+            expect(result).toEqual('foo');
+        });
+        it('should get really long scoped imports', () => {
+            const importPath = '@foo/bar/baz/gez/guz/kus';
+            const result = snippets.getPackageName(importPath);
+
+            expect(result).toEqual('@foo/bar');
+        })
+        it('should **not** fail with empty string', () => {
+            const importPath = '';
+
+            expect(() => {snippets.getPackageName(importPath);}).not.toThrow();
         });
     });
 });
