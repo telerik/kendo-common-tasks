@@ -1155,8 +1155,13 @@ window.openInPlunker = function(listing) {
                 }
             }
 
+            var shouldIncludeBlueprintFile =
+                listing.extendBlueprint
+                || !listing.multiple
+                || file === 'index.html';
+
             if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
-                if (listing.extendBlueprint || !listing.multiple || file === 'index.html') {
+                if (shouldIncludeBlueprintFile) {
                     var content;
                     /* don't apply kendo template to files with angular template inside or in a css file*/
                     if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
@@ -1284,9 +1289,7 @@ $(function() {
         for (var i = 0; i < tags.length;) {
             var tag = tags.eq(i);
             var siblingTags = tag.nextUntil(":not(pre)").addBack();
-            if (tag.data("codeListing")) {
-                //console.log('skip processing');
-            } else {
+            if (!tag.data("codeListing")) {
                 tag.data("codeListing", true);
                 blocks.push(new CodeListing(siblingTags));
             }
