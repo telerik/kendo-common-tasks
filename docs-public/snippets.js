@@ -1151,7 +1151,12 @@ function openInEditor(listing) {
             var shouldIncludeFile = false;
 
             if (exampleTemplate === 'angular-cli') {
-                shouldIncludeFile = /^(styles\.css|main\.ts|polyfills\.ts)$/.test(filename);
+                var alwaysInclude = [
+                    'styles.css',
+                    'main.ts',
+                    'polyfills.ts'
+                ];
+                shouldIncludeFile = alwaysInclude.indexOf(filename) > -1;
             }
 
             if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
