@@ -1097,7 +1097,7 @@ function prepareSnippet(site, listing, templateFiles) {
 }
 
 // preprocesses code listing, creates form and posts to online editor
-window.openInPlunker = function(listing) {
+function openInEditor(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
@@ -1201,7 +1201,9 @@ window.openInPlunker = function(listing) {
     .fail(function() {
         console.log("Snippet posting failed, probably due to template fetching network errors.");
     });
-};
+
+    return false;
+}
 
 var themeColors = {
     default: "#ff6358",
@@ -1213,11 +1215,7 @@ var themeColors = {
 $(function() {
     var framework = $.extend({
         editor: 'plunkr',
-        editButtonTemplate: '<a href="#" class="edit-online plunkr">Open in StackBlitz</a>',
-        editOnline: function(listing) {
-            window.openInPlunker(listing);
-            return false;
-        }
+        editButtonTemplate: '<a href="#" class="edit-online plunkr">Open in StackBlitz</a>'
     }, {
         builder: {
             runnerContent: function(options) {
@@ -1343,7 +1341,7 @@ $(function() {
             }
 
             previewElement.find('.edit-online').click(
-                framework.editOnline.bind(null, block)
+                openInEditor.bind(null, block)
             );
             var content;
             if (block.multiple) {
@@ -1366,7 +1364,7 @@ $(function() {
             if (block.multiple) {
                 run.text("Open in StackBlitz");
                 run.insertAfter(fileListElement);
-                run.click(framework.editOnline.bind(null, block));
+                run.click(openInEditor.bind(null, block));
             } else {
                 run.text("Run Code");
                 run.insertAfter(block.elements.last());
@@ -1421,7 +1419,7 @@ $(function() {
                     }
 
                     editor.find('.edit-online').click(function() {
-                        return framework.editOnline(listing());
+                        return openInEditor(listing());
                     });
 
                     kendo.animationFrame(function() {
