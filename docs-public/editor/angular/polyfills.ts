@@ -40,6 +40,12 @@
 // import 'web-animations-js';  // Run `npm install --save web-animations-js`.
 
 
+// polyfill for @angular/animations
+// https://github.com/angular/angular/issues/24769
+if (!Element.prototype.matches) {
+    Element.prototype.matches = Element.prototype.msMatchesSelector;
+}
+
 /** Evergreen browsers require these. **/
 import 'core-js/es6/reflect';
 import 'core-js/es7/reflect';
