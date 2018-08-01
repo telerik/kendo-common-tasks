@@ -1149,33 +1149,34 @@ window.openInPlunker = function(listing) {
             var file = plunkerFiles[index];
             var template = templateContent;
 
-            if (exampleTemplate === 'angular-cli') {
-                if (file === "styles.css" || file === "main.ts" || file === 'polyfills.ts') {
-                    files[file] = kendo.template(template)(context);
-                }
-            }
+            var shouldIncludeFile = false;
 
-            var shouldIncludeBlueprintFile =
-                listing.extendBlueprint
-                || !listing.multiple
-                || file === 'index.html';
+            if (exampleTemplate === 'angular-cli') {
+                shouldIncludeFile = /^(styles\.css|main\.ts|polyfills\.ts)$/.test(file);
+            }
 
             if (exampleTemplate !== 'javascript' || window.platform === 'vue') {
-                if (shouldIncludeBlueprintFile) {
-                    var content;
-                    /* don't apply kendo template to files with angular template inside or in a css file*/
-                    if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
-                        // don't sanitize if kendo template is present inside
-                        var sanitizedContent = template.match(/#(=|:).*#/g) ? template : template.replace(/#/g, "\\#");
-                        content = kendo.template(sanitizedContent)(context);
-                    } else {
-                        content = template;
-                    }
-
-                    files[file] = content;
-                }
+                shouldIncludeFile =
+                    shouldIncludeFile
+                    || listing.extendBlueprint
+                    || !listing.multiple
+                    || file === 'index.html';
             }
 
+
+            if (shouldIncludeFile) {
+                var content;
+                /* don't apply kendo template to files with angular template inside or in a css file*/
+                if (!template.match(/\$\{.+\}/) && file.indexOf('css') < 0) {
+                    // don't sanitize if kendo template is present inside
+                    var sanitizedContent = template.match(/#(=|:).*#/g) ? template : template.replace(/#/g, "\\#");
+                    content = kendo.template(sanitizedContent)(context);
+                } else {
+                    content = template;
+                }
+
+                files[file] = content;
+            }
         });
 
         return files;
