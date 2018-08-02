@@ -341,6 +341,10 @@ var stackBlitzDependencies = {
     }
 };
 
+var stackblitzMainFile = {
+    'react': 'app%2Fmain.js'
+};
+
 function SnippetRunner(container) {
     this.container = container;
     this.iframe = $();
@@ -992,7 +996,9 @@ function getStackBlitzTemplate(listing) {
 }
 
 function buildExampleEditorForm(exampleTemplate, platform, dependencies) {
-    var form = new EditorForm('https://stackblitz.com/run/');
+    var mainFile = stackblitzMainFile[platform];
+    var actionURL = 'https://stackblitz.com/run/';
+    var form = new EditorForm(mainFile ? actionURL + '?file=' + mainFile : actionURL);
     var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
 
     form.addField('project[template]', exampleTemplate);
