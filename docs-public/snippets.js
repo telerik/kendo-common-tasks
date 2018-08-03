@@ -999,7 +999,7 @@ function buildExampleEditorForm(exampleTemplate, platform, dependencies) {
     var mainFile = stackblitzMainFile[platform];
     var actionURL = 'https://stackblitz.com/run/';
     var form = new EditorForm(mainFile ? actionURL + '?file=' + mainFile : actionURL);
-    var link = (/localhost/).test(window.location.href) ? '' : ', see ' + window.location.href;
+    var link = (/localhost/).test(window.location.href) ? '' : '\nSee ' + window.location.href;
 
     form.addField('project[template]', exampleTemplate);
     form.addField('project[tags][0]', capitalize(platform));
