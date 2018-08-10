@@ -3,6 +3,7 @@ const fs = require('fs');
 
 const express = require('express');
 const mds = require('./markdown-serve');
+const sassMiddleware = require('node-sass-middleware');
 const BrowserSync = require('browser-sync');
 const serveIndex = require('serve-index');
 const rewrite = require('express-urlrewrite');
@@ -23,7 +24,14 @@ module.exports = (libraryName, onServerStart, done) => {
     app.set('views', __dirname);
     app.set('view engine', 'hbs');
 
+    app.use(sassMiddleware({
+        src: path.join(__dirname, 'docs-public'),
+        dest: path.join(__dirname, '.compiled'),
+        ouputStyle: 'compressed',
+        prefix: '/internals'
+    }));
     app.use('/internals', express.static(path.join(__dirname, 'docs-public')));
+    app.use('/internals', express.static(path.join(__dirname, '.compiled')));
     app.use('/cdn', express.static('dist/cdn/'));
     app.use('/npm', express.static('node_modules', staticContentOptions));
     app.use('/npm', express.static('../../node_modules', staticContentOptions));
