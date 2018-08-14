@@ -14,6 +14,11 @@ window.ExampleRunner = (function() {
         path: "https://unpkg.com/jquery@3.2.1/dist/jquery.min.js"
     };
 
+    var jszipConfiguration = {
+        module: "jszip",
+        path: "https://cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min.js"
+    };
+
     var kendoConfiguration = {
         module: "@progress/kendo-ui",
         path: "https://unpkg.com/@progress/kendo-ui/"
@@ -120,6 +125,9 @@ window.ExampleRunner = (function() {
                 } else if (kendoPackage.module === 'jquery') {
                     /* Map jQuery */
                     config.map[jqueryConfiguration.module] = jqueryConfiguration.path;
+                } else if (kendoPackage.module === 'jszip') {
+                    /* Map JSZip */
+                    config.map[jszipConfiguration.module] = jszipConfiguration.path;
                 } else {
                     config.packages[kendoPackage.module] = {
                         main: kendoPackage.main || 'dist/cdn/'.concat(kendoPackage.module.replace(/(@progress\/|@telerik\/)/, ''), '.min.js'),

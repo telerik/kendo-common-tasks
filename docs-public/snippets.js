@@ -262,7 +262,8 @@ var stackBlitzDependencies = {
             "@progress/kendo-validator-vue-wrapper": channel,
             "@progress/kendo-window-vue-wrapper": channel,
             "@progress/kendo-ui": "*",
-            "vue": "*"
+            "vue": "*",
+            "jszip": "2.4.0"
         };
     },
     'react': function(channel) {
