@@ -372,6 +372,7 @@ exports.karmaConfig = function(config, webpackConfig, bundleFile) {
                 flags: [
                     '--headless',
                     '--disable-gpu',
+                    '--disable-software-rasterizer',
                     '--remote-debugging-port=9222'
                 ]
             }
