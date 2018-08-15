@@ -152,6 +152,7 @@ var stackBlitzDependencies = {
             'core-js': '2.5.7',
             'rxjs': '6.2.2',
             'rxjs-compat': '6.2.2',
+            'web-animations-js': '2.3.1',
             'zone.js': '0.8.26',
             '@angular/animations': '6',
             '@angular/core': '6',
