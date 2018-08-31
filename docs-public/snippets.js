@@ -1269,7 +1269,7 @@ $(function() {
                     html: listing['html'],
                     language: listing.runtimeLanguage,
                     theme: theme,
-                    themeAccent: themeColors[options.theme],
+                    themeAccent: themeColors[theme],
                     track: options.track
                 });
             }
@@ -1285,7 +1285,7 @@ $(function() {
                     html: listing['html'],
                     language: listing.runtimeLanguage,
                     theme: theme,
-                    themeAccent: themeColors[options.theme],
+                    themeAccent: themeColors[theme],
                     track: options.track
                 });
             }
@@ -1293,7 +1293,7 @@ $(function() {
         react: {
             runnerContent: function(options) {
                 var listing = options.listing;
-                var theme = options.theme || 'default';
+                var theme = options.theme || 'material';
 
                 return plunkerPage({
                     bootstrap: bootstrapReact,
@@ -1301,7 +1301,7 @@ $(function() {
                     language: listing.runtimeLanguage,
                     html: listing['html'],
                     theme: theme,
-                    themeAccent: themeColors[options.theme],
+                    themeAccent: themeColors[theme],
                     track: options.track
                 });
             }
@@ -1317,7 +1317,7 @@ $(function() {
                     language: listing.runtimeLanguage,
                     html: listing['html'],
                     theme: theme,
-                    themeAccent: themeColors[options.theme],
+                    themeAccent: themeColors[theme],
                     track: options.track
                 });
             }
@@ -1398,7 +1398,7 @@ $(function() {
             var preview = new SnippetRunner(previewElement.find('.tab-preview'));
             preview.update(content);
         } else if (!block.noRun) {
-            var title = $("<h5>Code Sample</h5>");
+            var title = $("<h5 class='code-sample-header' >Code Sample</h5>");
             title.insertBefore(block.multiple ? fileListElement : block.elements[0]);
 
             var run = $("<button class='button secondary'></button>");
@@ -1410,7 +1410,7 @@ $(function() {
             } else {
                 run.text("Run Code");
                 run.insertAfter(block.elements.last());
-                run.wrap("<p class='run-code'></p>");
+                run.wrap("<p class='run-code code-sample-footer'></p>");
 
                 // TODO: delegate run handler instead
                 run.click(function() {
