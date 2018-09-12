@@ -185,6 +185,7 @@ var stackBlitzDependencies = {
             '@progress/kendo-angular-label': channel,
             '@progress/kendo-angular-layout': channel,
             '@progress/kendo-angular-menu': channel,
+            '@progress/kendo-angular-notification': channel,
             '@progress/kendo-angular-pdf-export': channel,
             '@progress/kendo-angular-popup': channel,
             '@progress/kendo-angular-ripple': channel,
