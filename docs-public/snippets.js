@@ -191,6 +191,7 @@ var stackBlitzDependencies = {
             '@progress/kendo-angular-ripple': channel,
             '@progress/kendo-angular-scrollview': channel,
             '@progress/kendo-angular-sortable': channel,
+            '@progress/kendo-angular-toolbar': channel,
             '@progress/kendo-angular-tooltip': channel,
             '@progress/kendo-angular-treeview': channel,
             '@progress/kendo-angular-upload': channel
