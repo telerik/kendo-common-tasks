@@ -1135,7 +1135,7 @@ function openInEditor(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
-    var theme = listing.theme || "default";
+    var theme = listing.theme || window.localStorage ? window.localStorage.getItem('theme') : "default";
 
     if (!code) {
         code = wrapAngularTemplate(template);
@@ -1293,7 +1293,7 @@ $(function() {
         react: {
             runnerContent: function(options) {
                 var listing = options.listing;
-                var theme = options.theme || 'material';
+                var theme = options.theme || (window && window.localStorage.getItem('theme')) || 'material';
 
                 return plunkerPage({
                     bootstrap: bootstrapReact,
@@ -1396,6 +1396,16 @@ $(function() {
             }
 
             var preview = new SnippetRunner(previewElement.find('.tab-preview'));
+
+            $('.change-theme-btn').on('click', function() {
+                var updatedContent = framework.runnerContent({
+                    listing: block,
+                    track: window.trackjs
+                });
+
+                preview.update(updatedContent);
+            });
+
             preview.update(content);
         } else if (!block.noRun) {
             var title = $("<h5 class='code-sample-header' >Code Sample</h5>");
