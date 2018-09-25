@@ -1397,10 +1397,11 @@ $(function() {
 
             var preview = new SnippetRunner(previewElement.find('.tab-preview'));
 
-            $('.change-theme-btn').on('click', function() {
+            $(document).on("theme-change", function(_, theme) {
                 var updatedContent = framework.runnerContent({
                     listing: block,
-                    track: window.trackjs
+                    track: window.trackjs,
+                    theme: theme
                 });
 
                 preview.update(updatedContent);
