@@ -26,8 +26,8 @@ function debounce(func, wait, immediate) {
 }
 
 var previewTemplate = kendo.template(
-    "<ul class='docs-tabstrip' >" +
-    "<li class='active'><a href='\\#preview-#= index #' data-toggle='tab'>Example</a></li>" +
+    "<ul class='docs-tabstrip nav' >" +
+    "<li class='active'><a class='active' href='\\#preview-#= index #' data-toggle='tab'>Example</a></li>" +
     "<li><a href='\\#code-#= index #' data-toggle='tab'>View Source</a></li>" +
     "<li class='editor-container'>" +
     "#= editButtonTemplate #" +
