@@ -26,8 +26,8 @@ function debounce(func, wait, immediate) {
 }
 
 var previewTemplate = kendo.template(
-    "<ul class='docs-tabstrip' >" +
-    "<li class='active'><a href='\\#preview-#= index #' data-toggle='tab'>Example</a></li>" +
+    "<ul class='docs-tabstrip nav' >" +
+    "<li class='active'><a class='active' href='\\#preview-#= index #' data-toggle='tab'>Example</a></li>" +
     "<li><a href='\\#code-#= index #' data-toggle='tab'>View Source</a></li>" +
     "<li class='editor-container'>" +
     "#= editButtonTemplate #" +
@@ -185,11 +185,13 @@ var stackBlitzDependencies = {
             '@progress/kendo-angular-label': channel,
             '@progress/kendo-angular-layout': channel,
             '@progress/kendo-angular-menu': channel,
+            '@progress/kendo-angular-notification': channel,
             '@progress/kendo-angular-pdf-export': channel,
             '@progress/kendo-angular-popup': channel,
             '@progress/kendo-angular-ripple': channel,
             '@progress/kendo-angular-scrollview': channel,
             '@progress/kendo-angular-sortable': channel,
+            '@progress/kendo-angular-toolbar': channel,
             '@progress/kendo-angular-tooltip': channel,
             '@progress/kendo-angular-treeview': channel,
             '@progress/kendo-angular-upload': channel
