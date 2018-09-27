@@ -40,7 +40,7 @@ var previewTemplate = kendo.template(
 
 var fileListTemplate = kendo.template(
     "<div class='file-list'>" +
-    "<ul class='docs-tabstrip'>" +
+    "<ul class='docs-tabstrip nav'>" +
     "# for (var i = 0; i < files.length; i++) { #" +
     "#var filename = files[i].getAttribute('data-file')#" +
     "#if(i === 0){# <li class='active'> #}else{# <li> #}#" +
