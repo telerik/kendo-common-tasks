@@ -1398,11 +1398,13 @@ $(function() {
             var preview = new SnippetRunner(previewElement.find('.tab-preview'));
 
             $(document).on("theme-change", function(_, theme) {
-                var updatedContent = framework.runnerContent({
-                    listing: block,
-                    track: window.trackjs,
-                    theme: theme
-                });
+                var updatedContent = block.multiple
+                    ? loadMultiFileRunnerContent(codeTab, theme)
+                    : framework.runnerContent({
+                        listing: block,
+                        track: window.trackjs,
+                        theme: theme
+                    });
 
                 preview.update(updatedContent);
             });
@@ -1553,7 +1555,7 @@ $(function() {
         return sanitizedText;
     }
 
-    function loadMultiFileRunnerContent(element) {
+    function loadMultiFileRunnerContent(element, themeVar) {
         var filesContent = "";
         var files = $.map(element.find("pre"), function(item) {
             var pre = $(item);
@@ -1571,7 +1573,7 @@ $(function() {
         /* If this is multifile runnable example there must be a main file, locate it and infer the runtime language from it */
         var mainFile = files.filter(function(file) { return file.name.indexOf('main.') >= 0; }).pop();
         var runtimeLanguage = mainFile.name.split('.').pop();
-        var theme = element.closest("[data-theme]").attr("data-theme") || 'default';
+        var theme = themeVar || element.closest("[data-theme]").attr("data-theme") || window.localStorage.getItem('theme') || 'default';
         var content = plunkerTemplate({
             npmUrl: window.npmUrl,
             npmChannel: window.env === 'production' ? "latest" : "dev",
