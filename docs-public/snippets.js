@@ -1135,7 +1135,7 @@ function openInEditor(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
-    var theme = listing.theme || window.localStorage ? window.localStorage.getItem('theme') : "default";
+    var theme = listing.theme || window.localStorage.getItem('theme') || "default";
 
     if (!code) {
         code = wrapAngularTemplate(template);
@@ -1399,7 +1399,7 @@ $(function() {
 
             $(document).on("theme-change", function(_, theme) {
                 var updatedContent = block.multiple
-                    ? loadMultiFileRunnerContent(codeTab, theme)
+                    ? loadMultiFileRunnerContent(codeTab, theme || 'default')
                     : framework.runnerContent({
                         listing: block,
                         track: window.trackjs,
