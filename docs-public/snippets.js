@@ -1419,6 +1419,7 @@ $(function() {
             if (block.multiple) {
                 run.text("Open in StackBlitz");
                 run.insertAfter(fileListElement);
+                run.wrap("<p class='run-code code-sample-footer'></p>");
                 run.click(openInEditor.bind(null, block));
             } else {
                 run.text("Run Code");
