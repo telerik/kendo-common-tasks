@@ -1051,6 +1051,10 @@ function getExampleImports(files) {
     }, {});
 }
 
+function platformSpecificTheme() {
+    return window.localStorage.getItem("theme-" + window.platform);
+}
+
 // fetch plunker templates for platform
 // this must be cached before the button is clicked,
 // otherwise the popup blocker blocks the new tab
@@ -1135,7 +1139,9 @@ function openInEditor(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
     var template = listing['ng-template'];
     var html = listing['html'] || '';
-    var theme = listing.theme || window.localStorage.getItem('theme') || "default";
+    var theme = listing.theme
+        || platformSpecificTheme()
+        || "default";
 
     if (!code) {
         code = wrapAngularTemplate(template);
@@ -1293,7 +1299,7 @@ $(function() {
         react: {
             runnerContent: function(options) {
                 var listing = options.listing;
-                var theme = options.theme || (window && window.localStorage.getItem('theme')) || 'material';
+                var theme = options.theme || platformSpecificTheme() || 'material';
 
                 return plunkerPage({
                     bootstrap: bootstrapReact,
@@ -1574,7 +1580,11 @@ $(function() {
         /* If this is multifile runnable example there must be a main file, locate it and infer the runtime language from it */
         var mainFile = files.filter(function(file) { return file.name.indexOf('main.') >= 0; }).pop();
         var runtimeLanguage = mainFile.name.split('.').pop();
-        var theme = themeVar || element.closest("[data-theme]").attr("data-theme") || window.localStorage.getItem('theme') || 'default';
+        var theme = themeVar
+            || element.closest("[data-theme]").attr("data-theme")
+            || platformSpecificTheme()
+            || "default";
+
         var content = plunkerTemplate({
             npmUrl: window.npmUrl,
             npmChannel: window.env === 'production' ? "latest" : "dev",
