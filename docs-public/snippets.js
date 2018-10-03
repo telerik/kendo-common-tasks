@@ -1425,12 +1425,12 @@ $(function() {
             if (block.multiple) {
                 run.text("Open in StackBlitz");
                 run.insertAfter(fileListElement);
-                run.wrap("<p class='run-code code-sample-footer'></p>");
+                run.wrap("<p class='run-code run-external code-sample-footer'></p>");
                 run.click(openInEditor.bind(null, block));
             } else {
                 run.text("Run Code");
                 run.insertAfter(block.elements.last());
-                run.wrap("<p class='run-code code-sample-footer'></p>");
+                run.wrap("<p class='run-code run-internal code-sample-footer'></p>");
 
                 // TODO: delegate run handler instead
                 run.click(function() {
