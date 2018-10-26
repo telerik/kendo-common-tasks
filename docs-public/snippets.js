@@ -189,6 +189,7 @@ var stackBlitzDependencies = {
             '@progress/kendo-angular-notification': channel,
             '@progress/kendo-angular-pdf-export': channel,
             '@progress/kendo-angular-popup': channel,
+            '@progress/kendo-angular-resize-sensor': channel,
             '@progress/kendo-angular-ripple': channel,
             '@progress/kendo-angular-scheduler': channel,
             '@progress/kendo-angular-scrollview': channel,
