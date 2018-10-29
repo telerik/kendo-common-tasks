@@ -266,7 +266,7 @@ window.ExampleRunner = (function() {
             var modules = options.modules;
             var trackjs = options.trackjs;
             var ngVer = '@5.2.2'; // lock in the angular package version; do not let it float to current!
-            var SYSTEM_BUNDLES = [{
+            var SYSTEM_BUNDLES = [ {
                 name: "@progress/kendo-common",
                 file: "kendo-common.js"
             }, {
@@ -298,7 +298,7 @@ window.ExampleRunner = (function() {
             }, {
                 name: "@telerik/kendo-inputs-common",
                 file: "kendo-inputs-common.js"
-            }];
+            } ];
 
             var config = {
                 transpiler: 'ts',
