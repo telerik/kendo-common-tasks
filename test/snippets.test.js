@@ -370,4 +370,30 @@ describe('stackblitz dependencies', () => {
             expect(() => {snippets.getPackageName(importPath);}).not.toThrow();
         });
     });
+
+    describe('resolvePeerDependencies', () => {
+        it('should return peers of package', () => {
+            const result = snippets.resolvePeerDependencies('foo', {
+                'foo': ['bar', 'baz']
+            });
+
+            expect(result).toEqual({
+                'bar': '*',
+                'baz': '*'
+            });
+        });
+
+        it('should return deep peerDependencies', () => {
+            const result = snippets.resolvePeerDependencies('foo', {
+                'foo': ['bar', 'baz'],
+                'bar': ['qux']
+            });
+
+            expect(result).toEqual({
+                'bar': '*',
+                'baz': '*',
+                'qux': '*'
+            });
+        });
+    });
 });

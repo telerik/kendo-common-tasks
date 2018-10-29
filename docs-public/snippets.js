@@ -1026,6 +1026,25 @@ function buildExampleDependencies(platform, imports) {
     return $.extend({}, imports, platformDependencies);
 }
 
+function resolvePeerDependencies(pkg, knownPeers) {
+    var queue = [ pkg ];
+    var result = {};
+    var registerDependency = function(packageName) {
+        result[packageName] = '*';
+    };
+
+    while (queue.length) {
+        var current = queue.pop();
+        var peers = knownPeers[current] || [];
+
+        peers.forEach(registerDependency);
+
+        queue.push.apply(queue, peers);
+    }
+
+    return result;
+}
+
 function getPackageName(importStatement) {
     var sections = importStatement.split('/');
 
@@ -1643,6 +1662,7 @@ if (typeof module !== 'undefined') {
         toModuleImport: toModuleImport,
         buildExampleDependencies: buildExampleDependencies,
         getExampleImports: getExampleImports,
+        resolvePeerDependencies: resolvePeerDependencies,
         stackBlitzDependencies: stackBlitzDependencies,
         getPackageName: getPackageName
     };
