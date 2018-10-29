@@ -274,6 +274,9 @@ window.ExampleRunner = (function() {
                 name: "@progress/kendo-charts",
                 file: "kendo-charts.js"
             }, {
+                name: "@telerik/kendo-draggable",
+                file: "kendo-draggable.js"
+            }, {
                 name: "@progress/kendo-angular-charts",
                 file: "kendo-angular-charts.js"
             }, {
