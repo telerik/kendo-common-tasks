@@ -266,13 +266,16 @@ window.ExampleRunner = (function() {
             var modules = options.modules;
             var trackjs = options.trackjs;
             var ngVer = '@5.2.2'; // lock in the angular package version; do not let it float to current!
-            var SYSTEM_BUNDLES = [ {
-                name: "@progress/kendo-drawing",
-                file: "kendo-drawing.js",
-                modules: true
+            var SYSTEM_BUNDLES = [{
+                name: "@progress/kendo-common",
+                file: "kendo-common.js"
             }, {
                 name: "@progress/kendo-charts",
                 file: "kendo-charts.js"
+            }, {
+                name: "@progress/kendo-drawing",
+                file: "kendo-drawing.js",
+                modules: true
             }, {
                 name: "@telerik/kendo-draggable",
                 file: "kendo-draggable.js"
@@ -283,16 +286,19 @@ window.ExampleRunner = (function() {
                 name: "@progress/kendo-angular-gauges",
                 file: "kendo-angular-gauges.js"
             }, {
+                name: "@progress/kendo-angular-intl",
+                file: "kendo-angular-intl.js",
+                map: true
+            }, {
                 name: "@progress/kendo-angular-resize-sensor",
                 file: "kendo-angular-resize-sensor.js"
             }, {
                 name: "@telerik/kendo-intl",
                 file: "kendo-intl.js"
             }, {
-                name: "@progress/kendo-angular-intl",
-                file: "kendo-angular-intl.js",
-                map: true
-            } ];
+                name: "@telerik/kendo-inputs-common",
+                file: "kendo-inputs-common.js"
+            }];
 
             var config = {
                 transpiler: 'ts',
