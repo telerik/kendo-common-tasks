@@ -289,40 +289,38 @@ describe('stackblitz dependencies', () => {
         });
     });
     describe('buildExampleDependencies', () => {
-        [
-            'react',
-            'angular',
-            'builder',
-            'react-wrappers'
-        ].forEach(platform => {
-            [
-                'production',
-                'development'
-            ].forEach(env => {
-                test(`should apply platformDependencies for ${platform} in ${env} environment`, () => {
-                    window.env = env;
-                    const channel = env === 'production' ? 'latest' : 'dev';
-                    const stackBlitzDependencies = snippets.stackBlitzDependencies[platform](channel);
-                    const dependencies = snippets.buildExampleDependencies(platform);
-
-                    expect(dependencies).toEqual(stackBlitzDependencies);
-                });
-
-                test(`should apply example imports as dependencies on top of default ${platform} dependencies`, () => {
-                    window.env = env;
-                    const channel = env === 'production' ? 'latest' : 'dev';
-                    const imports = { 'foo': channel, 'bar': channel };
-                    const stackBlitzDependencies = snippets.stackBlitzDependencies[platform](channel);
-                    const dependencies = snippets.buildExampleDependencies(platform, imports);
-
-                    expect(dependencies).toEqual(global.$.extend({}, stackBlitzDependencies, imports));
-                });
+        test(`should apply platformDependencies for react in production environment`, () => {
+            const channel = 'latest';
+            const stackBlitzDependencies = snippets.stackBlitzDependencies.react(channel);
+            const dependencies = snippets.buildExampleDependencies({
+                platform: 'react',
+                wrappers: false,
+                env: 'production'
             });
+
+            expect(dependencies).toEqual(stackBlitzDependencies);
         });
+
+        test(`should apply example imports as dependencies on top of default react dependencies`, () => {
+            const channel = 'dev';
+            const imports = { 'foo': channel, 'bar': channel };
+            const stackBlitzDependencies = snippets.stackBlitzDependencies.react(channel);
+            const dependencies = snippets.buildExampleDependencies({
+                platform: 'react',
+                wrappers: false,
+                env: 'development'
+            }, imports);
+
+            expect(dependencies).toEqual(global.$.extend({}, stackBlitzDependencies, imports));
+        });
+
         test('should dependencies for react-wrappers when window.wrappers is set to true', () => {
-            window.wrappers = true;
             const stackBlitzDependencies = snippets.stackBlitzDependencies['react-wrappers']('dev');
-            const dependencies = snippets.buildExampleDependencies('react');
+            const dependencies = snippets.buildExampleDependencies({
+                platform: 'react',
+                wrappers: true,
+                env: 'dev'
+            });
 
             expect(dependencies).toEqual(stackBlitzDependencies);
         });

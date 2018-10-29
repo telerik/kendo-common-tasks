@@ -1019,9 +1019,10 @@ function buildExampleEditorForm(exampleTemplate, platform, dependencies) {
     return form;
 }
 
-function buildExampleDependencies(platform, imports) {
-    var channel = window.env === 'production' ? "latest" : "dev";
-    var platformDependencies = stackBlitzDependencies[window.wrappers ? 'react-wrappers' : platform](channel);
+function buildExampleDependencies(settings, imports) {
+    var channel = settings.env === 'production' ? "latest" : "dev";
+    var _platform = settings.wrappers ? 'react-wrappers' : settings.platform;
+    var platformDependencies = stackBlitzDependencies[_platform](channel, imports);
 
     return $.extend({}, imports, platformDependencies);
 }
@@ -1257,7 +1258,11 @@ function openInEditor(listing) {
     .then(function(files) {
         var platform = window.platform;
         var imports = getExampleImports(files);
-        var dependencies = buildExampleDependencies(platform, imports);
+        var dependencies = buildExampleDependencies({
+            platform: platform,
+            wrappers: window.wrappers,
+            env: window.env
+        }, imports);
         var form = buildExampleEditorForm(exampleTemplate, platform, dependencies);
 
         for (var filename in files) {
