@@ -1157,7 +1157,7 @@ function openInEditor(listing) {
         common: {
             appComponentContent: code || '',
             appImports: imports.join('\n'),
-            npmUrl: 'https://unpkg.com',
+            npmUrl: window.npmUrl,
             npmChannel: window.env === 'production' ? "latest" : "dev",
             htmlContent: html,
             theme: theme,
