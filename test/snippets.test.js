@@ -74,7 +74,7 @@ describe('preparing snippets for editing', () => {
 
         expect(files['index.html']).toBeTruthy();
         expect(files['index.html']).toContain('foobar');
-        expect(files['index.html']).toContain('cdn.jsdelivr.net/npm/@progress/kendo-theme-default');
+        expect(files['index.html']).toContain('unpkg.com/@progress/kendo-theme-default');
 
         expect(files['index.js']).toBe(''); // because stackblitz
     });
