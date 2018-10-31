@@ -1231,7 +1231,7 @@ function openInEditor(listing) {
     })
     .then(function(files) {
         return prepareSnippet({
-            npmUrl: 'https://unpkg.com',
+            npmUrl: window.npmUrl,
             platform: window.platform
         }, listing, files);
     })
