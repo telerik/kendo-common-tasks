@@ -1137,11 +1137,6 @@ function prepareSnippet(site, listing, templateFiles) {
     return deferred.promise();
 }
 
-function windowOrigin() {
-    var port = window.location.port ? ':' + window.location.port : '';
-    return window.location.protocol + '//' + window.location.hostname + port;
-}
-
 // preprocesses code listing, creates form and posts to online editor
 function openInEditor(listing) {
     var code = listing['ts'] || listing['jsx'] || listing['js'];
@@ -1162,7 +1157,7 @@ function openInEditor(listing) {
         common: {
             appComponentContent: code || '',
             appImports: imports.join('\n'),
-            npmUrl: windowOrigin() + window.npmUrl,
+            npmUrl: 'https://unpkg.com',
             npmChannel: window.env === 'production' ? "latest" : "dev",
             htmlContent: html,
             theme: theme,
@@ -1236,7 +1231,7 @@ function openInEditor(listing) {
     })
     .then(function(files) {
         return prepareSnippet({
-            npmUrl: windowOrigin() + window.npmUrl,
+            npmUrl: 'https://unpkg.com',
             platform: window.platform
         }, listing, files);
     })
