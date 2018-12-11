@@ -1318,7 +1318,7 @@ $(function() {
         vue: {
             runnerContent: function(options) {
                 var listing = options.listing;
-                var theme = options.theme || 'default';
+                var theme = options.theme || platformSpecificTheme() || 'material';
 
                 return plunkerPage({
                     bootstrap: bootstrapVue,
